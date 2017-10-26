@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { BreakpointHoc } from '../../Breakpoint.js';
+import './DocsBreakpoint.css';
 
 const DemoOne = (() => {
   const breakpoints = [
@@ -13,29 +14,18 @@ const DemoOne = (() => {
   const C = ({ bp }) => {
     const keys = ['isLt', 'isLte', 'isGt', 'isGte', 'isEq'];
     const results = breakpoints.map(({ name }) => (
-      <div key={name}>
-        <h2>{name}</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>method</th>
-              <th>value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {keys.map(key => (
-              <tr key={key}>
-                <td>{key}</td>
-                <td>{String(bp[key](name))}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div key={name} className="DocsBreakpoint__DemoOneGroup">
+        {keys.map(key => (
+          <div key={key}>
+            <code className="DocsBreakpoint__DemoOneMethod">{`${key}('${name}')`}</code>
+            <span>{String(bp[key](name))}</span>
+          </div>
+        ))}
       </div>
     ));
     return <div>{results}</div>;
   };
-  return BreakpointHoc({ breakpoints })(C);
+  return BreakpointHoc({ breakpoints, type: 'viewport' })(C);
 })();
 
 export default class DocsBreakpoint extends React.Component {

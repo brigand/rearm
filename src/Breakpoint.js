@@ -51,11 +51,17 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
       if (key === 'minWidth') return 0;
       if (key === 'maxWidth') return Infinity;
     }
+    // constraint from another breakpoint key
     if (typeof value === 'string') {
       const target = byName[value];
       if (!target) throw new TypeError(`Invalid breakpoint reference from ${bp.name} to ${value}`);
 
-      return solveFor(target, key);
+      // we invert the key so that e.g. minWidth of bp becomes the maxWidth of the reference
+      const inverted = {
+        maxWidth: 'minWidth',
+        minWidth: 'maxWidth',
+      };
+      return solveFor(target, inverted[key]);
     }
     throw new TypeError(`Failed to solve for breakpoint ${bp.name} on ${key} with value ${bp[key] != null ? bp[key] : 'null'}`);
   };
@@ -63,6 +69,7 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
   bps.forEach((bp) => {
     const minWidth = solveFor(bp, 'minWidth');
     const maxWidth = solveFor(bp, 'maxWidth');
+    console.log(bp.name, minWidth, maxWidth);
     if (size.width >= minWidth) {
       gt.push(bp.name);
       keys.push(`gt:${bp.name}`);
@@ -97,12 +104,12 @@ type HocState = {
 
 type HocProps = {};
 
-const BreakpointHoc = (opts: BreakpointHocOpts) => (Component) => {
+const BreakpointHoc = (opts: BreakpointHocOpts) => (Component: React.ComponentType<any>) => {
   return class BreakpointProvider extends React.Component<HocProps, HocState> {
     cleanup: () => void;
     ownProps: BreakpointChildProps;
 
-    constructor(props) {
+    constructor(props: HocProps) {
       super(props);
       this.state = {
         current: null,
