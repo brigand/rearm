@@ -1,0 +1,41 @@
+{
+  "name": "rearm",
+  "version": "0.1.0",
+  "description": "powerful react.js abstractions for non-trivial apps",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brigand/rearm.git"
+  },
+  "keywords": [
+    "react",
+    "abstraction",
+    "hoc",
+    "highordercomponent",
+    "rendercallback"
+  ],
+  "author": "Frankie Bagnardi <f.bagnardi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brigand/rearm/issues"
+  },
+  "homepage": "https://github.com/brigand/rearm#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-jest": "^21.2.0",
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-react": "^7.4.0",
+    "flow-bin": "^0.57.3",
+    "jest": "^21.2.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  }
+}
