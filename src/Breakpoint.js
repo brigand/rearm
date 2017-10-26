@@ -173,3 +173,5 @@ const BreakpointHoc = (opts: BreakpointHocOpts) => (Component) => {
     }
   }
 }
+
+export { BreakpointHoc };

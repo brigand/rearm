@@ -13,6 +13,7 @@ module.exports = {
     "react/no-multi-comp": 0,
     "no-restricted-syntax": 0,
     "react/jsx-no-bind": 0,
+    "import/extensions": 0,
   },
   env: {
     browser: true,
