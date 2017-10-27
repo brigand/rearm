@@ -84,7 +84,7 @@ export default class DocsBreakpoint extends React.Component {
           They can be imported like this:
 
           ||||js
-          import { BreakpointHOC } from 'rearm/lib/Breakpoint';
+          import { BreakpointHoc } from 'rearm/lib/Breakpoint';
 
           // or the render variant
           import { BreakpointRender } from 'rearm/lib/Breakpoint';

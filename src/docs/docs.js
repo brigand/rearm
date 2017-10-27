@@ -19,11 +19,12 @@ const urlParts = urlPartsRaw.filter((x) => {
   if (!x) return false;
   if (x === 'index.html') return false;
   if (x === 'rearm') return false;
+  if (x === 'docs') return false;
   return true;
 });
 
 const isHome = urlParts.length === 0;
-const activePage = isHome ? null : urlParts[0];
+const activePage = isHome ? null : urlParts[1] || urlParts[0];
 
 class Docs extends React.Component<Props> {
   render() {
@@ -75,7 +76,7 @@ class Docs extends React.Component<Props> {
     if (isActive) className = `${className} Docs__Link--active`;
 
     return (
-      <a href={`/rearm/${page.path || ''}`} className={className} title={page.description}>
+      <a href={`/rearm/${page.path ? `/docs/${page.path}` : ''}`} className={className} title={page.description}>
         <div className="Docs__Link__Name">
           {page.name}
         </div>
