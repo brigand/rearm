@@ -1453,11 +1453,12 @@ var urlParts = urlPartsRaw.filter(function (x) {
   if (!x) return false;
   if (x === 'index.html') return false;
   if (x === 'rearm') return false;
+  if (x === 'docs') return false;
   return true;
 });
 
 var isHome = urlParts.length === 0;
-var activePage = isHome ? null : urlParts[0];
+var activePage = isHome ? null : urlParts[1] || urlParts[0];
 
 var Docs = function (_React$Component) {
   _inherits(Docs, _React$Component);
@@ -1542,7 +1543,7 @@ var Docs = function (_React$Component) {
 
       return React.createElement(
         'a',
-        { href: '/rearm/' + (page.path || ''), className: className, title: page.description },
+        { href: '/rearm/' + (page.path ? '/docs/' + page.path : ''), className: className, title: page.description },
         React.createElement(
           'div',
           { className: 'Docs__Link__Name' },
