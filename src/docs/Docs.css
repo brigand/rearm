@@ -24,3 +24,7 @@ h1 {
 code {
   color: #da1884;
 }
+
+code.lang-js {
+  color: inherit;
+}

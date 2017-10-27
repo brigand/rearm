@@ -8,12 +8,19 @@
 import * as React from 'react';
 import marked from 'marked';
 import outdent from 'outdent';
+import highlight from 'highlight.js';
+import './highlightjs.css';
+
+marked.setOptions({
+  highlight(code) {
+    return highlight.highlight('jsx', code).value;
+  },
+});
 
 export default function md(strings: Array<string>, ...values: Array<any>) {
   const markdown = outdent(strings, ...values)
     .replace(/\|{4}/g, '```')
     .replace(/\|{2}/g, '`');
-  console.log(markdown);
   const html = marked(markdown);
 
   /* eslint-disable react/no-danger */
