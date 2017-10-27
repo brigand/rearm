@@ -14,12 +14,37 @@ html, body {
 }
 
 .Docs__Page {
+  position: relative;
   background: #f6f6f6;
   color: #575757;
   width: 100%;
   max-width: 45em;
   padding: 1em;
   margin: 1em auto;
+}
+
+.Docs__Sidebar {
+  position: absolute;
+  right: 100%;
+  top: 0;
+}
+
+.Docs__Link {
+  display: block;
+  width: 10em;
+  padding: 0.6em 1em;
+  border-left: 4px solid transparent;
+  background: #f6f6f6;
+  color: #686868;
+  text-decoration: none;
+}
+
+.Docs__Link:hover {
+  background: white;
+}
+
+.Docs__Link--active {
+  border-left-color: hotpink;
 }
 
 h1 {

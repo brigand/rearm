@@ -14,6 +14,7 @@ module.exports = {
     "no-restricted-syntax": 0,
     "react/jsx-no-bind": 0,
     "import/extensions": 0,
+    "class-methods-use-this": 0,
   },
   env: {
     browser: true,
