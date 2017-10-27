@@ -1427,7 +1427,11 @@ var _DocsBreakpoint = __webpack_require__(34);
 
 var _DocsBreakpoint2 = _interopRequireDefault(_DocsBreakpoint);
 
-__webpack_require__(44);
+var _pages = __webpack_require__(44);
+
+var _pages2 = _interopRequireDefault(_pages);
+
+__webpack_require__(45);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1438,6 +1442,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var pageToDoc = {
+  breakpoint: _DocsBreakpoint2.default
+};
+
+var urlPartsRaw = window.location.pathname.split('/');
+
+var urlParts = urlPartsRaw.filter(function (x) {
+  if (!x) return false;
+  if (x === 'index.html') return false;
+  if (x === 'rearm') return false;
+  return true;
+});
+
+var isHome = urlParts.length === 0;
+var activePage = isHome ? null : urlParts[0];
 
 var Docs = function (_React$Component) {
   _inherits(Docs, _React$Component);
@@ -1457,7 +1477,76 @@ var Docs = function (_React$Component) {
         React.createElement(
           'div',
           { className: 'Docs__Page' },
-          React.createElement(_DocsBreakpoint2.default, null)
+          this.renderSidebar(),
+          isHome ? this.renderHome() : this.renderPage()
+        )
+      );
+    }
+  }, {
+    key: 'renderHome',
+    value: function renderHome() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'h1',
+          null,
+          'Rearm'
+        ),
+        React.createElement(
+          'div',
+          null,
+          'A collection of React.js abstractions for non-trivial apps'
+        )
+      );
+    }
+  }, {
+    key: 'renderPage',
+    value: function renderPage() {
+      if (!activePage) return null;
+
+      var Page = pageToDoc[activePage];
+      if (!Page) {
+        return React.createElement(
+          'h2',
+          null,
+          '404 Not found'
+        );
+      }
+      return React.createElement(Page, null);
+    }
+  }, {
+    key: 'renderSidebar',
+    value: function renderSidebar() {
+      var _this2 = this;
+
+      return React.createElement(
+        'div',
+        { className: 'Docs__Sidebar' },
+        this.renderLink({ path: null, name: 'Home', description: 'The home page' }),
+        _pages2.default.map(function (page) {
+          return _this2.renderLink(page);
+        })
+      );
+    }
+
+    // eslint-disable-next-line
+
+  }, {
+    key: 'renderLink',
+    value: function renderLink(page) {
+      var isActive = page.path === activePage;
+
+      var className = 'Docs__Link';
+      if (isActive) className = className + ' Docs__Link--active';
+
+      return React.createElement(
+        'a',
+        { href: '/rearm/' + (page.path || ''), className: className, title: page.description },
+        React.createElement(
+          'div',
+          { className: 'Docs__Link__Name' },
+          page.name
         )
       );
     }
@@ -21683,7 +21772,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHOC } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        '], ['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHOC } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        ']),
+var _templateObject = _taggedTemplateLiteral(['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHoc } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        '], ['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHoc } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        ']),
     _templateObject2 = _taggedTemplateLiteral(['\n          In the previous example we hard coded the ||minWidth|| of medium to be\n          one pixel more than the ||maxWidth|| of small. This works, but it\'s more\n          expressive to name the breakpoint you want to base the property on.\n\n          In this code, \'medium\' sets its ||minWidth|| based on \'small\'. When you\n          reference another breakpoint, the key is inverted.\n\n          So the ||minWidth|| of \'medium\'\n          becomes the ||maxWidth|| of \'small\', plus one.\n\n          The ||maxWidth|| of \'medium\' becomes\n          the ||minWidth|| of \'large\', minus one.\n\n          ||||js\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: \'small\', maxWidth: \'large\' },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          ||||\n        '], ['\n          In the previous example we hard coded the ||minWidth|| of medium to be\n          one pixel more than the ||maxWidth|| of small. This works, but it\'s more\n          expressive to name the breakpoint you want to base the property on.\n\n          In this code, \'medium\' sets its ||minWidth|| based on \'small\'. When you\n          reference another breakpoint, the key is inverted.\n\n          So the ||minWidth|| of \'medium\'\n          becomes the ||maxWidth|| of \'small\', plus one.\n\n          The ||maxWidth|| of \'medium\' becomes\n          the ||minWidth|| of \'large\', minus one.\n\n          ||||js\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: \'small\', maxWidth: \'large\' },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          ||||\n        ']),
     _templateObject3 = _taggedTemplateLiteral(['\n          The render variant is similar, but can be used more easily in some\n          situations. We\'ll use this code (styles omitted for brevity):\n\n          ||||js\n          <BreakpointRender breakpoints={breakpoints} type="viewport">\n            {bp => (\n              <div>\n                <dl>\n                  <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                  <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                  <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                </dl>\n              </div>\n            )}\n          </BreakpointRender>\n          ||||\n\n          Which produces this output:\n        '], ['\n          The render variant is similar, but can be used more easily in some\n          situations. We\'ll use this code (styles omitted for brevity):\n\n          ||||js\n          <BreakpointRender breakpoints={breakpoints} type="viewport">\n            {bp => (\n              <div>\n                <dl>\n                  <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                  <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                  <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                </dl>\n              </div>\n            )}\n          </BreakpointRender>\n          ||||\n\n          Which produces this output:\n        ']);
 
@@ -23831,10 +23920,21 @@ module.exports = function (css) {
 /* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render based on viewport and element sizes' }];
+
+module.exports = pages;
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(45);
+var content = __webpack_require__(46);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -23859,7 +23959,7 @@ if(false) {
 }
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(15)(undefined);
@@ -23867,7 +23967,7 @@ exports = module.exports = __webpack_require__(15)(undefined);
 
 
 // module
-exports.push([module.i, "html, body {\n  height: 100%;\n  background: #ededed;\n  font-family: 'Lato', sans-serif;\n  font-size: 16px;\n}\n\n#root, .Docs {\n  height: 100%;\n}\n\n.Docs__Page {\n  background: #f6f6f6;\n  color: #575757;\n  width: 100%;\n  max-width: 45em;\n  padding: 1em;\n  margin: 1em auto;\n}\n\nh1 {\n  color: #686868;\n}\n\ncode {\n  font-family: 'Source Code Pro', monospace;\n  color: #da1884;\n}\n\npre {\n  background: #f2f2f2;\n  padding: 0.4em 0.2em;\n  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);\n  white-space: pre-wrap;\n}\n\npre code {\n  color: inherit;\n}\n\n\npre code .high-reset {\n  color: #575757;\n}\n\npre code .high-str {\n  color: red;\n}\n\npre code .high-jsx {\n  color: green;\n}\n\npre code .high-num {\n  color: blue;\n}\n\npre code .high-comment {\n  font-size: 0.9em;\n  color: #467a56;\n}\n", ""]);
+exports.push([module.i, "* {\n  box-sizing: border-box;\n}\n\nhtml, body {\n  height: 100%;\n  background: #ededed;\n  font-family: 'Lato', sans-serif;\n  font-size: 16px;\n}\n\n#root, .Docs {\n  height: 100%;\n}\n\n.Docs__Page {\n  position: relative;\n  background: #f6f6f6;\n  color: #575757;\n  width: 100%;\n  max-width: 45em;\n  padding: 1em;\n  margin: 1em auto;\n}\n\n.Docs__Sidebar {\n  position: absolute;\n  right: 100%;\n  top: 0;\n}\n\n.Docs__Link {\n  display: block;\n  width: 10em;\n  padding: 0.6em 1em;\n  border-left: 4px solid transparent;\n  background: #f6f6f6;\n  color: #686868;\n  text-decoration: none;\n}\n\n.Docs__Link:hover {\n  background: white;\n}\n\n.Docs__Link--active {\n  border-left-color: hotpink;\n}\n\nh1 {\n  color: #686868;\n}\n\ncode {\n  font-family: 'Source Code Pro', monospace;\n  color: #da1884;\n}\n\npre {\n  background: #f2f2f2;\n  padding: 0.4em 0.2em;\n  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);\n  white-space: pre-wrap;\n}\n\npre code {\n  color: inherit;\n}\n\n\npre code .high-reset {\n  color: #575757;\n}\n\npre code .high-str {\n  color: red;\n}\n\npre code .high-jsx {\n  color: green;\n}\n\npre code .high-num {\n  color: blue;\n}\n\npre code .high-comment {\n  font-size: 0.9em;\n  color: #467a56;\n}\n", ""]);
 
 // exports
 
