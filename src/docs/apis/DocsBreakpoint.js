@@ -1,7 +1,29 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import md from '../md';
 import { BreakpointHoc, BreakpointRender } from '../../Breakpoint.js';
 import './DocsBreakpoint.css';
+
+class TextHighlightTransition extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      flashing: false,
+    };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.children !== this.props.children) {
+      this.setState({ flashing: true });
+      setTimeout(() => this.setState({ flashing: false }), 1000);
+    }
+  }
+  render() {
+    const style = { transition: 'background 0.23s' };
+    if (this.state.flashing) style.background = '#a0ffa9';
+    return <span style={style}>{this.props.children}</span>;
+  }
+}
+TextHighlightTransition.propTypes = { children: PropTypes.node.isRequired };
 
 const DemoOne = (() => {
   const breakpoints = [
@@ -18,7 +40,7 @@ const DemoOne = (() => {
         {keys.map(key => (
           <div key={key}>
             <code className="DocsBreakpoint__DemoOneMethod">{`${key}('${name}')`}</code>
-            <span>{String(bp[key](name))}</span>
+            <span><TextHighlightTransition>{String(bp[key](name))}</TextHighlightTransition></span>
           </div>
         ))}
       </div>
