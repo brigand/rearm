@@ -21867,9 +21867,18 @@ _marked2.default.setOptions({
     var jsxbrackets = 0;
     var isStr = null;
     var isNum = false;
+    var isComment = false;
     for (var i = 0; i < code.length; i += 1) {
       var char = code[i];
-      if (!isStr && char === '<') {
+      if (isComment) {
+        if (char === '\n') {
+          isComment = false;
+          output += '</span>';
+          output += escape1(char);
+        } else {
+          output += escape1(char);
+        }
+      } else if (!isStr && char === '<') {
         langle += 1;
         output += '<span class="high-jsx">';
         output += escape1(char);
@@ -21914,6 +21923,10 @@ _marked2.default.setOptions({
       } else if (/\d/.test(char)) {
         isNum = true;
         output += '<span class="high-num">';
+        output += escape1(char);
+      } else if (!isStr && char === '/' && code[i + 1] === '/') {
+        isComment = true;
+        output += '<span class="high-comment">';
         output += escape1(char);
       } else {
         output += escape1(char);
@@ -23854,7 +23867,7 @@ exports = module.exports = __webpack_require__(15)(undefined);
 
 
 // module
-exports.push([module.i, "html, body {\n  height: 100%;\n  background: #ededed;\n  font-family: 'Lato', sans-serif;\n}\n\n#root, .Docs {\n  height: 100%;\n}\n\n.Docs__Page {\n  background: #f6f6f6;\n  color: #575757;\n  width: 100%;\n  max-width: 45em;\n  padding: 1em;\n  margin: 1em auto;\n}\n\nh1 {\n  color: #686868;\n}\n\ncode {\n  font-family: 'Source Code Pro', monospace;\n  color: #da1884;\n}\n\npre code {\n  color: inherit;\n}\n\n\npre code .high-reset {\n  color: #575757;\n}\n\npre code .high-str {\n  color: red;\n}\n\npre code .high-jsx {\n  color: green;\n}\n\npre code .high-num {\n  color: blue;\n}\n", ""]);
+exports.push([module.i, "html, body {\n  height: 100%;\n  background: #ededed;\n  font-family: 'Lato', sans-serif;\n  font-size: 16px;\n}\n\n#root, .Docs {\n  height: 100%;\n}\n\n.Docs__Page {\n  background: #f6f6f6;\n  color: #575757;\n  width: 100%;\n  max-width: 45em;\n  padding: 1em;\n  margin: 1em auto;\n}\n\nh1 {\n  color: #686868;\n}\n\ncode {\n  font-family: 'Source Code Pro', monospace;\n  color: #da1884;\n}\n\npre {\n  background: #f2f2f2;\n  padding: 0.4em 0.2em;\n  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);\n  white-space: pre-wrap;\n}\n\npre code {\n  color: inherit;\n}\n\n\npre code .high-reset {\n  color: #575757;\n}\n\npre code .high-str {\n  color: red;\n}\n\npre code .high-jsx {\n  color: green;\n}\n\npre code .high-num {\n  color: blue;\n}\n\npre code .high-comment {\n  font-size: 0.9em;\n  color: #467a56;\n}\n", ""]);
 
 // exports
 
