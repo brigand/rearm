@@ -23,9 +23,18 @@ marked.setOptions({
     let jsxbrackets = 0;
     let isStr = null;
     let isNum = false;
+    let isComment = false;
     for (let i = 0; i < code.length; i += 1) {
       const char = code[i];
-      if (!isStr && char === '<') {
+      if (isComment) {
+        if (char === '\n') {
+          isComment = false;
+          output += '</span>';
+          output += escape1(char);
+        } else {
+          output += escape1(char);
+        }
+      } else if (!isStr && char === '<') {
         langle += 1;
         output += '<span class="high-jsx">';
         output += escape1(char);
@@ -70,6 +79,10 @@ marked.setOptions({
       } else if (/\d/.test(char)) {
         isNum = true;
         output += '<span class="high-num">';
+        output += escape1(char);
+      } else if (!isStr && char === '/' && code[i + 1] === '/') {
+        isComment = true;
+        output += '<span class="high-comment">';
         output += escape1(char);
       } else {
         output += escape1(char);

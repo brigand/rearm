@@ -1,7 +1,8 @@
 html, body {
   height: 100%;
   background: #ededed;
-  font-family: Arial;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
 }
 
 #root, .Docs {
@@ -22,7 +23,15 @@ h1 {
 }
 
 code {
+  font-family: 'Source Code Pro', monospace;
   color: #da1884;
+}
+
+pre {
+  background: #f2f2f2;
+  padding: 0.4em 0.2em;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
 }
 
 pre code {
@@ -44,4 +53,9 @@ pre code .high-jsx {
 
 pre code .high-num {
   color: blue;
+}
+
+pre code .high-comment {
+  font-size: 0.9em;
+  color: #467a56;
 }
