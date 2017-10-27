@@ -23854,7 +23854,7 @@ exports = module.exports = __webpack_require__(15)(undefined);
 
 
 // module
-exports.push([module.i, "html, body {\n  height: 100%;\n  background: #ededed;\n  font-family: Arial;\n}\n\n#root, .Docs {\n  height: 100%;\n}\n\n.Docs__Page {\n  background: #f6f6f6;\n  color: #575757;\n  width: 100%;\n  max-width: 45em;\n  padding: 1em;\n  margin: 1em auto;\n}\n\nh1 {\n  color: #686868;\n}\n\ncode {\n  color: #da1884;\n}\n\npre code {\n  color: inherit;\n}\n\n\npre code .high-reset {\n  color: #575757;\n}\n\npre code .high-str {\n  color: red;\n}\n\npre code .high-jsx {\n  color: green;\n}\n\npre code .high-num {\n  color: blue;\n}\n", ""]);
+exports.push([module.i, "html, body {\n  height: 100%;\n  background: #ededed;\n  font-family: 'Lato', sans-serif;\n}\n\n#root, .Docs {\n  height: 100%;\n}\n\n.Docs__Page {\n  background: #f6f6f6;\n  color: #575757;\n  width: 100%;\n  max-width: 45em;\n  padding: 1em;\n  margin: 1em auto;\n}\n\nh1 {\n  color: #686868;\n}\n\ncode {\n  font-family: 'Source Code Pro', monospace;\n  color: #da1884;\n}\n\npre code {\n  color: inherit;\n}\n\n\npre code .high-reset {\n  color: #575757;\n}\n\npre code .high-str {\n  color: red;\n}\n\npre code .high-jsx {\n  color: green;\n}\n\npre code .high-num {\n  color: blue;\n}\n", ""]);
 
 // exports
 
