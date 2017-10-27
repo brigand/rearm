@@ -25,6 +25,23 @@ code {
   color: #da1884;
 }
 
-code.lang-js {
+pre code {
   color: inherit;
+}
+
+
+pre code .high-reset {
+  color: #575757;
+}
+
+pre code .high-str {
+  color: red;
+}
+
+pre code .high-jsx {
+  color: green;
+}
+
+pre code .high-num {
+  color: blue;
 }

@@ -6,9 +6,10 @@
   "scripts": {
     "test": "jest",
     "docs-dev": "webpack-dev-server --port 9398 --config ./src/docs/webpack.config.js",
-    "build-docs": "webpack --config ./src/docs/webpack.config.js",
+    "build-docs": "webpack --config ./src/docs/webpack.config.js && node ./scripts/buildDocs.js",
     "build": "babel src --out-dir lib --ignore src/docs,src/__tests__",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "gh-pages": "npm run build-docs && gh-pages -d gh-pages"
   },
   "repository": {
     "type": "git",
@@ -47,10 +48,12 @@
     "jest": "^21.2.1",
     "marked": "^0.3.6",
     "outdent": "^0.3.0",
+    "peacock": "^0.3.1",
     "raw-loader": "^0.5.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
+    "showdown": "^1.8.0",
     "style-loader": "^0.19.0",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3"
