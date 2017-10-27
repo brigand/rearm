@@ -8,3 +8,12 @@
   display: inline-block;
   width: 9.5em;
 }
+
+.DocsBreakpoint__DemoTwo li {
+  width: 13em;
+  padding: 0.3em 0.4em;
+}
+
+.DocsBreakpoint__DemoTwoItemYes {
+  background: rgb(120, 255, 140);
+}

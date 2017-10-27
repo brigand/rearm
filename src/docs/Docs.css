@@ -1,0 +1,26 @@
+html, body {
+  height: 100%;
+  background: #ededed;
+  font-family: Arial;
+}
+
+#root, .Docs {
+  height: 100%;
+}
+
+.Docs__Page {
+  background: #f6f6f6;
+  color: #575757;
+  width: 100%;
+  max-width: 45em;
+  padding: 1em;
+  margin: 1em auto;
+}
+
+h1 {
+  color: #686868;
+}
+
+code {
+  color: #da1884;
+}

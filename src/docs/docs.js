@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import DocsBreakpoint from './apis/DocsBreakpoint';
+import './Docs.css';
 
 type Props = {
 
@@ -10,11 +11,16 @@ type Props = {
 class Docs extends React.Component<Props> {
   render() {
     return (
-      <div>
-        <DocsBreakpoint />
+      <div className="Docs">
+        <div className="Docs__Page">
+          <DocsBreakpoint />
+        </div>
       </div>
     );
   }
 }
 
-ReactDOM.render(<Docs />, document.getElementById('root'));
+const root = document.getElementById('root');
+if (root) {
+  ReactDOM.render(<Docs />, root);
+}
