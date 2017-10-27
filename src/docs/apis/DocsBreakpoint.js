@@ -62,6 +62,11 @@ export default class DocsBreakpoint extends React.Component {
           or the size of a specific element. It watches for changes to either of these,
           and renders your component with new props.
 
+          ## Status: Partial
+
+          Currently only viewport breakpoints are supported. The notes about element breakpoints
+          will eventually be true.
+
           ## Why?
 
           Managing breakpoints from JS gives you full control over the view. You
