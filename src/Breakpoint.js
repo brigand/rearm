@@ -74,11 +74,11 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
   bps.forEach((bp) => {
     const minWidth = solveFor(bp, 'minWidth');
     const maxWidth = solveFor(bp, 'maxWidth');
-    if (size.width >= minWidth) {
+    if (size.width > maxWidth) {
       gt.push(bp.name);
       keys.push(`gt:${bp.name}`);
     }
-    if (size.width <= maxWidth) {
+    if (size.width < minWidth) {
       lt.push(bp.name);
       keys.push(`lt:${bp.name}`);
     }
