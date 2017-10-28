@@ -23875,6 +23875,7 @@ var BreakpointRender = function (_React$Component) {
           var idleCallbackToken = window.requestIdleCallback(function () {
             // try again
             _this2.setupListeners();
+            _this2.maybeUpdate();
           }, { timeout: timeout });
 
           this.cleanup = function () {
@@ -23898,6 +23899,8 @@ var BreakpointRender = function (_React$Component) {
     key: 'wrapChildren',
     value: function wrapChildren(children) {
       var _this3 = this;
+
+      if (this.props.type !== 'element') return children;
 
       var childNode = React.Children.only(children);
 
@@ -23950,6 +23953,11 @@ var BreakpointRender = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      if (this.props.type === 'element' && !this.props.canRenderWithNullBp) {
+        if (!this.state.current) {
+          return this.wrapChildren(React.createElement('span', null));
+        }
+      }
       // pass the key for the HOC to ensure an update
       if (this.props._passPreviousKey) {
         return this.wrapChildren(this.props.children(this.ownProps.bp, this.state.previousKey));
