@@ -1624,7 +1624,12 @@ var Docs = function (_React$Component) {
 
       return React.createElement(
         'a',
-        { href: '/rearm/' + (page.path ? 'docs/' + page.path : ''), className: className, title: page.description },
+        {
+          href: '/rearm/' + (page.path ? 'docs/' + page.path : ''),
+          className: className,
+          title: page.description,
+          key: page.path
+        },
         React.createElement(
           'div',
           { className: 'Docs__Link__Name' },
