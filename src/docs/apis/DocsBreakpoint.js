@@ -107,10 +107,10 @@ export default class DocsBreakpoint extends React.Component {
           or the size of a specific element. It watches for changes to either of these,
           and renders your component with new props.
 
-          ## Status: Partial
+          ## Status: Unstable
 
-          Currently only viewport breakpoints are supported. The notes about element breakpoints
-          will eventually be true.
+          The basic functionality is here, but it's in the process of being
+          integrated in an existing app, and may change based on that experience.
 
           ## Why?
 
