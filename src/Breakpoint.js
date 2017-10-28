@@ -272,6 +272,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
         const idleCallbackToken = window.requestIdleCallback(() => {
           // try again
           this.setupListeners();
+          this.maybeUpdate();
         }, { timeout });
 
         this.cleanup = () => window.cancelIdleCallback(idleCallbackToken);
@@ -290,6 +291,8 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   }
 
   wrapChildren(children: React.Node) {
+    if (this.props.type !== 'element') return children;
+
     const childNode = React.Children.only(children);
 
     const wrapperProps = {
@@ -335,7 +338,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   render() {
     if (this.props.type === 'element' && !this.props.canRenderWithNullBp) {
       if (!this.state.current) {
-        return null;
+        return this.wrapChildren(<span />);
       }
     }
     // pass the key for the HOC to ensure an update
