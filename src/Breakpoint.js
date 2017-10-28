@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
+import { findDOMNode } from 'react-dom';
 import { getElementSize, getViewportSize, type Size } from './utils/getSize';
+import addResizeListener from 'add-resize-listener';
 
 export type Breakpoint = {
   // these can either be a number in pixels or a name of another breakpoint
@@ -128,6 +130,8 @@ const BreakpointHoc = (opts: BreakpointHocOpts) => (Component: React.ComponentTy
 export type BreakpointRenderProps = {
   breakpoints: Array<Breakpoint>,
   type: 'viewport' | 'element',
+  element?: string | HTMLElement,
+  canRenderWithNullBp?: boolean,
   children: (bp: BreakpointResultProp, previousKey?: ?string) => ?React.Node,
 };
 
@@ -139,6 +143,14 @@ type BreakpointRenderState = {
 class BreakpointRender extends React.Component<BreakpointRenderProps, BreakpointRenderState> {
   cleanup: () => void;
   ownProps: BreakpointChildProps;
+  previousElement: ?HTMLElement;
+  previousElement = null;
+  rootElement: ?HTMLElement;
+  rootElement = null;
+
+  // we set this when the element selector changes
+  // ignored for viewport breakpoints
+  useShortIdleDelay = true;
 
   constructor(props: BreakpointRenderProps) {
     super(props);
@@ -163,7 +175,13 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     if (typeof window === 'undefined') return;
     if (this.props.type === 'element') return;
 
-    const size = getViewportSize();
+    // sets this.previousElement when type="element" which we use below
+    this.setupListeners();
+
+    const size = this.previousElement
+      ? getElementSize(this.previousElement)
+      : getViewportSize();
+
     const relationships = calcBreakpoints(this.props.breakpoints, size);
     this.setState({
       current: relationships,
@@ -172,37 +190,158 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   }
 
   maybeUpdate() {
+    let size = null;
     if (this.props.type === 'viewport') {
-      const size = getViewportSize();
-      const relationships = calcBreakpoints(this.props.breakpoints, size);
-      if (relationships.key !== this.state.previousKey) {
-        this.setState({
-          current: relationships,
-          previousKey: relationships.key,
-        });
+      size = getViewportSize();
+    } else if (this.props.type === 'element') {
+      const element = this.getElement();
+      if (element) {
+        size = getElementSize(element);
       }
+    }
+
+    if (!size) return;
+
+    const relationships = calcBreakpoints(this.props.breakpoints, size);
+    if (relationships.key !== this.state.previousKey) {
+      this.setState({
+        current: relationships,
+        previousKey: relationships.key,
+      });
     }
   }
 
   componentDidMount() {
     this.maybeUpdate();
+    this.setupListeners();
+  }
+
+  getElement(): ?HTMLElement {
+    let element = this.props.element || null;
+    if (typeof element === 'string') {
+      const query = element;
+
+      let pElement: ?HTMLElement = this.rootElement;
+      while (pElement && pElement !== document.body && !pElement.matches(query)) {
+        const parent = pElement.parentElement;
+        if (parent instanceof HTMLElement) {
+          pElement = parent;
+        } else {
+          return null;
+        }
+      }
+      return pElement || null;
+    }
+    if (element instanceof HTMLElement) {
+      return element;
+    }
+    return null;
+  }
+
+  setupListeners() {
     const handleResize = () => {
       this.maybeUpdate();
     };
-    window.addEventListener('resize', handleResize, false);
-    this.cleanup = () => window.removeEventListener('resize', handleResize, false);
+
+    if (this.props.type === 'viewport') {
+      if (this.cleanup) this.cleanup();
+      window.addEventListener('resize', handleResize, false);
+      this.cleanup = () => window.removeEventListener('resize', handleResize, false);
+    } else if (this.props.type === 'element') {
+      const element = this.getElement();
+
+      // either element has changed, or it became null
+      // either way, we should clean up existing listeners
+      if (element != this.previousElement) {
+        if (this.cleanup) this.cleanup();
+      }
+
+      // if it's a sibling element, it won't be rendered immediately when this
+      // component mounts, so element might be null
+      if (!element) {
+        if (this.cleanup) this.cleanup();
+
+        // use idle callback because it's possible the element will never exist
+        // and we don't want to use too many resources
+        // on the initial mount we want to retry ASAP
+        let timeout = 250;
+        if (this.useShortIdleDelay) {
+          timeout = 1;
+          this.useShortIdleDelay = false;
+        }
+        const idleCallbackToken = window.requestIdleCallback(() => {
+          // try again
+          this.setupListeners();
+        }, { timeout });
+
+        this.cleanup = () => window.cancelIdleCallback(idleCallbackToken);
+        return;
+      }
+
+      this.previousElement = element;
+      this.cleanup = addResizeListener(element, () => {
+        this.maybeUpdate();
+      });
+    }
   }
 
   componentWillUnmount() {
     if (this.cleanup) this.cleanup();
   }
 
+  wrapChildren(children: React.Node) {
+    const childNode = React.Children.only(children);
+
+    const wrapperProps = {
+      ref: (el: ?HTMLElement) => {
+        if (el instanceof HTMLElement) {
+          this.rootElement = el;
+        } else {
+          this.rootElement = null;
+        }
+      },
+    };
+
+    if (!childNode || typeof childNode !== 'object') {
+      return <span {...wrapperProps}>{childNode}</span>
+    }
+
+    if (typeof childNode.type === 'string') {
+      return React.cloneElement(childNode, wrapperProps);
+    }
+
+    if (typeof childNode.type === 'function'
+      // and is not functional component
+      && Object.getPrototypeOf(childNode.type) !== Function.prototype) {
+      return React.cloneElement(childNode, {
+        ref: (instance: React.Component<any>) => {
+          if (!instance) this.rootElement = null;
+          else {
+            const el = findDOMNode(instance)
+            if (el instanceof HTMLElement) {
+              this.rootElement = el;
+            } else {
+              this.rootElement = null;
+            }
+          }
+        },
+      });
+    }
+
+    // functional component
+    return <span {...wrapperProps}>{childNode}</span>
+  }
+
   render() {
     // pass the key for the HOC to ensure an update
     if (this.props._passPreviousKey) {
-      return this.props.children(this.ownProps.bp, this.state.previousKey);
+      return this.wrapChildren(
+        this.props.children(this.ownProps.bp, this.state.previousKey),
+      );
     }
-    return this.props.children(this.ownProps.bp);
+    return this.wrapChildren(
+      this.props.children(this.ownProps.bp),
+    );
   }
 }
 

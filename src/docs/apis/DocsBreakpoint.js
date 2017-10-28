@@ -73,6 +73,29 @@ const DemoTwo = (() => {
   );
 })();
 
+const DemoElementBp = (() => {
+  const breakpoints = [
+    { name: 'small', maxWidth: 300 },
+    { name: 'medium', minWidth: 'small', maxWidth: 600 },
+    { name: 'large', minWidth: 'medium' },
+  ];
+
+  const className = `DocsBreakpoint__DemoElementBp`;
+  return () => (
+    <div className={className}>
+      <BreakpointRender breakpoints={breakpoints} type="element" element={`.${className}`}>
+        {bp => (
+          <div className="DocsBreakpoint__DemoElementBp__Inner">
+            {bp.isEq('small') && 'small'}
+            {bp.isEq('medium') && 'medium'}
+            {bp.isEq('large') && 'large'}
+          </div>
+        )}
+      </BreakpointRender>
+    </div>
+  );
+})();
+
 export default class DocsBreakpoint extends React.Component {
   render() {
     return (
@@ -192,6 +215,82 @@ export default class DocsBreakpoint extends React.Component {
           Which produces this output:
         `}
         <DemoTwo />
+        {md`
+          ## Element Breakpoints
+
+          Viewport breakpoints are great for laying out entire pages, but often
+          and element should only be concerned with its own size, or the size of
+          a parent element.
+
+          We can declaratively access the size of an element, and use breakpoints
+          like we did for the viewport above.
+
+          You can use either the high order component or render callback for element
+          breakpoints, but often the render callback is more convenient since it
+          operates on the ||BreakpointRender|| child or parents of that element.
+
+          We'll use the previous example of ||BreakpointRender||, with some alterations.
+
+          ||||js
+          <div className="SomeClass">
+            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">
+              {bp => (
+                <div>
+                  <dl>
+                    <dt>Equal to small? {String(bp.isEq('small'))}</dt>
+                    <dt>Equal to medium? {String(bp.isEq('medium'))}</dt>
+                    <dt>Equal to large? {String(bp.isEq('large'))}</dt>
+                  </dl>
+                </div>
+              )}
+            </BreakpointRender>
+          </div>
+          ||||
+
+          Let's break down the props:
+
+          ||breakpoints|| is the same as viewport, except now it's relative to our
+          outer div here.
+
+          ||type|| is set to ||'element'||, which tells it to use element breakpoints.
+
+          ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),
+          or a string selector that will be matched against the closest parent. If that element
+          doesn't match, then it'll be matched against the grandparent, and so on, until
+          it reaches ||document.body|| where it gives up.
+
+          If an element isn't found immediately, we schedule low priority tasks to
+          attempt to find the element again. This will be the case on the initial mount
+          unless you pass an ||HTMLElement|| as the ||element|| property.
+
+          So what do we do if we don't have an element to check the size of?
+          We'll, that's up to you. By default, we simply don't render the
+          child until we're able to get a breakpoint object ready. You can override
+          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,
+          and we don't have a breakpoint, we'll pass ||bp|| as ||null||. It's up
+          to you to do something appropriate with the lack of information.
+
+          In this example, we're using a css animation to change the size of the element.
+          As I understand it, we handle any possible source of the element size changing –
+          without expensive timers.
+        `}
+        <DemoElementBp />
+        {md`
+          ## Caveats
+
+          We do our best to render the child without a wrapper node. If the type
+          of the child element is a ||React.Component|| subclass, or an element
+          type string (e.g. ||<div />|| has type ||'div'||), then we can render
+          it without a wrapper.
+
+          If it's e.g. a number, or the type is a functional component, we wrap
+          it in a ||<span>|| with only a ||ref|| prop, and pass your element
+          as the child.
+
+          When using the high order component variant, your render method should
+          return exactly one element or ||null||. With the render callback variant, your callback
+          should render exactly one node or ||null||.
+        `}
       </div>
     );
   }

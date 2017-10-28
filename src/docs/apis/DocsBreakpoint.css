@@ -17,3 +17,32 @@
 .DocsBreakpoint__DemoTwoItemYes {
   background: rgb(120, 255, 140);
 }
+
+.DocsBreakpoint__DemoElementBp {
+  width: 100%;
+  height: 4em;
+  margin: 0.5em auto;
+  background: #eeeeee;
+  animation-duration: 4s;
+  animation-name: DemoElementBpAnim;
+  animation-iteration-count: infinite;
+}
+
+.DocsBreakpoint__DemoElementBp__Inner {
+  padding: 1.5em 0;
+  text-align: center;
+}
+
+@keyframes DemoElementBpAnim {
+  0% {
+    width: 100%;
+  }
+
+  50% {
+    width: 4em;
+  }
+
+  100% {
+    width: 99.5%;
+  }
+}
