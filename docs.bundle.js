@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -363,9 +363,9 @@ module.exports = invariant;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(18);
+  module.exports = __webpack_require__(20);
 } else {
-  module.exports = __webpack_require__(19);
+  module.exports = __webpack_require__(21);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
@@ -692,6 +692,52 @@ module.exports = ExecutionEnvironment;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
+function checkDCE() {
+  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
+  if (
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
+  ) {
+    return;
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    // This branch is unreachable because this function is only called
+    // in production, but the condition is true only in development.
+    // Therefore if the branch is still here, dead code elimination wasn't
+    // properly applied.
+    // Don't change the message. React DevTools relies on it. Also make sure
+    // this message doesn't occur elsewhere in this function, or it will cause
+    // a false positive.
+    throw new Error('^_^');
+  }
+  try {
+    // Verify that the code above has been dead code eliminated (DCE'd).
+    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
+  } catch (err) {
+    // DevTools shouldn't crash React, no matter what.
+    // We should still report in case we break this code.
+    console.error(err);
+  }
+}
+
+if (process.env.NODE_ENV === 'production') {
+  // DCE check should happen before ReactDOM bundle executes so that
+  // DevTools can report bad minification during injection.
+  checkDCE();
+  module.exports = __webpack_require__(22);
+} else {
+  module.exports = __webpack_require__(25);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -767,7 +813,7 @@ module.exports = EventListener;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -838,7 +884,7 @@ function shallowEqual(objA, objB) {
 module.exports = shallowEqual;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -853,7 +899,7 @@ module.exports = shallowEqual;
  * 
  */
 
-var isTextNode = __webpack_require__(22);
+var isTextNode = __webpack_require__(23);
 
 /*eslint-disable no-bitwise */
 
@@ -881,7 +927,7 @@ function containsNode(outerNode, innerNode) {
 module.exports = containsNode;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -911,7 +957,7 @@ function focusNode(node) {
 module.exports = focusNode;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -953,7 +999,42 @@ function getActiveElement(doc) /*?DOMElement*/{
 module.exports = getActiveElement;
 
 /***/ }),
-/* 15 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== 'production') {
+  var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
+    Symbol.for &&
+    Symbol.for('react.element')) ||
+    0xeac7;
+
+  var isValidElement = function(object) {
+    return typeof object === 'object' &&
+      object !== null &&
+      object.$$typeof === REACT_ELEMENT_TYPE;
+  };
+
+  // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+  var throwOnDirectAccess = true;
+  module.exports = __webpack_require__(32)(isValidElement, throwOnDirectAccess);
+} else {
+  // By explicitly using `prop-types` you are opting into new production behavior.
+  // http://fb.me/prop-types-in-prod
+  module.exports = __webpack_require__(33)();
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports) {
 
 /*
@@ -1035,7 +1116,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -1091,7 +1172,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(43);
+var	fixUrls = __webpack_require__(44);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -1407,7 +1488,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1419,7 +1500,7 @@ var _react = __webpack_require__(3);
 
 var React = _interopRequireWildcard(_react);
 
-var _reactDom = __webpack_require__(20);
+var _reactDom = __webpack_require__(10);
 
 var ReactDOM = _interopRequireWildcard(_reactDom);
 
@@ -1427,11 +1508,11 @@ var _DocsBreakpoint = __webpack_require__(34);
 
 var _DocsBreakpoint2 = _interopRequireDefault(_DocsBreakpoint);
 
-var _pages = __webpack_require__(44);
+var _pages = __webpack_require__(45);
 
 var _pages2 = _interopRequireDefault(_pages);
 
-__webpack_require__(45);
+__webpack_require__(46);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1562,7 +1643,7 @@ if (root) {
 }
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1592,7 +1673,7 @@ module.exports={Children:{map:S.map,forEach:S.forEach,count:S.count,toArray:S.to
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3298,53 +3379,7 @@ module.exports = ReactEntry;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-function checkDCE() {
-  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
-  if (
-    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
-    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
-  ) {
-    return;
-  }
-  if (process.env.NODE_ENV !== 'production') {
-    // This branch is unreachable because this function is only called
-    // in production, but the condition is true only in development.
-    // Therefore if the branch is still here, dead code elimination wasn't
-    // properly applied.
-    // Don't change the message. React DevTools relies on it. Also make sure
-    // this message doesn't occur elsewhere in this function, or it will cause
-    // a false positive.
-    throw new Error('^_^');
-  }
-  try {
-    // Verify that the code above has been dead code eliminated (DCE'd).
-    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
-  } catch (err) {
-    // DevTools shouldn't crash React, no matter what.
-    // We should still report in case we break this code.
-    console.error(err);
-  }
-}
-
-if (process.env.NODE_ENV === 'production') {
-  // DCE check should happen before ReactDOM bundle executes so that
-  // DevTools can report bad minification during injection.
-  checkDCE();
-  module.exports = __webpack_require__(21);
-} else {
-  module.exports = __webpack_require__(24);
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3358,7 +3393,7 @@ if (process.env.NODE_ENV === 'production') {
  LICENSE file in the root directory of this source tree.
  Modernizr 3.0.0pre (Custom Build) | MIT
 */
-var aa=__webpack_require__(3);__webpack_require__(2);var l=__webpack_require__(9),n=__webpack_require__(4),ba=__webpack_require__(10),ca=__webpack_require__(1),da=__webpack_require__(5),ea=__webpack_require__(11),fa=__webpack_require__(12),ha=__webpack_require__(13),ia=__webpack_require__(14);
+var aa=__webpack_require__(3);__webpack_require__(2);var l=__webpack_require__(9),n=__webpack_require__(4),ba=__webpack_require__(11),ca=__webpack_require__(1),da=__webpack_require__(5),ea=__webpack_require__(12),fa=__webpack_require__(13),ha=__webpack_require__(14),ia=__webpack_require__(15);
 function w(a){for(var b=arguments.length-1,c="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,d=0;d<b;d++)c+="\x26args[]\x3d"+encodeURIComponent(arguments[d+1]);b=Error(c+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}aa?void 0:w("227");
 function ja(a){switch(a){case "svg":return"http://www.w3.org/2000/svg";case "math":return"http://www.w3.org/1998/Math/MathML";default:return"http://www.w3.org/1999/xhtml"}}
 var ka={Namespaces:{html:"http://www.w3.org/1999/xhtml",mathml:"http://www.w3.org/1998/Math/MathML",svg:"http://www.w3.org/2000/svg"},getIntrinsicNamespace:ja,getChildNamespace:function(a,b){return null==a||"http://www.w3.org/1999/xhtml"===a?ja(b):"http://www.w3.org/2000/svg"===a&&"foreignObject"===b?"http://www.w3.org/1999/xhtml":a}},la=null,oa={};
@@ -3607,7 +3642,7 @@ unstable_deferredUpdates:Xj.deferredUpdates,flushSync:Xj.flushSync,__SECRET_INTE
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3622,7 +3657,7 @@ unstable_deferredUpdates:Xj.deferredUpdates,flushSync:Xj.flushSync,__SECRET_INTE
  * @typechecks
  */
 
-var isNode = __webpack_require__(23);
+var isNode = __webpack_require__(24);
 
 /**
  * @param {*} object The object to check.
@@ -3635,7 +3670,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3663,7 +3698,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3687,19 +3722,19 @@ var react = __webpack_require__(3);
 var invariant = __webpack_require__(2);
 var ExecutionEnvironment = __webpack_require__(9);
 var _assign = __webpack_require__(4);
-var EventListener = __webpack_require__(10);
+var EventListener = __webpack_require__(11);
 var require$$0 = __webpack_require__(6);
-var hyphenateStyleName = __webpack_require__(25);
+var hyphenateStyleName = __webpack_require__(26);
 var emptyFunction = __webpack_require__(1);
-var camelizeStyleName = __webpack_require__(27);
-var performanceNow = __webpack_require__(29);
-var propTypes = __webpack_require__(31);
+var camelizeStyleName = __webpack_require__(28);
+var performanceNow = __webpack_require__(30);
+var propTypes = __webpack_require__(16);
 var emptyObject = __webpack_require__(5);
 var checkPropTypes = __webpack_require__(7);
-var shallowEqual = __webpack_require__(11);
-var containsNode = __webpack_require__(12);
-var focusNode = __webpack_require__(13);
-var getActiveElement = __webpack_require__(14);
+var shallowEqual = __webpack_require__(12);
+var containsNode = __webpack_require__(13);
+var focusNode = __webpack_require__(14);
+var getActiveElement = __webpack_require__(15);
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -20892,7 +20927,7 @@ module.exports = ReactDOMFiberEntry;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20907,7 +20942,7 @@ module.exports = ReactDOMFiberEntry;
 
 
 
-var hyphenate = __webpack_require__(26);
+var hyphenate = __webpack_require__(27);
 
 var msPattern = /^ms-/;
 
@@ -20934,7 +20969,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20970,7 +21005,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20985,7 +21020,7 @@ module.exports = hyphenate;
 
 
 
-var camelize = __webpack_require__(28);
+var camelize = __webpack_require__(29);
 
 var msPattern = /^-ms-/;
 
@@ -21013,7 +21048,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21048,7 +21083,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21063,7 +21098,7 @@ module.exports = camelize;
  * @typechecks
  */
 
-var performance = __webpack_require__(30);
+var performance = __webpack_require__(31);
 
 var performanceNow;
 
@@ -21085,7 +21120,7 @@ if (performance.now) {
 module.exports = performanceNow;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21109,41 +21144,6 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = performance || {};
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-if (process.env.NODE_ENV !== 'production') {
-  var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
-    Symbol.for &&
-    Symbol.for('react.element')) ||
-    0xeac7;
-
-  var isValidElement = function(object) {
-    return typeof object === 'object' &&
-      object !== null &&
-      object.$$typeof === REACT_ELEMENT_TYPE;
-  };
-
-  // By explicitly using `prop-types` you are opting into new development behavior.
-  // http://fb.me/prop-types-in-prod
-  var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(32)(isValidElement, throwOnDirectAccess);
-} else {
-  // By explicitly using `prop-types` you are opting into new production behavior.
-  // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(33)();
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 32 */
@@ -21773,13 +21773,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Status: Partial\n\n          Currently only viewport breakpoints are supported. The notes about element breakpoints\n          will eventually be true.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHoc } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        '], ['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Status: Partial\n\n          Currently only viewport breakpoints are supported. The notes about element breakpoints\n          will eventually be true.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHoc } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        ']),
+var _templateObject = _taggedTemplateLiteral(['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Status: Unstable\n\n          The basic functionality is here, but it\'s in the process of being\n          integrated in an existing app, and may change based on that experience.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHoc } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        '], ['\n          # Breakpoint\n\n          The ||Breakpoint|| module provides information about the current viewport size,\n          or the size of a specific element. It watches for changes to either of these,\n          and renders your component with new props.\n\n          ## Status: Unstable\n\n          The basic functionality is here, but it\'s in the process of being\n          integrated in an existing app, and may change based on that experience.\n\n          ## Why?\n\n          Managing breakpoints from JS gives you full control over the view. You\n          can render totally different components for different sizes. Additionally,\n          you can pass a breakpoint object to child components without them knowing\n          what the actual numbers are; only the names of each breakpoint.\n\n          This module can also do breakpoints on any element in the DOM; it\'s\n          not restricted to ||window||. This means your component doesn\'t have to\n          assume it\'ll be used in any specific container. The component\'s concern is\n          that it renders appropriately for the space it\'s given.\n\n          ## Usage\n\n          With the high order component variant, you receive one prop which is the \'bp\'\n          object. It has methods such as ||props.bp.isGte(\'medium\')||.\n\n          With the render callback variant, you receive \'bp\' as the first argument to the function.\n\n          They can be imported like this:\n\n          ||||js\n          import { BreakpointHoc } from \'rearm/lib/Breakpoint\';\n\n          // or the render variant\n          import { BreakpointRender } from \'rearm/lib/Breakpoint\';\n          ||||\n\n          You configure it by providing an array of breakpoint objects containing constraints.\n\n          If you don\'t provide ||minWidth||, it defaults to ||0||. If you don\'t proivide ||maxWidth||,\n          it defaults to ||Infinity||.\n\n          ||||js\n          const MyComponent = ({ bp }) => (\n            bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />\n          );\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: 601, maxWidth: 1199 },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          export default BreakpointHoc({ breakpoints, type: \'viewport\' });\n          ||||\n\n          Or use the render callback variant:\n\n          ||||js\n          const MyComponent = () => (\n            <BreakpointRender breakpoints={breakpoints} type="viewport">\n              {bp => bp.isLt(\'medium\') ? <MobileView /> : <DesktopView />}\n            </BreakpointRender>\n          );\n          export default MyComponent;\n          ||||\n\n          Here are the outputs of all of the ||bp|| methods given these breakpoints.\n          If you resize your browser, they will change.\n        ']),
     _templateObject2 = _taggedTemplateLiteral(['\n          In the previous example we hard coded the ||minWidth|| of medium to be\n          one pixel more than the ||maxWidth|| of small. This works, but it\'s more\n          expressive to name the breakpoint you want to base the property on.\n\n          In this code, \'medium\' sets its ||minWidth|| based on \'small\'. When you\n          reference another breakpoint, the key is inverted.\n\n          So the ||minWidth|| of \'medium\'\n          becomes the ||maxWidth|| of \'small\', plus one.\n\n          The ||maxWidth|| of \'medium\' becomes\n          the ||minWidth|| of \'large\', minus one.\n\n          ||||js\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: \'small\', maxWidth: \'large\' },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          ||||\n        '], ['\n          In the previous example we hard coded the ||minWidth|| of medium to be\n          one pixel more than the ||maxWidth|| of small. This works, but it\'s more\n          expressive to name the breakpoint you want to base the property on.\n\n          In this code, \'medium\' sets its ||minWidth|| based on \'small\'. When you\n          reference another breakpoint, the key is inverted.\n\n          So the ||minWidth|| of \'medium\'\n          becomes the ||maxWidth|| of \'small\', plus one.\n\n          The ||maxWidth|| of \'medium\' becomes\n          the ||minWidth|| of \'large\', minus one.\n\n          ||||js\n          const breakpoints = [\n            { name: \'small\', maxWidth: 600 },\n            { name: \'medium\', minWidth: \'small\', maxWidth: \'large\' },\n            { name: \'large\', minWidth: 1200 },\n          ];\n          ||||\n        ']),
-    _templateObject3 = _taggedTemplateLiteral(['\n          The render variant is similar, but can be used more easily in some\n          situations. We\'ll use this code (styles omitted for brevity):\n\n          ||||js\n          <BreakpointRender breakpoints={breakpoints} type="viewport">\n            {bp => (\n              <div>\n                <dl>\n                  <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                  <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                  <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                </dl>\n              </div>\n            )}\n          </BreakpointRender>\n          ||||\n\n          Which produces this output:\n        '], ['\n          The render variant is similar, but can be used more easily in some\n          situations. We\'ll use this code (styles omitted for brevity):\n\n          ||||js\n          <BreakpointRender breakpoints={breakpoints} type="viewport">\n            {bp => (\n              <div>\n                <dl>\n                  <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                  <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                  <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                </dl>\n              </div>\n            )}\n          </BreakpointRender>\n          ||||\n\n          Which produces this output:\n        ']);
+    _templateObject3 = _taggedTemplateLiteral(['\n          The render variant is similar, but can be used more easily in some\n          situations. We\'ll use this code (styles omitted for brevity):\n\n          ||||js\n          <BreakpointRender breakpoints={breakpoints} type="viewport">\n            {bp => (\n              <div>\n                <dl>\n                  <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                  <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                  <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                </dl>\n              </div>\n            )}\n          </BreakpointRender>\n          ||||\n\n          Which produces this output:\n        '], ['\n          The render variant is similar, but can be used more easily in some\n          situations. We\'ll use this code (styles omitted for brevity):\n\n          ||||js\n          <BreakpointRender breakpoints={breakpoints} type="viewport">\n            {bp => (\n              <div>\n                <dl>\n                  <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                  <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                  <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                </dl>\n              </div>\n            )}\n          </BreakpointRender>\n          ||||\n\n          Which produces this output:\n        ']),
+    _templateObject4 = _taggedTemplateLiteral(['\n          ## Element Breakpoints\n\n          Viewport breakpoints are great for laying out entire pages, but often\n          and element should only be concerned with its own size, or the size of\n          a parent element.\n\n          We can declaratively access the size of an element, and use breakpoints\n          like we did for the viewport above.\n\n          You can use either the high order component or render callback for element\n          breakpoints, but often the render callback is more convenient since it\n          operates on the ||BreakpointRender|| child or parents of that element.\n\n          We\'ll use the previous example of ||BreakpointRender||, with some alterations.\n\n          ||||js\n          <div className="SomeClass">\n            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">\n              {bp => (\n                <div>\n                  <dl>\n                    <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                    <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                    <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                  </dl>\n                </div>\n              )}\n            </BreakpointRender>\n          </div>\n          ||||\n\n          Let\'s break down the props:\n\n          ||breakpoints|| is the same as viewport, except now it\'s relative to our\n          outer div here.\n\n          ||type|| is set to ||\'element\'||, which tells it to use element breakpoints.\n\n          ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),\n          or a string selector that will be matched against the closest parent. If that element\n          doesn\'t match, then it\'ll be matched against the grandparent, and so on, until\n          it reaches ||document.body|| where it gives up.\n\n          If an element isn\'t found immediately, we schedule low priority tasks to\n          attempt to find the element again. This will be the case on the initial mount\n          unless you pass an ||HTMLElement|| as the ||element|| property.\n\n          So what do we do if we don\'t have an element to check the size of?\n          We\'ll, that\'s up to you. By default, we simply don\'t render the\n          child until we\'re able to get a breakpoint object ready. You can override\n          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,\n          and we don\'t have a breakpoint, we\'ll pass ||bp|| as ||null||. It\'s up\n          to you to do something appropriate with the lack of information.\n\n          In this example, we\'re using a css animation to change the size of the element.\n          As I understand it, we handle any possible source of the element size changing \u2013\n          without expensive timers.\n        '], ['\n          ## Element Breakpoints\n\n          Viewport breakpoints are great for laying out entire pages, but often\n          and element should only be concerned with its own size, or the size of\n          a parent element.\n\n          We can declaratively access the size of an element, and use breakpoints\n          like we did for the viewport above.\n\n          You can use either the high order component or render callback for element\n          breakpoints, but often the render callback is more convenient since it\n          operates on the ||BreakpointRender|| child or parents of that element.\n\n          We\'ll use the previous example of ||BreakpointRender||, with some alterations.\n\n          ||||js\n          <div className="SomeClass">\n            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">\n              {bp => (\n                <div>\n                  <dl>\n                    <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                    <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                    <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                  </dl>\n                </div>\n              )}\n            </BreakpointRender>\n          </div>\n          ||||\n\n          Let\'s break down the props:\n\n          ||breakpoints|| is the same as viewport, except now it\'s relative to our\n          outer div here.\n\n          ||type|| is set to ||\'element\'||, which tells it to use element breakpoints.\n\n          ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),\n          or a string selector that will be matched against the closest parent. If that element\n          doesn\'t match, then it\'ll be matched against the grandparent, and so on, until\n          it reaches ||document.body|| where it gives up.\n\n          If an element isn\'t found immediately, we schedule low priority tasks to\n          attempt to find the element again. This will be the case on the initial mount\n          unless you pass an ||HTMLElement|| as the ||element|| property.\n\n          So what do we do if we don\'t have an element to check the size of?\n          We\'ll, that\'s up to you. By default, we simply don\'t render the\n          child until we\'re able to get a breakpoint object ready. You can override\n          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,\n          and we don\'t have a breakpoint, we\'ll pass ||bp|| as ||null||. It\'s up\n          to you to do something appropriate with the lack of information.\n\n          In this example, we\'re using a css animation to change the size of the element.\n          As I understand it, we handle any possible source of the element size changing \u2013\n          without expensive timers.\n        ']),
+    _templateObject5 = _taggedTemplateLiteral(['\n          ## Caveats\n\n          We do our best to render the child without a wrapper node. If the type\n          of the child element is a ||React.Component|| subclass, or an element\n          type string (e.g. ||<div />|| has type ||\'div\'||), then we can render\n          it without a wrapper.\n\n          If it\'s e.g. a number, or the type is a functional component, we wrap\n          it in a ||<span>|| with only a ||ref|| prop, and pass your element\n          as the child.\n\n          When using the high order component variant, your render method should\n          return exactly one element or ||null||. With the render callback variant, your callback\n          should render exactly one node or ||null||.\n        '], ['\n          ## Caveats\n\n          We do our best to render the child without a wrapper node. If the type\n          of the child element is a ||React.Component|| subclass, or an element\n          type string (e.g. ||<div />|| has type ||\'div\'||), then we can render\n          it without a wrapper.\n\n          If it\'s e.g. a number, or the type is a functional component, we wrap\n          it in a ||<span>|| with only a ||ref|| prop, and pass your element\n          as the child.\n\n          When using the high order component variant, your render method should\n          return exactly one element or ||null||. With the render callback variant, your callback\n          should render exactly one node or ||null||.\n        ']);
 
 var _react = __webpack_require__(3);
 
 var React = _interopRequireWildcard(_react);
+
+var _propTypes = __webpack_require__(16);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _md = __webpack_require__(35);
 
@@ -21787,7 +21793,7 @@ var _md2 = _interopRequireDefault(_md);
 
 var _Breakpoint = __webpack_require__(39);
 
-__webpack_require__(41);
+__webpack_require__(42);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21800,6 +21806,50 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TextHighlightTransition = function (_React$Component) {
+  _inherits(TextHighlightTransition, _React$Component);
+
+  function TextHighlightTransition(props) {
+    _classCallCheck(this, TextHighlightTransition);
+
+    var _this = _possibleConstructorReturn(this, (TextHighlightTransition.__proto__ || Object.getPrototypeOf(TextHighlightTransition)).call(this, props));
+
+    _this.state = {
+      flashing: false
+    };
+    return _this;
+  }
+
+  _createClass(TextHighlightTransition, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _this2 = this;
+
+      if (nextProps.children !== this.props.children) {
+        this.setState({ flashing: true });
+        setTimeout(function () {
+          return _this2.setState({ flashing: false });
+        }, 1000);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var style = { transition: 'background 0.23s' };
+      if (this.state.flashing) style.background = '#a0ffa9';
+      return React.createElement(
+        'span',
+        { style: style },
+        this.props.children
+      );
+    }
+  }]);
+
+  return TextHighlightTransition;
+}(React.Component);
+
+TextHighlightTransition.propTypes = { children: _propTypes2.default.node.isRequired };
 
 var DemoOne = function () {
   var breakpoints = [{ name: 'small', maxWidth: 600 }, { name: 'medium', minWidth: 'small', maxWidth: 'large' }, { name: 'large', minWidth: 1200 }];
@@ -21826,7 +21876,11 @@ var DemoOne = function () {
             React.createElement(
               'span',
               null,
-              String(bp[key](name))
+              React.createElement(
+                TextHighlightTransition,
+                null,
+                String(bp[key](name))
+              )
             )
           );
         })
@@ -21883,8 +21937,33 @@ var DemoTwo = function () {
   };
 }();
 
-var DocsBreakpoint = function (_React$Component) {
-  _inherits(DocsBreakpoint, _React$Component);
+var DemoElementBp = function () {
+  var breakpoints = [{ name: 'small', maxWidth: 300 }, { name: 'medium', minWidth: 'small', maxWidth: 600 }, { name: 'large', minWidth: 'medium' }];
+
+  var className = 'DocsBreakpoint__DemoElementBp';
+  return function () {
+    return React.createElement(
+      'div',
+      { className: className },
+      React.createElement(
+        _Breakpoint.BreakpointRender,
+        { breakpoints: breakpoints, type: 'element', element: '.' + className },
+        function (bp) {
+          return React.createElement(
+            'div',
+            { className: 'DocsBreakpoint__DemoElementBp__Inner' },
+            bp.isEq('small') && 'small',
+            bp.isEq('medium') && 'medium',
+            bp.isEq('large') && 'large'
+          );
+        }
+      )
+    );
+  };
+}();
+
+var DocsBreakpoint = function (_React$Component2) {
+  _inherits(DocsBreakpoint, _React$Component2);
 
   function DocsBreakpoint() {
     _classCallCheck(this, DocsBreakpoint);
@@ -21902,7 +21981,10 @@ var DocsBreakpoint = function (_React$Component) {
         React.createElement(DemoOne, null),
         (0, _md2.default)(_templateObject2),
         (0, _md2.default)(_templateObject3),
-        React.createElement(DemoTwo, null)
+        React.createElement(DemoTwo, null),
+        (0, _md2.default)(_templateObject4),
+        React.createElement(DemoElementBp, null),
+        (0, _md2.default)(_templateObject5)
       );
     }
   }]);
@@ -23520,6 +23602,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BreakpointRender = exports.BreakpointHoc = undefined;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -23528,7 +23612,15 @@ var _react = __webpack_require__(3);
 
 var React = _interopRequireWildcard(_react);
 
+var _reactDom = __webpack_require__(10);
+
 var _getSize = __webpack_require__(40);
+
+var _addResizeListener = __webpack_require__(41);
+
+var _addResizeListener2 = _interopRequireDefault(_addResizeListener);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -23581,11 +23673,11 @@ var calcBreakpoints = function calcBreakpoints(bps, size) {
   bps.forEach(function (bp) {
     var minWidth = solveFor(bp, 'minWidth');
     var maxWidth = solveFor(bp, 'maxWidth');
-    if (size.width >= minWidth) {
+    if (size.width > maxWidth) {
       gt.push(bp.name);
       keys.push('gt:' + bp.name);
     }
-    if (size.width <= maxWidth) {
+    if (size.width < minWidth) {
       lt.push(bp.name);
       keys.push('lt:' + bp.name);
     }
@@ -23627,6 +23719,10 @@ var BreakpointRender = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (BreakpointRender.__proto__ || Object.getPrototypeOf(BreakpointRender)).call(this, props));
 
+    _this.previousElement = null;
+    _this.rootElement = null;
+    _this.useShortIdleDelay = true;
+
     _this.state = {
       current: null,
       previousKey: null
@@ -23656,13 +23752,21 @@ var BreakpointRender = function (_React$Component) {
     return _this;
   }
 
+  // we set this when the element selector changes
+  // ignored for viewport breakpoints
+
+
   _createClass(BreakpointRender, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
       if (typeof window === 'undefined') return;
       if (this.props.type === 'element') return;
 
-      var size = (0, _getSize.getViewportSize)();
+      // sets this.previousElement when type="element" which we use below
+      this.setupListeners();
+
+      var size = this.previousElement ? (0, _getSize.getElementSize)(this.previousElement) : (0, _getSize.getViewportSize)();
+
       var relationships = calcBreakpoints(this.props.breakpoints, size);
       this.setState({
         current: relationships,
@@ -23672,30 +23776,108 @@ var BreakpointRender = function (_React$Component) {
   }, {
     key: 'maybeUpdate',
     value: function maybeUpdate() {
+      var size = null;
       if (this.props.type === 'viewport') {
-        var size = (0, _getSize.getViewportSize)();
-        var relationships = calcBreakpoints(this.props.breakpoints, size);
-        if (relationships.key !== this.state.previousKey) {
-          this.setState({
-            current: relationships,
-            previousKey: relationships.key
-          });
+        size = (0, _getSize.getViewportSize)();
+      } else if (this.props.type === 'element') {
+        var _element = this.getElement();
+        if (_element) {
+          size = (0, _getSize.getElementSize)(_element);
         }
+      }
+
+      if (!size) return;
+
+      var relationships = calcBreakpoints(this.props.breakpoints, size);
+      if (relationships.key !== this.state.previousKey) {
+        this.setState({
+          current: relationships,
+          previousKey: relationships.key
+        });
       }
     }
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
+      this.maybeUpdate();
+      this.setupListeners();
+    }
+  }, {
+    key: 'getElement',
+    value: function getElement() {
+      var element = this.props.element || null;
+      if (typeof element === 'string') {
+        var query = element;
+
+        var pElement = this.rootElement;
+        while (pElement && pElement !== document.body && !pElement.matches(query)) {
+          var parent = pElement.parentElement;
+          if (parent instanceof HTMLElement) {
+            pElement = parent;
+          } else {
+            return null;
+          }
+        }
+        return pElement || null;
+      }
+      if (element instanceof HTMLElement) {
+        return element;
+      }
+      return null;
+    }
+  }, {
+    key: 'setupListeners',
+    value: function setupListeners() {
       var _this2 = this;
 
-      this.maybeUpdate();
       var handleResize = function handleResize() {
         _this2.maybeUpdate();
       };
-      window.addEventListener('resize', handleResize, false);
-      this.cleanup = function () {
-        return window.removeEventListener('resize', handleResize, false);
-      };
+
+      if (this.props.type === 'viewport') {
+        if (this.cleanup) this.cleanup();
+        window.addEventListener('resize', handleResize, false);
+        this.cleanup = function () {
+          return window.removeEventListener('resize', handleResize, false);
+        };
+      } else if (this.props.type === 'element') {
+        var _element2 = this.getElement();
+
+        // either element has changed, or it became null
+        // either way, we should clean up existing listeners
+        if (_element2 != this.previousElement) {
+          if (this.cleanup) this.cleanup();
+        }
+
+        // if it's a sibling element, it won't be rendered immediately when this
+        // component mounts, so element might be null
+        if (!_element2) {
+          if (this.cleanup) this.cleanup();
+
+          // use idle callback because it's possible the element will never exist
+          // and we don't want to use too many resources
+          // on the initial mount we want to retry ASAP
+          var timeout = 250;
+          if (this.useShortIdleDelay) {
+            timeout = 1;
+            this.useShortIdleDelay = false;
+          }
+          var idleCallbackToken = window.requestIdleCallback(function () {
+            // try again
+            _this2.setupListeners();
+          }, { timeout: timeout });
+
+          this.cleanup = function () {
+            return window.cancelIdleCallback(idleCallbackToken);
+          };
+          return;
+        }
+
+        this.previousElement = _element2;
+        this.cleanup = (0, _addResizeListener2.default)(_element2, function () {
+          _this2.maybeUpdate();
+        });
+      }
     }
   }, {
     key: 'componentWillUnmount',
@@ -23703,13 +23885,66 @@ var BreakpointRender = function (_React$Component) {
       if (this.cleanup) this.cleanup();
     }
   }, {
+    key: 'wrapChildren',
+    value: function wrapChildren(children) {
+      var _this3 = this;
+
+      var childNode = React.Children.only(children);
+
+      var wrapperProps = {
+        ref: function ref(el) {
+          if (el instanceof HTMLElement) {
+            _this3.rootElement = el;
+          } else {
+            _this3.rootElement = null;
+          }
+        }
+      };
+
+      if (!childNode || (typeof childNode === 'undefined' ? 'undefined' : _typeof(childNode)) !== 'object') {
+        return React.createElement(
+          'span',
+          wrapperProps,
+          childNode
+        );
+      }
+
+      if (typeof childNode.type === 'string') {
+        return React.cloneElement(childNode, wrapperProps);
+      }
+
+      if (typeof childNode.type === 'function'
+      // and is not functional component
+      && Object.getPrototypeOf(childNode.type) !== Function.prototype) {
+        return React.cloneElement(childNode, {
+          ref: function ref(instance) {
+            if (!instance) _this3.rootElement = null;else {
+              var el = (0, _reactDom.findDOMNode)(instance);
+              if (el instanceof HTMLElement) {
+                _this3.rootElement = el;
+              } else {
+                _this3.rootElement = null;
+              }
+            }
+          }
+        });
+      }
+
+      // functional component
+      return React.createElement(
+        'span',
+        wrapperProps,
+        childNode
+      );
+    }
+  }, {
     key: 'render',
     value: function render() {
       // pass the key for the HOC to ensure an update
       if (this.props._passPreviousKey) {
-        return this.props.children(this.ownProps.bp, this.state.previousKey);
+        return this.wrapChildren(this.props.children(this.ownProps.bp, this.state.previousKey));
       }
-      return this.props.children(this.ownProps.bp);
+      return this.wrapChildren(this.props.children(this.ownProps.bp));
     }
   }]);
 
@@ -23779,12 +24014,188 @@ function getViewportSize() {
 
 /***/ }),
 /* 41 */
+/***/ (function(module, exports) {
+
+/**
+ * Detect Element Resize
+ *
+ * https://github.com/sdecima/javascript-detect-element-resize
+ * Sebastian Decima
+ *
+ * version: 0.5.3
+ **/
+var stylesCreated = false;
+
+var requestFrame = (function() {
+  var raf =
+    window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    function(fn) {
+      return window.setTimeout(fn, 20);
+    };
+  return function(fn) {
+    return raf(fn);
+  };
+})();
+
+var cancelFrame = (function() {
+  var cancel =
+    window.cancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.clearTimeout;
+  return function(id) {
+    return cancel(id);
+  };
+})();
+
+var resetTriggers = function resetTriggers(element) {
+  var triggers = element.__resizeTriggers__,
+    expand = triggers.firstElementChild,
+    contract = triggers.lastElementChild,
+    expandChild = expand.firstElementChild;
+  contract.scrollLeft = contract.scrollWidth;
+  contract.scrollTop = contract.scrollHeight;
+  expandChild.style.width = expand.offsetWidth + 1 + 'px';
+  expandChild.style.height = expand.offsetHeight + 1 + 'px';
+  expand.scrollLeft = expand.scrollWidth;
+  expand.scrollTop = expand.scrollHeight;
+}
+
+function checkTriggers(element) {
+  return (
+    element.offsetWidth != element.__resizeLast__.width || element.offsetHeight != element.__resizeLast__.height
+  );
+}
+
+function scrollListener(e) {
+  var element = this;
+  resetTriggers(this);
+  if (this.__resizeRAF__) cancelFrame(this.__resizeRAF__);
+  this.__resizeRAF__ = requestFrame(function() {
+    if (checkTriggers(element)) {
+      element.__resizeLast__.width = element.offsetWidth;
+      element.__resizeLast__.height = element.offsetHeight;
+      element.__resizeListeners__.forEach(function(fn) {
+        fn.call(element, e);
+      });
+    }
+  });
+}
+
+/* Detect CSS Animations support to detect element display/re-attach */
+var animation = false,
+  animationstring = 'animation',
+  keyframeprefix = '',
+  animationstartevent = 'animationstart',
+  domPrefixes = 'Webkit Moz O ms'.split(' '),
+  startEvents = 'webkitAnimationStart animationstart oAnimationStart MSAnimationStart'.split(' '),
+  pfx = '';
+{
+  var elm = document.createElement('fakeelement');
+  if (elm.style.animationName !== undefined) {
+    animation = true;
+  }
+
+  if (animation === false) {
+    for (var i = 0; i < domPrefixes.length; i++) {
+      if (elm.style[domPrefixes[i] + 'AnimationName'] !== undefined) {
+        pfx = domPrefixes[i];
+        animationstring = pfx + 'Animation';
+        keyframeprefix = '-' + pfx.toLowerCase() + '-';
+        animationstartevent = startEvents[i];
+        animation = true;
+        break;
+      }
+    }
+  }
+}
+
+var animationName = 'resizeanim';
+var animationKeyframes =
+  '@' + keyframeprefix + 'keyframes ' + animationName + ' { from { opacity: 0; } to { opacity: 0; } } ';
+var animationStyle = keyframeprefix + 'animation: 1ms ' + animationName + '; ';
+
+function createStyles() {
+  if (!stylesCreated) {
+    //opacity:0 works around a chrome bug https://code.google.com/p/chromium/issues/detail?id=286360
+    var css =
+      (animationKeyframes ? animationKeyframes : '') +
+      '.resize-triggers { ' +
+      (animationStyle ? animationStyle : '') +
+      'visibility: hidden; opacity: 0; } ' +
+      '.resize-triggers, .resize-triggers > div, .contract-trigger:before { content: " "; display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; } .resize-triggers > div { background: #eee; overflow: auto; } .contract-trigger:before { width: 200%; height: 200%; }',
+      head = document.head || document.getElementsByTagName('head')[0],
+      style = document.createElement('style');
+
+    style.type = 'text/css';
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+
+    head.appendChild(style);
+    stylesCreated = true;
+  }
+}
+
+var addResizeListener = function(element, fn) {
+  if (!element) {
+    throw new TypeError('Expected first argument to be provided but was ' + element);
+  }
+  if (!element instanceof HTMLElement) {
+    throw new TypeError('Expected first argument to be a HTMLElement but was ' + element.constructor.name);
+  }
+  if (!fn || typeof fn !== 'function') {
+    throw new TypeError('Expected second argument to be a function but got ' + fn);
+  }
+  if (!element.__resizeTriggers__) {
+    if (getComputedStyle(element).position == 'static') element.style.position = 'relative';
+    createStyles();
+    element.__resizeLast__ = {};
+    element.__resizeListeners__ = [];
+    (element.__resizeTriggers__ = document.createElement('div')).className = 'resize-triggers';
+    element.__resizeTriggers__.innerHTML =
+      '<div class="expand-trigger"><div></div></div>' + '<div class="contract-trigger"></div>';
+    element.appendChild(element.__resizeTriggers__);
+    resetTriggers(element);
+    element.addEventListener('scroll', scrollListener, true);
+
+    /* Listen for a css animation to detect element display/re-attach */
+    animationstartevent &&
+      element.__resizeTriggers__.addEventListener(animationstartevent, function(e) {
+        if (e.animationName == animationName) resetTriggers(element);
+      });
+  }
+  element.__resizeListeners__.push(fn);
+  return function unsubscribeResizeListener() {
+    removeResizeListener(element, fn);
+  }
+};
+
+var removeResizeListener = function(element, fn) {
+  element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
+  if (!element.__resizeListeners__.length) {
+    element.removeEventListener('scroll', scrollListener);
+    element.__resizeTriggers__ = !element.removeChild(element.__resizeTriggers__);
+  }
+};
+
+module.exports = addResizeListener;
+module.exports.removeResizeListener = removeResizeListener;
+
+
+
+/***/ }),
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(42);
+var content = __webpack_require__(43);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -23792,7 +24203,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -23809,21 +24220,21 @@ if(false) {
 }
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(undefined);
+exports = module.exports = __webpack_require__(17)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, ".DocsBreakpoint__DemoOneGroup {\n  display: inline-block;\n  width: 15em;\n  margin-bottom: 1em;\n}\n\n.DocsBreakpoint__DemoOneMethod {\n  display: inline-block;\n  width: 9.5em;\n}\n\n.DocsBreakpoint__DemoTwo li {\n  width: 13em;\n  padding: 0.3em 0.4em;\n}\n\n.DocsBreakpoint__DemoTwoItemYes {\n  background: rgb(120, 255, 140);\n}\n", ""]);
+exports.push([module.i, ".DocsBreakpoint__DemoOneGroup {\n  display: inline-block;\n  width: 15em;\n  margin-bottom: 1em;\n}\n\n.DocsBreakpoint__DemoOneMethod {\n  display: inline-block;\n  width: 9.5em;\n}\n\n.DocsBreakpoint__DemoTwo li {\n  width: 13em;\n  padding: 0.3em 0.4em;\n}\n\n.DocsBreakpoint__DemoTwoItemYes {\n  background: rgb(120, 255, 140);\n}\n\n.DocsBreakpoint__DemoElementBp {\n  width: 100%;\n  height: 4em;\n  margin: 0.5em auto;\n  background: #eeeeee;\n  animation-duration: 4s;\n  animation-name: DemoElementBpAnim;\n  animation-iteration-count: infinite;\n}\n\n.DocsBreakpoint__DemoElementBp__Inner {\n  padding: 1.5em 0;\n  text-align: center;\n}\n\n@keyframes DemoElementBpAnim {\n  0% {\n    width: 100%;\n  }\n\n  50% {\n    width: 4em;\n  }\n\n  100% {\n    width: 99.5%;\n  }\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 
@@ -23918,7 +24329,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23929,13 +24340,13 @@ var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render base
 module.exports = pages;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(46);
+var content = __webpack_require__(47);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -23943,7 +24354,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -23960,10 +24371,10 @@ if(false) {
 }
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(undefined);
+exports = module.exports = __webpack_require__(17)(undefined);
 // imports
 
 
