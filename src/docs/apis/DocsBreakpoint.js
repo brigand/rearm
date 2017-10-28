@@ -219,15 +219,15 @@ export default class DocsBreakpoint extends React.Component {
           ## Element Breakpoints
 
           Viewport breakpoints are great for laying out entire pages, but often
-          and element should only be concerned with its own size, or the size of
-          a parent element.
+          an element should only be concerned with its own size, or the size of
+          a close parent element.
 
           We can declaratively access the size of an element, and use breakpoints
           like we did for the viewport above.
 
           You can use either the high order component or render callback for element
-          breakpoints, but often the render callback is more convenient since it
-          operates on the ||BreakpointRender|| child or parents of that element.
+          breakpoints, but often the render callback is more convenient since it's
+          relative to the position of the ||BreakpointRender|| in the tree.
 
           We'll use the previous example of ||BreakpointRender||, with some alterations.
 
@@ -250,29 +250,32 @@ export default class DocsBreakpoint extends React.Component {
           Let's break down the props:
 
           ||breakpoints|| is the same as viewport, except now it's relative to our
-          outer div here.
+          outer ||div|| here.
 
-          ||type|| is set to ||'element'||, which tells it to use element breakpoints.
+          ||type|| is set to ||'element'||, which tells it to use element breakpoints
+          instead of viewport breakpoints.
 
           ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),
           or a string selector that will be matched against the closest parent. If that element
-          doesn't match, then it'll be matched against the grandparent, and so on, until
-          it reaches ||document.body|| where it gives up.
+          doesn't match, then we attempt to match it on the grandparent, and so on, until
+          it finds a match, or reaches ||document.body|| where it gives up.
 
           If an element isn't found immediately, we schedule low priority tasks to
-          attempt to find the element again. This will be the case on the initial mount
+          attempt to find the element again. This will be the case on the initial render
           unless you pass an ||HTMLElement|| as the ||element|| property.
 
           So what do we do if we don't have an element to check the size of?
           We'll, that's up to you. By default, we simply don't render the
-          child until we're able to get a breakpoint object ready. You can override
+          child until we're able to create a valid breakpoint object. You can override
           this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,
           and we don't have a breakpoint, we'll pass ||bp|| as ||null||. It's up
           to you to do something appropriate with the lack of information.
 
-          In this example, we're using a css animation to change the size of the element.
-          As I understand it, we handle any possible source of the element size changing –
-          without expensive timers.
+          We handle all sources of the element size changing without using
+          timers, nor requiring you to make any special effort. There's no significant performance
+          cost in listening for element resizes.
+
+          In this example, we're using a CSS animation to change the size of the element.
         `}
         <DemoElementBp />
         {md`
