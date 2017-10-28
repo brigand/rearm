@@ -110,15 +110,11 @@ type HocProps = {};
 const BreakpointHoc = (opts: BreakpointHocOpts) => (Component: React.ComponentType<any>) => {
   const BreakpointProvider = (props: Object): React.Node => {
     return (
-      <BreakpointRender breakpoints={opts.breakpoints} type={opts.type} _passPreviousKey>
+      <BreakpointRender breakpoints={opts.breakpoints} type={opts.type}>
         {(bp: BreakpointResultProp, previousKey?: ?string) => (
           <Component
             {...props}
             bp={bp}
-
-            // this ensures PureComponent will allow an update when breakpoints change
-            // despite this.ownProps not changing
-            __RearmUpdateKey={previousKey}
           />
         )}
       </BreakpointRender>
@@ -138,11 +134,11 @@ export type BreakpointRenderProps = {
 type BreakpointRenderState = {
   current: ?Relationships,
   previousKey: ?string,
+  bp: BreakpointResultProp,
 }
 
 class BreakpointRender extends React.Component<BreakpointRenderProps, BreakpointRenderState> {
   cleanup: () => void;
-  ownProps: BreakpointChildProps;
   previousElement: ?HTMLElement;
   previousElement = null;
   rootElement: ?HTMLElement;
@@ -157,20 +153,20 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     this.state = {
       current: null,
       previousKey: null,
-    };
-
-    // creating this in constructor allows the child shouldComponentUpdate to pass
-    // and improves our performance
-    this.ownProps = {
-      bp: {
-        isGt: (key) => !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
-        isLt: (key) => !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
-        isEq: (key) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
-        isGte: (key) => this.ownProps.bp.isGt(key) || this.ownProps.bp.isEq(key),
-        isLte: (key) => this.ownProps.bp.isLt(key) || this.ownProps.bp.isEq(key),
-      },
+      bp: this.createBp(),
     };
   }
+
+  createBp() {
+    return {
+      isGt: (key: string) => !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
+      isLt: (key: string) => !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
+      isEq: (key: string) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
+      isGte: (key: string) => this.state.bp.isGt(key) || this.state.bp.isEq(key),
+      isLte: (key: string) => this.state.bp.isLt(key) || this.state.bp.isEq(key),
+    };
+  }
+
   componentWillMount() {
     if (typeof window === 'undefined') return;
     if (this.props.type === 'element') return;
@@ -186,6 +182,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     this.setState({
       current: relationships,
       previousKey: relationships.key,
+      bp: this.createBp(),
     });
   }
 
@@ -207,6 +204,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
       this.setState({
         current: relationships,
         previousKey: relationships.key,
+        bp: this.createBp(),
       });
     }
   }
@@ -341,14 +339,8 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
         return this.wrapChildren(<span />);
       }
     }
-    // pass the key for the HOC to ensure an update
-    if (this.props._passPreviousKey) {
-      return this.wrapChildren(
-        this.props.children(this.ownProps.bp, this.state.previousKey),
-      );
-    }
     return this.wrapChildren(
-      this.props.children(this.ownProps.bp),
+      this.props.children(this.state.bp),
     );
   }
 }

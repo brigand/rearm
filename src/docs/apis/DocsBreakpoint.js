@@ -4,7 +4,7 @@ import md from '../md';
 import { BreakpointHoc, BreakpointRender } from '../../Breakpoint.js';
 import './DocsBreakpoint.css';
 
-class TextHighlightTransition extends React.Component {
+class TextHighlightTransition extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
