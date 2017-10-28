@@ -9,11 +9,21 @@ import * as React from 'react';
 import marked from 'marked';
 import outdent from 'outdent';
 
+const renderer = new marked.Renderer();
+
 const escape1 = str => str
   .replace(/</g, '%%%lt%%%')
   .replace(/>/g, '%%%gt%%%')
   .replace(/&/g, '%%%amp%%%')
   .replace(/"/g, '%%%quot%%%');
+
+renderer.heading = (text, level) => {
+  const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+  const open = `<h${level}><a name="${escapedText}" href="#${escapedText}">`;
+  const close = `</a></h${level}>`;
+
+  return `${open}${text}${close}`;
+};
 
 marked.setOptions({
   sanitize: false,
@@ -96,7 +106,7 @@ export default function md(strings: Array<string>, ...values: Array<any>) {
   const markdown = outdent(strings, ...values)
     .replace(/\|{4}/g, '```')
     .replace(/\|{2}/g, '`');
-  const html = marked(markdown)
+  const html = marked(markdown, { renderer })
     .replace(/%%%(\w+)%%%/g, '&$1;');
 
   /* eslint-disable react/no-danger */
