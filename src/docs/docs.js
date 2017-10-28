@@ -76,7 +76,12 @@ class Docs extends React.Component<Props> {
     if (isActive) className = `${className} Docs__Link--active`;
 
     return (
-      <a href={`/rearm/${page.path ? `docs/${page.path}` : ''}`} className={className} title={page.description}>
+      <a
+        href={`/rearm/${page.path ? `docs/${page.path}` : ''}`}
+        className={className}
+        title={page.description}
+        key={page.path}
+      >
         <div className="Docs__Link__Name">
           {page.name}
         </div>
