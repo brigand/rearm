@@ -333,6 +333,11 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   }
 
   render() {
+    if (this.props.type === 'element' && !this.props.canRenderWithNullBp) {
+      if (!this.state.current) {
+        return null;
+      }
+    }
     // pass the key for the HOC to ensure an update
     if (this.props._passPreviousKey) {
       return this.wrapChildren(
