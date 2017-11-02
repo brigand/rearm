@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
-import { getElementSize, getViewportSize, type Size } from './utils/getSize';
 import addResizeListener from 'add-resize-listener';
+import { getElementSize, getViewportSize, type Size } from './utils/getSize';
 
 export type Breakpoint = {
   // these can either be a number in pixels or a name of another breakpoint
@@ -34,9 +34,7 @@ type Relationships = {
 };
 
 const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
-  const { width } = size;
-
-  let keys = [];
+  const keys = [];
   const lt = [];
   const gt = [];
   const eq = [];
@@ -68,8 +66,9 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
 
       // offset by one so the breakpoints don't overlap
       if (inverted === 'maxWidth') return solved + 1;
-      else return solved - 1;
+      return solved - 1;
     }
+    // eslint-disable-next-line max-len
     throw new TypeError(`Failed to solve for breakpoint ${bp.name} on ${key} with value ${bp[key] != null ? bp[key] : 'null'}`);
   };
 
@@ -90,7 +89,12 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
     }
   });
 
-  return { lt, gt, eq, key: keys.join('|||') };
+  return {
+    lt,
+    gt,
+    eq,
+    key: keys.join('|||'),
+  };
 };
 
 type BreakpointResultProp = {
@@ -101,27 +105,25 @@ type BreakpointResultProp = {
   isLte: (key: string) => boolean,
 };
 
-type BreakpointChildProps = {
-  bp: BreakpointResultProp,
-};
+// type BreakpointChildProps = {
+//   bp: BreakpointResultProp,
+// };
 
-type HocProps = {};
+// type HocProps = {};
 
 const BreakpointHoc = (opts: BreakpointHocOpts) => (Component: React.ComponentType<any>) => {
-  const BreakpointProvider = (props: Object): React.Node => {
-    return (
-      <BreakpointRender breakpoints={opts.breakpoints} type={opts.type}>
-        {(bp: BreakpointResultProp, previousKey?: ?string) => (
-          <Component
-            {...props}
-            bp={bp}
-          />
+  const BreakpointProvider = (props: Object): React.Node => (
+    <BreakpointRender breakpoints={opts.breakpoints} type={opts.type}>
+      {(bp: BreakpointResultProp) => (
+        <Component
+          {...props}
+          bp={bp}
+        />
         )}
-      </BreakpointRender>
-    );
-  }
+    </BreakpointRender>
+  );
   return BreakpointProvider;
-}
+};
 
 export type BreakpointRenderProps = {
   breakpoints: Array<Breakpoint>,
@@ -215,7 +217,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   }
 
   getElement(): ?HTMLElement {
-    let element = this.props.element || null;
+    const element = this.props.element || null;
     if (typeof element === 'string') {
       const query = element;
 
@@ -250,6 +252,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
 
       // either element has changed, or it became null
       // either way, we should clean up existing listeners
+      // eslint-disable-next-line eqeqeq
       if (element != this.previousElement) {
         if (this.cleanup) this.cleanup();
       }
@@ -304,7 +307,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     };
 
     if (!childNode || typeof childNode !== 'object') {
-      return <span {...wrapperProps}>{childNode}</span>
+      return <span {...wrapperProps}>{childNode}</span>;
     }
 
     if (typeof childNode.type === 'string') {
@@ -318,7 +321,8 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
         ref: (instance: React.Component<any>) => {
           if (!instance) this.rootElement = null;
           else {
-            const el = findDOMNode(instance)
+            // eslint-disable-next-line
+            const el = findDOMNode(instance);
             if (el instanceof HTMLElement) {
               this.rootElement = el;
             } else {
@@ -330,7 +334,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     }
 
     // functional component
-    return <span {...wrapperProps}>{childNode}</span>
+    return <span {...wrapperProps}>{childNode}</span>;
   }
 
   render() {
@@ -339,9 +343,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
         return this.wrapChildren(<span />);
       }
     }
-    return this.wrapChildren(
-      this.props.children(this.state.bp),
-    );
+    return this.wrapChildren(this.props.children(this.state.bp));
   }
 }
 
