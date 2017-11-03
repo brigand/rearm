@@ -174,6 +174,23 @@ export default class DocsBreakpoint extends React.Component {
             </Ctx>
           );
           ||||
+
+          ## makeCtx
+
+          The default ||Ctx|| uses one namespace for all of your context properties.
+          This also means the operations that filter or map the context can impact
+          children. Intermediate ||Ctx|| elements can accidentally override a parent
+          context key. To get around this, you can create a ||Ctx|| that uses a different
+          React context key.
+
+          |||jsx
+          const MyCtx = Ctx.makeCtx('my-unique-key');
+
+          <MyCtx inject={...}>
+          |||
+
+          Then you use ||MyCtx|| in places where you want to receive or inject
+          that context. It won't clash with any other ||Ctx|| elements on the page.
         `}
       </div>
     );
