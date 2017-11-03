@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -258,6 +258,21 @@ process.umask = function() { return 0; };
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports = __webpack_require__(21);
+} else {
+  module.exports = __webpack_require__(22);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 /**
@@ -296,7 +311,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -353,21 +368,6 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(20);
-} else {
-  module.exports = __webpack_require__(21);
-}
-
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
@@ -506,7 +506,7 @@ module.exports = emptyObject;
 
 
 
-var emptyFunction = __webpack_require__(1);
+var emptyFunction = __webpack_require__(2);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -575,7 +575,7 @@ module.exports = warning;
 
 
 if (process.env.NODE_ENV !== 'production') {
-  var invariant = __webpack_require__(2);
+  var invariant = __webpack_require__(3);
   var warning = __webpack_require__(6);
   var ReactPropTypesSecret = __webpack_require__(8);
   var loggedTypeFailures = {};
@@ -689,319 +689,6 @@ module.exports = ExecutionEnvironment;
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-function checkDCE() {
-  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
-  if (
-    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
-    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
-  ) {
-    return;
-  }
-  if (process.env.NODE_ENV !== 'production') {
-    // This branch is unreachable because this function is only called
-    // in production, but the condition is true only in development.
-    // Therefore if the branch is still here, dead code elimination wasn't
-    // properly applied.
-    // Don't change the message. React DevTools relies on it. Also make sure
-    // this message doesn't occur elsewhere in this function, or it will cause
-    // a false positive.
-    throw new Error('^_^');
-  }
-  try {
-    // Verify that the code above has been dead code eliminated (DCE'd).
-    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
-  } catch (err) {
-    // DevTools shouldn't crash React, no matter what.
-    // We should still report in case we break this code.
-    console.error(err);
-  }
-}
-
-if (process.env.NODE_ENV === 'production') {
-  // DCE check should happen before ReactDOM bundle executes so that
-  // DevTools can report bad minification during injection.
-  checkDCE();
-  module.exports = __webpack_require__(22);
-} else {
-  module.exports = __webpack_require__(25);
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-var emptyFunction = __webpack_require__(1);
-
-/**
- * Upstream version of event listener. Does not take into account specific
- * nature of platform.
- */
-var EventListener = {
-  /**
-   * Listen to DOM events during the bubble phase.
-   *
-   * @param {DOMEventTarget} target DOM element to register listener on.
-   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-   * @param {function} callback Callback function.
-   * @return {object} Object with a `remove` method.
-   */
-  listen: function listen(target, eventType, callback) {
-    if (target.addEventListener) {
-      target.addEventListener(eventType, callback, false);
-      return {
-        remove: function remove() {
-          target.removeEventListener(eventType, callback, false);
-        }
-      };
-    } else if (target.attachEvent) {
-      target.attachEvent('on' + eventType, callback);
-      return {
-        remove: function remove() {
-          target.detachEvent('on' + eventType, callback);
-        }
-      };
-    }
-  },
-
-  /**
-   * Listen to DOM events during the capture phase.
-   *
-   * @param {DOMEventTarget} target DOM element to register listener on.
-   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-   * @param {function} callback Callback function.
-   * @return {object} Object with a `remove` method.
-   */
-  capture: function capture(target, eventType, callback) {
-    if (target.addEventListener) {
-      target.addEventListener(eventType, callback, true);
-      return {
-        remove: function remove() {
-          target.removeEventListener(eventType, callback, true);
-        }
-      };
-    } else {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
-      }
-      return {
-        remove: emptyFunction
-      };
-    }
-  },
-
-  registerDefault: function registerDefault() {}
-};
-
-module.exports = EventListener;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- * 
- */
-
-/*eslint-disable no-self-compare */
-
-
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-/**
- * inlined Object.is polyfill to avoid requiring consumers ship their own
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
- */
-function is(x, y) {
-  // SameValue algorithm
-  if (x === y) {
-    // Steps 1-5, 7-10
-    // Steps 6.b-6.e: +0 != -0
-    // Added the nonzero y check to make Flow happy, but it is redundant
-    return x !== 0 || y !== 0 || 1 / x === 1 / y;
-  } else {
-    // Step 6.a: NaN == NaN
-    return x !== x && y !== y;
-  }
-}
-
-/**
- * Performs equality by iterating through keys on an object and returning false
- * when any key has values which are not strictly equal between the arguments.
- * Returns true when the values of all keys are strictly equal.
- */
-function shallowEqual(objA, objB) {
-  if (is(objA, objB)) {
-    return true;
-  }
-
-  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-    return false;
-  }
-
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // Test for A's keys different from B.
-  for (var i = 0; i < keysA.length; i++) {
-    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-module.exports = shallowEqual;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * 
- */
-
-var isTextNode = __webpack_require__(23);
-
-/*eslint-disable no-bitwise */
-
-/**
- * Checks if a given DOM node contains or is another DOM node.
- */
-function containsNode(outerNode, innerNode) {
-  if (!outerNode || !innerNode) {
-    return false;
-  } else if (outerNode === innerNode) {
-    return true;
-  } else if (isTextNode(outerNode)) {
-    return false;
-  } else if (isTextNode(innerNode)) {
-    return containsNode(outerNode, innerNode.parentNode);
-  } else if ('contains' in outerNode) {
-    return outerNode.contains(innerNode);
-  } else if (outerNode.compareDocumentPosition) {
-    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
-  } else {
-    return false;
-  }
-}
-
-module.exports = containsNode;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-
-
-/**
- * @param {DOMElement} node input/textarea to focus
- */
-
-function focusNode(node) {
-  // IE8 can throw "Can't move focus to the control because it is invisible,
-  // not enabled, or of a type that does not accept the focus." for all kinds of
-  // reasons that are too expensive and fragile to test.
-  try {
-    node.focus();
-  } catch (e) {}
-}
-
-module.exports = focusNode;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- *
- * @param {?DOMDocument} doc Defaults to current document.
- * @return {?DOMElement}
- */
-function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || (typeof document !== 'undefined' ? document : undefined);
-  if (typeof doc === 'undefined') {
-    return null;
-  }
-  try {
-    return doc.activeElement || doc.body;
-  } catch (e) {
-    return doc.body;
-  }
-}
-
-module.exports = getActiveElement;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1024,17 +711,17 @@ if (process.env.NODE_ENV !== 'production') {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(32)(isValidElement, throwOnDirectAccess);
+  module.exports = __webpack_require__(33)(isValidElement, throwOnDirectAccess);
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(33)();
+  module.exports = __webpack_require__(34)();
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 17 */
+/* 11 */
 /***/ (function(module, exports) {
 
 /*
@@ -1116,7 +803,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 18 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -1488,7 +1175,458 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+function checkDCE() {
+  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
+  if (
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
+  ) {
+    return;
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    // This branch is unreachable because this function is only called
+    // in production, but the condition is true only in development.
+    // Therefore if the branch is still here, dead code elimination wasn't
+    // properly applied.
+    // Don't change the message. React DevTools relies on it. Also make sure
+    // this message doesn't occur elsewhere in this function, or it will cause
+    // a false positive.
+    throw new Error('^_^');
+  }
+  try {
+    // Verify that the code above has been dead code eliminated (DCE'd).
+    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
+  } catch (err) {
+    // DevTools shouldn't crash React, no matter what.
+    // We should still report in case we break this code.
+    console.error(err);
+  }
+}
+
+if (process.env.NODE_ENV === 'production') {
+  // DCE check should happen before ReactDOM bundle executes so that
+  // DevTools can report bad minification during injection.
+  checkDCE();
+  module.exports = __webpack_require__(23);
+} else {
+  module.exports = __webpack_require__(26);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+var emptyFunction = __webpack_require__(2);
+
+/**
+ * Upstream version of event listener. Does not take into account specific
+ * nature of platform.
+ */
+var EventListener = {
+  /**
+   * Listen to DOM events during the bubble phase.
+   *
+   * @param {DOMEventTarget} target DOM element to register listener on.
+   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+   * @param {function} callback Callback function.
+   * @return {object} Object with a `remove` method.
+   */
+  listen: function listen(target, eventType, callback) {
+    if (target.addEventListener) {
+      target.addEventListener(eventType, callback, false);
+      return {
+        remove: function remove() {
+          target.removeEventListener(eventType, callback, false);
+        }
+      };
+    } else if (target.attachEvent) {
+      target.attachEvent('on' + eventType, callback);
+      return {
+        remove: function remove() {
+          target.detachEvent('on' + eventType, callback);
+        }
+      };
+    }
+  },
+
+  /**
+   * Listen to DOM events during the capture phase.
+   *
+   * @param {DOMEventTarget} target DOM element to register listener on.
+   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+   * @param {function} callback Callback function.
+   * @return {object} Object with a `remove` method.
+   */
+  capture: function capture(target, eventType, callback) {
+    if (target.addEventListener) {
+      target.addEventListener(eventType, callback, true);
+      return {
+        remove: function remove() {
+          target.removeEventListener(eventType, callback, true);
+        }
+      };
+    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
+      }
+      return {
+        remove: emptyFunction
+      };
+    }
+  },
+
+  registerDefault: function registerDefault() {}
+};
+
+module.exports = EventListener;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ * 
+ */
+
+/*eslint-disable no-self-compare */
+
+
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * inlined Object.is polyfill to avoid requiring consumers ship their own
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+ */
+function is(x, y) {
+  // SameValue algorithm
+  if (x === y) {
+    // Steps 1-5, 7-10
+    // Steps 6.b-6.e: +0 != -0
+    // Added the nonzero y check to make Flow happy, but it is redundant
+    return x !== 0 || y !== 0 || 1 / x === 1 / y;
+  } else {
+    // Step 6.a: NaN == NaN
+    return x !== x && y !== y;
+  }
+}
+
+/**
+ * Performs equality by iterating through keys on an object and returning false
+ * when any key has values which are not strictly equal between the arguments.
+ * Returns true when the values of all keys are strictly equal.
+ */
+function shallowEqual(objA, objB) {
+  if (is(objA, objB)) {
+    return true;
+  }
+
+  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+    return false;
+  }
+
+  var keysA = Object.keys(objA);
+  var keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  // Test for A's keys different from B.
+  for (var i = 0; i < keysA.length; i++) {
+    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+module.exports = shallowEqual;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ */
+
+var isTextNode = __webpack_require__(24);
+
+/*eslint-disable no-bitwise */
+
+/**
+ * Checks if a given DOM node contains or is another DOM node.
+ */
+function containsNode(outerNode, innerNode) {
+  if (!outerNode || !innerNode) {
+    return false;
+  } else if (outerNode === innerNode) {
+    return true;
+  } else if (isTextNode(outerNode)) {
+    return false;
+  } else if (isTextNode(innerNode)) {
+    return containsNode(outerNode, innerNode.parentNode);
+  } else if ('contains' in outerNode) {
+    return outerNode.contains(innerNode);
+  } else if (outerNode.compareDocumentPosition) {
+    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
+  } else {
+    return false;
+  }
+}
+
+module.exports = containsNode;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+
+
+/**
+ * @param {DOMElement} node input/textarea to focus
+ */
+
+function focusNode(node) {
+  // IE8 can throw "Can't move focus to the control because it is invisible,
+  // not enabled, or of a type that does not accept the focus." for all kinds of
+  // reasons that are too expensive and fragile to test.
+  try {
+    node.focus();
+  } catch (e) {}
+}
+
+module.exports = focusNode;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+/* eslint-disable fb-www/typeof-undefined */
+
+/**
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ *
+ * @param {?DOMDocument} doc Defaults to current document.
+ * @return {?DOMElement}
+ */
+function getActiveElement(doc) /*?DOMElement*/{
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  if (typeof doc === 'undefined') {
+    return null;
+  }
+  try {
+    return doc.activeElement || doc.body;
+  } catch (e) {
+    return doc.body;
+  }
+}
+
+module.exports = getActiveElement;
+
+/***/ }),
 /* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = md;
+
+var _react = __webpack_require__(1);
+
+var React = _interopRequireWildcard(_react);
+
+var _marked = __webpack_require__(36);
+
+var _marked2 = _interopRequireDefault(_marked);
+
+var _outdent = __webpack_require__(38);
+
+var _outdent2 = _interopRequireDefault(_outdent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var renderer = new _marked2.default.Renderer();
+
+// converts markdown to a react element
+// due to the use of template literals in the docs,
+// code sections are marked like ||code|| instead of `code`
+// and code blocks with ||||code||||
+
+var escape1 = function escape1(str) {
+  return str.replace(/</g, '%%%lt%%%').replace(/>/g, '%%%gt%%%').replace(/&/g, '%%%amp%%%').replace(/"/g, '%%%quot%%%');
+};
+
+renderer.heading = function (text, level) {
+  var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+  var open = '<h' + level + '><a name="' + escapedText + '" href="#' + escapedText + '">';
+  var close = '</a></h' + level + '>';
+
+  return '' + open + text + close;
+};
+
+_marked2.default.setOptions({
+  sanitize: false,
+  highlight: function highlight(code) {
+    var output = '';
+    var langle = 0;
+    var jsxbrackets = 0;
+    var isStr = null;
+    var isNum = false;
+    var isComment = false;
+    for (var i = 0; i < code.length; i += 1) {
+      var char = code[i];
+      if (isComment) {
+        if (char === '\n') {
+          isComment = false;
+          output += '</span>';
+          output += escape1(char);
+        } else {
+          output += escape1(char);
+        }
+      } else if (!isStr && char === '<') {
+        langle += 1;
+        output += '<span class="high-jsx">';
+        output += escape1(char);
+      } else if (!isStr && langle && char === '>') {
+        langle -= 1;
+        if (jsxbrackets && langle === 0) {
+          jsxbrackets -= 1;
+          output += '</span>';
+        }
+        output += escape1(char);
+        output += '</span>';
+
+        // TODO: other quotes?
+      } else if (!isStr && langle && char === '{') {
+        jsxbrackets += 1;
+        output += escape1(char);
+        output += '<span class="high-reset">';
+      } else if (!isStr && langle && char === '}') {
+        jsxbrackets -= 1;
+        output += '</span>';
+        output += escape1(char);
+      } else if (char === "'" || char === '"' || char === '`') {
+        if (isStr === char) {
+          isStr = null;
+          output += escape1(char);
+          output += '</span>';
+        } else if (!isStr) {
+          isStr = char;
+          output += '<span class="high-str">';
+          output += escape1(char);
+        } else {
+          output += escape1(char);
+        }
+      } else if (isNum) {
+        if (/\d/.test(char)) {
+          output += escape1(char);
+        } else {
+          isNum = false;
+          output += '</span>';
+          output += escape1(char);
+        }
+      } else if (/\d/.test(char)) {
+        isNum = true;
+        output += '<span class="high-num">';
+        output += escape1(char);
+      } else if (!isStr && char === '/' && code[i + 1] === '/') {
+        isComment = true;
+        output += '<span class="high-comment">';
+        output += escape1(char);
+      } else {
+        output += escape1(char);
+      }
+    }
+    return output;
+  }
+});
+
+function md(strings) {
+  for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    values[_key - 1] = arguments[_key];
+  }
+
+  var markdown = _outdent2.default.apply(undefined, [strings].concat(values)).replace(/\|{4}/g, '```').replace(/\|{2}/g, '`');
+  var html = (0, _marked2.default)(markdown, { renderer: renderer }).replace(/%%%(\w+)%%%/g, '&$1;');
+
+  /* eslint-disable react/no-danger */
+  return React.createElement('div', {
+    dangerouslySetInnerHTML: { __html: html }
+  });
+}
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1496,23 +1634,27 @@ function updateLink (link, options, obj) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(1);
 
 var React = _interopRequireWildcard(_react);
 
-var _reactDom = __webpack_require__(10);
+var _reactDom = __webpack_require__(13);
 
 var ReactDOM = _interopRequireWildcard(_reactDom);
 
-var _DocsBreakpoint = __webpack_require__(34);
+var _DocsBreakpoint = __webpack_require__(35);
 
 var _DocsBreakpoint2 = _interopRequireDefault(_DocsBreakpoint);
 
-var _pages = __webpack_require__(45);
+var _DocsCtx = __webpack_require__(45);
+
+var _DocsCtx2 = _interopRequireDefault(_DocsCtx);
+
+var _pages = __webpack_require__(49);
 
 var _pages2 = _interopRequireDefault(_pages);
 
-__webpack_require__(46);
+__webpack_require__(50);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1525,7 +1667,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var pageToDoc = {
-  breakpoint: _DocsBreakpoint2.default
+  breakpoint: _DocsBreakpoint2.default,
+  ctx: _DocsCtx2.default
 };
 
 var urlPartsRaw = window.location.pathname.split('/');
@@ -1648,7 +1791,7 @@ if (root) {
 }
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1661,7 +1804,7 @@ if (root) {
  This source code is licensed under the MIT license found in the
  LICENSE file in the root directory of this source tree.
 */
-var f=__webpack_require__(4),p=__webpack_require__(5);__webpack_require__(2);var r=__webpack_require__(1);
+var f=__webpack_require__(4),p=__webpack_require__(5);__webpack_require__(3);var r=__webpack_require__(2);
 function t(a){for(var b=arguments.length-1,d="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,e=0;e<b;e++)d+="\x26args[]\x3d"+encodeURIComponent(arguments[e+1]);b=Error(d+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}
 var u={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}};function v(a,b,d){this.props=a;this.context=b;this.refs=p;this.updater=d||u}v.prototype.isReactComponent={};v.prototype.setState=function(a,b){"object"!==typeof a&&"function"!==typeof a&&null!=a?t("85"):void 0;this.updater.enqueueSetState(this,a,b,"setState")};v.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate")};
 function w(a,b,d){this.props=a;this.context=b;this.refs=p;this.updater=d||u}function x(){}x.prototype=v.prototype;var y=w.prototype=new x;y.constructor=w;f(y,v.prototype);y.isPureReactComponent=!0;function z(a,b,d){this.props=a;this.context=b;this.refs=p;this.updater=d||u}var A=z.prototype=new x;A.constructor=z;f(A,v.prototype);A.unstable_isAsyncReactComponent=!0;A.render=function(){return this.props.children};
@@ -1678,7 +1821,7 @@ module.exports={Children:{map:S.map,forEach:S.forEach,count:S.count,toArray:S.to
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1701,8 +1844,8 @@ if (process.env.NODE_ENV !== "production") {
 var objectAssign$1 = __webpack_require__(4);
 var require$$0 = __webpack_require__(6);
 var emptyObject = __webpack_require__(5);
-var invariant = __webpack_require__(2);
-var emptyFunction = __webpack_require__(1);
+var invariant = __webpack_require__(3);
+var emptyFunction = __webpack_require__(2);
 var checkPropTypes = __webpack_require__(7);
 
 /**
@@ -3384,7 +3527,7 @@ module.exports = ReactEntry;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3398,7 +3541,7 @@ module.exports = ReactEntry;
  LICENSE file in the root directory of this source tree.
  Modernizr 3.0.0pre (Custom Build) | MIT
 */
-var aa=__webpack_require__(3);__webpack_require__(2);var l=__webpack_require__(9),n=__webpack_require__(4),ba=__webpack_require__(11),ca=__webpack_require__(1),da=__webpack_require__(5),ea=__webpack_require__(12),fa=__webpack_require__(13),ha=__webpack_require__(14),ia=__webpack_require__(15);
+var aa=__webpack_require__(1);__webpack_require__(3);var l=__webpack_require__(9),n=__webpack_require__(4),ba=__webpack_require__(14),ca=__webpack_require__(2),da=__webpack_require__(5),ea=__webpack_require__(15),fa=__webpack_require__(16),ha=__webpack_require__(17),ia=__webpack_require__(18);
 function w(a){for(var b=arguments.length-1,c="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,d=0;d<b;d++)c+="\x26args[]\x3d"+encodeURIComponent(arguments[d+1]);b=Error(c+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}aa?void 0:w("227");
 function ja(a){switch(a){case "svg":return"http://www.w3.org/2000/svg";case "math":return"http://www.w3.org/1998/Math/MathML";default:return"http://www.w3.org/1999/xhtml"}}
 var ka={Namespaces:{html:"http://www.w3.org/1999/xhtml",mathml:"http://www.w3.org/1998/Math/MathML",svg:"http://www.w3.org/2000/svg"},getIntrinsicNamespace:ja,getChildNamespace:function(a,b){return null==a||"http://www.w3.org/1999/xhtml"===a?ja(b):"http://www.w3.org/2000/svg"===a&&"foreignObject"===b?"http://www.w3.org/1999/xhtml":a}},la=null,oa={};
@@ -3647,7 +3790,7 @@ unstable_deferredUpdates:Xj.deferredUpdates,flushSync:Xj.flushSync,__SECRET_INTE
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3662,7 +3805,7 @@ unstable_deferredUpdates:Xj.deferredUpdates,flushSync:Xj.flushSync,__SECRET_INTE
  * @typechecks
  */
 
-var isNode = __webpack_require__(24);
+var isNode = __webpack_require__(25);
 
 /**
  * @param {*} object The object to check.
@@ -3675,7 +3818,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3703,7 +3846,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3723,23 +3866,23 @@ if (process.env.NODE_ENV !== "production") {
 
 'use strict';
 
-var react = __webpack_require__(3);
-var invariant = __webpack_require__(2);
+var react = __webpack_require__(1);
+var invariant = __webpack_require__(3);
 var ExecutionEnvironment = __webpack_require__(9);
 var _assign = __webpack_require__(4);
-var EventListener = __webpack_require__(11);
+var EventListener = __webpack_require__(14);
 var require$$0 = __webpack_require__(6);
-var hyphenateStyleName = __webpack_require__(26);
-var emptyFunction = __webpack_require__(1);
-var camelizeStyleName = __webpack_require__(28);
-var performanceNow = __webpack_require__(30);
-var propTypes = __webpack_require__(16);
+var hyphenateStyleName = __webpack_require__(27);
+var emptyFunction = __webpack_require__(2);
+var camelizeStyleName = __webpack_require__(29);
+var performanceNow = __webpack_require__(31);
+var propTypes = __webpack_require__(10);
 var emptyObject = __webpack_require__(5);
 var checkPropTypes = __webpack_require__(7);
-var shallowEqual = __webpack_require__(12);
-var containsNode = __webpack_require__(13);
-var focusNode = __webpack_require__(14);
-var getActiveElement = __webpack_require__(15);
+var shallowEqual = __webpack_require__(15);
+var containsNode = __webpack_require__(16);
+var focusNode = __webpack_require__(17);
+var getActiveElement = __webpack_require__(18);
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -20932,7 +21075,7 @@ module.exports = ReactDOMFiberEntry;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20947,7 +21090,7 @@ module.exports = ReactDOMFiberEntry;
 
 
 
-var hyphenate = __webpack_require__(27);
+var hyphenate = __webpack_require__(28);
 
 var msPattern = /^ms-/;
 
@@ -20974,7 +21117,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21010,7 +21153,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21025,7 +21168,7 @@ module.exports = hyphenate;
 
 
 
-var camelize = __webpack_require__(29);
+var camelize = __webpack_require__(30);
 
 var msPattern = /^-ms-/;
 
@@ -21053,7 +21196,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21088,7 +21231,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21103,7 +21246,7 @@ module.exports = camelize;
  * @typechecks
  */
 
-var performance = __webpack_require__(31);
+var performance = __webpack_require__(32);
 
 var performanceNow;
 
@@ -21125,7 +21268,7 @@ if (performance.now) {
 module.exports = performanceNow;
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21151,7 +21294,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = performance || {};
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21164,8 +21307,8 @@ module.exports = performance || {};
 
 
 
-var emptyFunction = __webpack_require__(1);
-var invariant = __webpack_require__(2);
+var emptyFunction = __webpack_require__(2);
+var invariant = __webpack_require__(3);
 var warning = __webpack_require__(6);
 var assign = __webpack_require__(4);
 
@@ -21701,7 +21844,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21714,8 +21857,8 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
 
 
-var emptyFunction = __webpack_require__(1);
-var invariant = __webpack_require__(2);
+var emptyFunction = __webpack_require__(2);
+var invariant = __webpack_require__(3);
 var ReactPropTypesSecret = __webpack_require__(8);
 
 module.exports = function() {
@@ -21766,7 +21909,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21784,15 +21927,15 @@ var _templateObject = _taggedTemplateLiteral(['\n          # Breakpoint\n\n     
     _templateObject4 = _taggedTemplateLiteral(['\n          ## Element Breakpoints\n\n          Viewport breakpoints are great for laying out entire pages, but often\n          an element should only be concerned with its own size, or the size of\n          a close parent element.\n\n          We can declaratively access the size of an element, and use breakpoints\n          like we did for the viewport above.\n\n          You can use either the high order component or render callback for element\n          breakpoints, but often the render callback is more convenient since it\'s\n          relative to the position of the ||BreakpointRender|| in the tree.\n\n          We\'ll use the previous example of ||BreakpointRender||, with some alterations.\n\n          ||||js\n          <div className="SomeClass">\n            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">\n              {bp => (\n                <div>\n                  <dl>\n                    <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                    <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                    <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                  </dl>\n                </div>\n              )}\n            </BreakpointRender>\n          </div>\n          ||||\n\n          Let\'s break down the props:\n\n          ||breakpoints|| is the same as viewport, except now it\'s relative to our\n          outer ||div|| here.\n\n          ||type|| is set to ||\'element\'||, which tells it to use element breakpoints\n          instead of viewport breakpoints.\n\n          ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),\n          or a string selector that will be matched against the closest parent. If that element\n          doesn\'t match, then we attempt to match it on the grandparent, and so on, until\n          it finds a match, or reaches ||document.body|| where it gives up.\n\n          If an element isn\'t found immediately, we schedule low priority tasks to\n          attempt to find the element again. This will be the case on the initial render\n          unless you pass an ||HTMLElement|| as the ||element|| property.\n\n          So what do we do if we don\'t have an element to check the size of?\n          We\'ll, that\'s up to you. By default, we simply don\'t render the\n          child until we\'re able to create a valid breakpoint object. You can override\n          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,\n          and we don\'t have a breakpoint, we\'ll pass ||bp|| as ||null||. It\'s up\n          to you to do something appropriate with the lack of information.\n\n          We handle all sources of the element size changing without using\n          timers, nor requiring you to make any special effort. There\'s no significant performance\n          cost in listening for element resizes.\n\n          In this example, we\'re using a CSS animation to change the size of the element.\n        '], ['\n          ## Element Breakpoints\n\n          Viewport breakpoints are great for laying out entire pages, but often\n          an element should only be concerned with its own size, or the size of\n          a close parent element.\n\n          We can declaratively access the size of an element, and use breakpoints\n          like we did for the viewport above.\n\n          You can use either the high order component or render callback for element\n          breakpoints, but often the render callback is more convenient since it\'s\n          relative to the position of the ||BreakpointRender|| in the tree.\n\n          We\'ll use the previous example of ||BreakpointRender||, with some alterations.\n\n          ||||js\n          <div className="SomeClass">\n            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">\n              {bp => (\n                <div>\n                  <dl>\n                    <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                    <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                    <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                  </dl>\n                </div>\n              )}\n            </BreakpointRender>\n          </div>\n          ||||\n\n          Let\'s break down the props:\n\n          ||breakpoints|| is the same as viewport, except now it\'s relative to our\n          outer ||div|| here.\n\n          ||type|| is set to ||\'element\'||, which tells it to use element breakpoints\n          instead of viewport breakpoints.\n\n          ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),\n          or a string selector that will be matched against the closest parent. If that element\n          doesn\'t match, then we attempt to match it on the grandparent, and so on, until\n          it finds a match, or reaches ||document.body|| where it gives up.\n\n          If an element isn\'t found immediately, we schedule low priority tasks to\n          attempt to find the element again. This will be the case on the initial render\n          unless you pass an ||HTMLElement|| as the ||element|| property.\n\n          So what do we do if we don\'t have an element to check the size of?\n          We\'ll, that\'s up to you. By default, we simply don\'t render the\n          child until we\'re able to create a valid breakpoint object. You can override\n          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,\n          and we don\'t have a breakpoint, we\'ll pass ||bp|| as ||null||. It\'s up\n          to you to do something appropriate with the lack of information.\n\n          We handle all sources of the element size changing without using\n          timers, nor requiring you to make any special effort. There\'s no significant performance\n          cost in listening for element resizes.\n\n          In this example, we\'re using a CSS animation to change the size of the element.\n        ']),
     _templateObject5 = _taggedTemplateLiteral(['\n          ## Caveats\n\n          We do our best to render the child without a wrapper node. If the type\n          of the child element is a ||React.Component|| subclass, or an element\n          type string (e.g. ||<div />|| has type ||\'div\'||), then we can render\n          it without a wrapper.\n\n          If it\'s e.g. a number, or the type is a functional component, we wrap\n          it in a ||<span>|| with only a ||ref|| prop, and pass your element\n          as the child.\n\n          When using the high order component variant, your render method should\n          return exactly one element or ||null||. With the render callback variant, your callback\n          should render exactly one node or ||null||.\n        '], ['\n          ## Caveats\n\n          We do our best to render the child without a wrapper node. If the type\n          of the child element is a ||React.Component|| subclass, or an element\n          type string (e.g. ||<div />|| has type ||\'div\'||), then we can render\n          it without a wrapper.\n\n          If it\'s e.g. a number, or the type is a functional component, we wrap\n          it in a ||<span>|| with only a ||ref|| prop, and pass your element\n          as the child.\n\n          When using the high order component variant, your render method should\n          return exactly one element or ||null||. With the render callback variant, your callback\n          should render exactly one node or ||null||.\n        ']);
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(1);
 
 var React = _interopRequireWildcard(_react);
 
-var _propTypes = __webpack_require__(16);
+var _propTypes = __webpack_require__(10);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _md = __webpack_require__(35);
+var _md = __webpack_require__(19);
 
 var _md2 = _interopRequireDefault(_md);
 
@@ -21812,8 +21955,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var TextHighlightTransition = function (_React$Component) {
-  _inherits(TextHighlightTransition, _React$Component);
+var TextHighlightTransition = function (_React$PureComponent) {
+  _inherits(TextHighlightTransition, _React$PureComponent);
 
   function TextHighlightTransition(props) {
     _classCallCheck(this, TextHighlightTransition);
@@ -21852,7 +21995,7 @@ var TextHighlightTransition = function (_React$Component) {
   }]);
 
   return TextHighlightTransition;
-}(React.Component);
+}(React.PureComponent);
 
 TextHighlightTransition.propTypes = { children: _propTypes2.default.node.isRequired };
 
@@ -21967,8 +22110,8 @@ var DemoElementBp = function () {
   };
 }();
 
-var DocsBreakpoint = function (_React$Component2) {
-  _inherits(DocsBreakpoint, _React$Component2);
+var DocsBreakpoint = function (_React$Component) {
+  _inherits(DocsBreakpoint, _React$Component);
 
   function DocsBreakpoint() {
     _classCallCheck(this, DocsBreakpoint);
@@ -21998,144 +22141,6 @@ var DocsBreakpoint = function (_React$Component2) {
 }(React.Component);
 
 exports.default = DocsBreakpoint;
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = md;
-
-var _react = __webpack_require__(3);
-
-var React = _interopRequireWildcard(_react);
-
-var _marked = __webpack_require__(36);
-
-var _marked2 = _interopRequireDefault(_marked);
-
-var _outdent = __webpack_require__(38);
-
-var _outdent2 = _interopRequireDefault(_outdent);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var renderer = new _marked2.default.Renderer();
-
-// converts markdown to a react element
-// due to the use of template literals in the docs,
-// code sections are marked like ||code|| instead of `code`
-// and code blocks with ||||code||||
-
-var escape1 = function escape1(str) {
-  return str.replace(/</g, '%%%lt%%%').replace(/>/g, '%%%gt%%%').replace(/&/g, '%%%amp%%%').replace(/"/g, '%%%quot%%%');
-};
-
-renderer.heading = function (text, level) {
-  var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-  var open = '<h' + level + '><a name="' + escapedText + '" href="#' + escapedText + '">';
-  var close = '</a></h' + level + '>';
-
-  return '' + open + text + close;
-};
-
-_marked2.default.setOptions({
-  sanitize: false,
-  highlight: function highlight(code) {
-    var output = '';
-    var langle = 0;
-    var jsxbrackets = 0;
-    var isStr = null;
-    var isNum = false;
-    var isComment = false;
-    for (var i = 0; i < code.length; i += 1) {
-      var char = code[i];
-      if (isComment) {
-        if (char === '\n') {
-          isComment = false;
-          output += '</span>';
-          output += escape1(char);
-        } else {
-          output += escape1(char);
-        }
-      } else if (!isStr && char === '<') {
-        langle += 1;
-        output += '<span class="high-jsx">';
-        output += escape1(char);
-      } else if (!isStr && langle && char === '>') {
-        langle -= 1;
-        if (jsxbrackets && langle === 0) {
-          jsxbrackets -= 1;
-          output += '</span>';
-        }
-        output += escape1(char);
-        output += '</span>';
-
-        // TODO: other quotes?
-      } else if (!isStr && langle && char === '{') {
-        jsxbrackets += 1;
-        output += escape1(char);
-        output += '<span class="high-reset">';
-      } else if (!isStr && langle && char === '}') {
-        jsxbrackets -= 1;
-        output += '</span>';
-        output += escape1(char);
-      } else if (char === "'" || char === '"' || char === '`') {
-        if (isStr === char) {
-          isStr = null;
-          output += escape1(char);
-          output += '</span>';
-        } else if (!isStr) {
-          isStr = char;
-          output += '<span class="high-str">';
-          output += escape1(char);
-        } else {
-          output += escape1(char);
-        }
-      } else if (isNum) {
-        if (/\d/.test(char)) {
-          output += escape1(char);
-        } else {
-          isNum = false;
-          output += '</span>';
-          output += escape1(char);
-        }
-      } else if (/\d/.test(char)) {
-        isNum = true;
-        output += '<span class="high-num">';
-        output += escape1(char);
-      } else if (!isStr && char === '/' && code[i + 1] === '/') {
-        isComment = true;
-        output += '<span class="high-comment">';
-        output += escape1(char);
-      } else {
-        output += escape1(char);
-      }
-    }
-    return output;
-  }
-});
-
-function md(strings) {
-  for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    values[_key - 1] = arguments[_key];
-  }
-
-  var markdown = _outdent2.default.apply(undefined, [strings].concat(values)).replace(/\|{4}/g, '```').replace(/\|{2}/g, '`');
-  var html = (0, _marked2.default)(markdown, { renderer: renderer }).replace(/%%%(\w+)%%%/g, '&$1;');
-
-  /* eslint-disable react/no-danger */
-  return React.createElement('div', {
-    dangerouslySetInnerHTML: { __html: html }
-  });
-}
 
 /***/ }),
 /* 36 */
@@ -23623,17 +23628,17 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(1);
 
 var React = _interopRequireWildcard(_react);
 
-var _reactDom = __webpack_require__(10);
+var _reactDom = __webpack_require__(13);
 
-var _getSize = __webpack_require__(40);
-
-var _addResizeListener = __webpack_require__(41);
+var _addResizeListener = __webpack_require__(40);
 
 var _addResizeListener2 = _interopRequireDefault(_addResizeListener);
+
+var _getSize = __webpack_require__(41);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23646,9 +23651,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var calcBreakpoints = function calcBreakpoints(bps, size) {
-  var width = size.width;
-
-
   var keys = [];
   var lt = [];
   var gt = [];
@@ -23680,8 +23682,10 @@ var calcBreakpoints = function calcBreakpoints(bps, size) {
       var solved = solveFor(target, inverted);
 
       // offset by one so the breakpoints don't overlap
-      if (inverted === 'maxWidth') return solved + 1;else return solved - 1;
+      if (inverted === 'maxWidth') return solved + 1;
+      return solved - 1;
     }
+    // eslint-disable-next-line max-len
     throw new TypeError('Failed to solve for breakpoint ' + bp.name + ' on ' + key + ' with value ' + (bp[key] != null ? bp[key] : 'null'));
   };
 
@@ -23702,22 +23706,29 @@ var calcBreakpoints = function calcBreakpoints(bps, size) {
     }
   });
 
-  return { lt: lt, gt: gt, eq: eq, key: keys.join('|||') };
+  return {
+    lt: lt,
+    gt: gt,
+    eq: eq,
+    key: keys.join('|||')
+  };
 };
+
+// type BreakpointChildProps = {
+//   bp: BreakpointResultProp,
+// };
+
+// type HocProps = {};
 
 var BreakpointHoc = function BreakpointHoc(opts) {
   return function (Component) {
     var BreakpointProvider = function BreakpointProvider(props) {
       return React.createElement(
         BreakpointRender,
-        { breakpoints: opts.breakpoints, type: opts.type, _passPreviousKey: true },
-        function (bp, previousKey) {
+        { breakpoints: opts.breakpoints, type: opts.type },
+        function (bp) {
           return React.createElement(Component, _extends({}, props, {
             bp: bp
-
-            // this ensures PureComponent will allow an update when breakpoints change
-            // despite this.ownProps not changing
-            , __RearmUpdateKey: previousKey
           }));
         }
       );
@@ -23740,29 +23751,8 @@ var BreakpointRender = function (_React$Component) {
 
     _this.state = {
       current: null,
-      previousKey: null
-    };
-
-    // creating this in constructor allows the child shouldComponentUpdate to pass
-    // and improves our performance
-    _this.ownProps = {
-      bp: {
-        isGt: function isGt(key) {
-          return !!_this.state.current && _this.state.current.gt.indexOf(key) !== -1;
-        },
-        isLt: function isLt(key) {
-          return !!_this.state.current && _this.state.current.lt.indexOf(key) !== -1;
-        },
-        isEq: function isEq(key) {
-          return !!_this.state.current && _this.state.current.eq.indexOf(key) !== -1;
-        },
-        isGte: function isGte(key) {
-          return _this.ownProps.bp.isGt(key) || _this.ownProps.bp.isEq(key);
-        },
-        isLte: function isLte(key) {
-          return _this.ownProps.bp.isLt(key) || _this.ownProps.bp.isEq(key);
-        }
-      }
+      previousKey: null,
+      bp: _this.createBp()
     };
     return _this;
   }
@@ -23772,6 +23762,29 @@ var BreakpointRender = function (_React$Component) {
 
 
   _createClass(BreakpointRender, [{
+    key: 'createBp',
+    value: function createBp() {
+      var _this2 = this;
+
+      return {
+        isGt: function isGt(key) {
+          return !!_this2.state.current && _this2.state.current.gt.indexOf(key) !== -1;
+        },
+        isLt: function isLt(key) {
+          return !!_this2.state.current && _this2.state.current.lt.indexOf(key) !== -1;
+        },
+        isEq: function isEq(key) {
+          return !!_this2.state.current && _this2.state.current.eq.indexOf(key) !== -1;
+        },
+        isGte: function isGte(key) {
+          return _this2.state.bp.isGt(key) || _this2.state.bp.isEq(key);
+        },
+        isLte: function isLte(key) {
+          return _this2.state.bp.isLt(key) || _this2.state.bp.isEq(key);
+        }
+      };
+    }
+  }, {
     key: 'componentWillMount',
     value: function componentWillMount() {
       if (typeof window === 'undefined') return;
@@ -23785,7 +23798,8 @@ var BreakpointRender = function (_React$Component) {
       var relationships = calcBreakpoints(this.props.breakpoints, size);
       this.setState({
         current: relationships,
-        previousKey: relationships.key
+        previousKey: relationships.key,
+        bp: this.createBp()
       });
     }
   }, {
@@ -23807,7 +23821,8 @@ var BreakpointRender = function (_React$Component) {
       if (relationships.key !== this.state.previousKey) {
         this.setState({
           current: relationships,
-          previousKey: relationships.key
+          previousKey: relationships.key,
+          bp: this.createBp()
         });
       }
     }
@@ -23843,10 +23858,10 @@ var BreakpointRender = function (_React$Component) {
   }, {
     key: 'setupListeners',
     value: function setupListeners() {
-      var _this2 = this;
+      var _this3 = this;
 
       var handleResize = function handleResize() {
-        _this2.maybeUpdate();
+        _this3.maybeUpdate();
       };
 
       if (this.props.type === 'viewport') {
@@ -23860,6 +23875,7 @@ var BreakpointRender = function (_React$Component) {
 
         // either element has changed, or it became null
         // either way, we should clean up existing listeners
+        // eslint-disable-next-line eqeqeq
         if (_element2 != this.previousElement) {
           if (this.cleanup) this.cleanup();
         }
@@ -23879,8 +23895,8 @@ var BreakpointRender = function (_React$Component) {
           }
           var idleCallbackToken = window.requestIdleCallback(function () {
             // try again
-            _this2.setupListeners();
-            _this2.maybeUpdate();
+            _this3.setupListeners();
+            _this3.maybeUpdate();
           }, { timeout: timeout });
 
           this.cleanup = function () {
@@ -23891,7 +23907,7 @@ var BreakpointRender = function (_React$Component) {
 
         this.previousElement = _element2;
         this.cleanup = (0, _addResizeListener2.default)(_element2, function () {
-          _this2.maybeUpdate();
+          _this3.maybeUpdate();
         });
       }
     }
@@ -23903,7 +23919,7 @@ var BreakpointRender = function (_React$Component) {
   }, {
     key: 'wrapChildren',
     value: function wrapChildren(children) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.props.type !== 'element') return children;
 
@@ -23912,9 +23928,9 @@ var BreakpointRender = function (_React$Component) {
       var wrapperProps = {
         ref: function ref(el) {
           if (el instanceof HTMLElement) {
-            _this3.rootElement = el;
+            _this4.rootElement = el;
           } else {
-            _this3.rootElement = null;
+            _this4.rootElement = null;
           }
         }
       };
@@ -23936,12 +23952,13 @@ var BreakpointRender = function (_React$Component) {
       && Object.getPrototypeOf(childNode.type) !== Function.prototype) {
         return React.cloneElement(childNode, {
           ref: function ref(instance) {
-            if (!instance) _this3.rootElement = null;else {
+            if (!instance) _this4.rootElement = null;else {
+              // eslint-disable-next-line
               var el = (0, _reactDom.findDOMNode)(instance);
               if (el instanceof HTMLElement) {
-                _this3.rootElement = el;
+                _this4.rootElement = el;
               } else {
-                _this3.rootElement = null;
+                _this4.rootElement = null;
               }
             }
           }
@@ -23963,11 +23980,7 @@ var BreakpointRender = function (_React$Component) {
           return this.wrapChildren(React.createElement('span', null));
         }
       }
-      // pass the key for the HOC to ensure an update
-      if (this.props._passPreviousKey) {
-        return this.wrapChildren(this.props.children(this.ownProps.bp, this.state.previousKey));
-      }
-      return this.wrapChildren(this.props.children(this.ownProps.bp));
+      return this.wrapChildren(this.props.children(this.state.bp));
     }
   }]);
 
@@ -23979,64 +23992,6 @@ exports.BreakpointRender = BreakpointRender;
 
 /***/ }),
 /* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getElementSize = getElementSize;
-exports.getViewportSize = getViewportSize;
-function getElementSize(element) {
-  if (!element || !element instanceof HTMLElement) throw new TypeError("getElementSize expected dom element but received " + String(element));
-
-  var bounds = element.getBoundingClientRect();
-  var scrollY = window.scrollY;
-  var scrollX = window.scrollX;
-
-  return {
-    // bounds.width/height has worse browser support
-    width: bounds.right - bounds.left,
-    height: bounds.bottom - bounds.top,
-
-    topView: bounds.top,
-    rightView: bounds.right,
-    bottomView: bounds.bottom,
-    leftView: bounds.left,
-
-    topAbs: bounds.top + scrollY,
-    rightAbs: bounds.right + scrollX,
-    bottomAbs: bounds.bottom + scrollY,
-    leftAbs: bounds.left + scrollX
-  };
-}
-
-function getViewportSize() {
-  var scrollY = window.scrollY;
-  var scrollX = window.scrollX;
-  var viewWidth = window.innerWidth;
-  var viewHeight = window.innerHeight;
-
-  return {
-    width: viewWidth,
-    height: viewHeight,
-
-    topView: scrollY,
-    rightView: viewWidth,
-    bottomView: scrollY + viewHeight,
-    leftView: 0,
-
-    topAbs: 0,
-    rightAbs: viewWidth,
-    bottomAbs: viewHeight,
-    leftAbs: 0
-  };
-}
-
-/***/ }),
-/* 41 */
 /***/ (function(module, exports) {
 
 /**
@@ -24212,6 +24167,64 @@ module.exports.removeResizeListener = removeResizeListener;
 
 
 /***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getElementSize = getElementSize;
+exports.getViewportSize = getViewportSize;
+function getElementSize(element) {
+  if (!element || !element instanceof HTMLElement) throw new TypeError("getElementSize expected dom element but received " + String(element));
+
+  var bounds = element.getBoundingClientRect();
+  var scrollY = window.scrollY;
+  var scrollX = window.scrollX;
+
+  return {
+    // bounds.width/height has worse browser support
+    width: bounds.right - bounds.left,
+    height: bounds.bottom - bounds.top,
+
+    topView: bounds.top,
+    rightView: bounds.right,
+    bottomView: bounds.bottom,
+    leftView: bounds.left,
+
+    topAbs: bounds.top + scrollY,
+    rightAbs: bounds.right + scrollX,
+    bottomAbs: bounds.bottom + scrollY,
+    leftAbs: bounds.left + scrollX
+  };
+}
+
+function getViewportSize() {
+  var scrollY = window.scrollY;
+  var scrollX = window.scrollX;
+  var viewWidth = window.innerWidth;
+  var viewHeight = window.innerHeight;
+
+  return {
+    width: viewWidth,
+    height: viewHeight,
+
+    topView: scrollY,
+    rightView: viewWidth,
+    bottomView: scrollY + viewHeight,
+    leftView: 0,
+
+    topAbs: 0,
+    rightAbs: viewWidth,
+    bottomAbs: viewHeight,
+    leftAbs: 0
+  };
+}
+
+/***/ }),
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24226,7 +24239,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(18)(content, options);
+var update = __webpack_require__(12)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -24246,7 +24259,7 @@ if(false) {
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(17)(undefined);
+exports = module.exports = __webpack_require__(11)(undefined);
 // imports
 
 
@@ -24358,18 +24371,305 @@ module.exports = function (css) {
 "use strict";
 
 
-var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render based on viewport and element sizes' }];
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-module.exports = pages;
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _templateObject = _taggedTemplateLiteral(['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n        '], ['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n        ']);
+
+var _react = __webpack_require__(1);
+
+var React = _interopRequireWildcard(_react);
+
+var _md = __webpack_require__(19);
+
+var _md2 = _interopRequireDefault(_md);
+
+var _Ctx = __webpack_require__(46);
+
+var _Ctx2 = _interopRequireDefault(_Ctx);
+
+__webpack_require__(47);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+// import PropTypes from 'prop-types';
+
+
+var DocsBreakpoint = function (_React$Component) {
+  _inherits(DocsBreakpoint, _React$Component);
+
+  function DocsBreakpoint() {
+    _classCallCheck(this, DocsBreakpoint);
+
+    return _possibleConstructorReturn(this, (DocsBreakpoint.__proto__ || Object.getPrototypeOf(DocsBreakpoint)).apply(this, arguments));
+  }
+
+  _createClass(DocsBreakpoint, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        (0, _md2.default)(_templateObject)
+      );
+    }
+  }]);
+
+  return DocsBreakpoint;
+}(React.Component);
+
+exports.default = DocsBreakpoint;
 
 /***/ }),
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+/* eslint-disable */
+
+
+var _react = __webpack_require__(1);
+
+var React = _interopRequireWildcard(_react);
+
+var _propTypes = __webpack_require__(10);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CTX_KEY = '_rearm:Ctx';
+var EMPTY_OBJECT = {};
+
+function objShallowEqual(a, b) {
+  if (a && !b) return false;
+  if (b && !a) return false;
+
+  var keysA = Object.keys(a);
+  var keysB = Object.keys(b);
+  for (var i = 0; i < keysA.length; i += 1) {
+    var key = keysA[i];
+    if (a[key] !== b[key]) return false;
+  }
+  for (var _i = 0; _i < keysB.length; _i += 1) {
+    var _key = keysB[_i];
+    if (a[_key] !== b[_key]) return false;
+  }
+  return false;
+}
+
+// A simple store, similar to redux but with replaceState instead of dispatch
+// it's intended for internal use of the Ctx component; not application code
+var CtxStore = function () {
+  function CtxStore() {
+    _classCallCheck(this, CtxStore);
+
+    this.state = {};
+    this.subs = [];
+  }
+
+  _createClass(CtxStore, [{
+    key: 'subscribe',
+    value: function subscribe(handler) {
+      this.subs.push(handler);
+    }
+  }, {
+    key: 'unsubscribe',
+    value: function unsubscribe(handler) {
+      var index = this.subs.indexOf(handler);
+      if (index !== -1) this.subs.splice(index, 1);
+    }
+  }, {
+    key: 'replaceState',
+    value: function replaceState(newState) {
+      var _this = this;
+
+      this.state = newState;
+      this.subs.forEach(function (sub) {
+        sub(_this.state);
+      });
+    }
+  }]);
+
+  return CtxStore;
+}();
+
+var Ctx = function (_React$Component) {
+  _inherits(Ctx, _React$Component);
+
+  function Ctx(props, context) {
+    _classCallCheck(this, Ctx);
+
+    var _this2 = _possibleConstructorReturn(this, (Ctx.__proto__ || Object.getPrototypeOf(Ctx)).call(this, props, context));
+
+    _this2.store = new CtxStore();
+    _this2.state = {
+      updateCount: 0
+    };
+
+    _this2.onParentStoreChange = function () {
+      _this2.update(_this2.props, _this2.getParentState());
+    };
+
+    if (_this2.context[CTX_KEY]) {
+      _this2.context[CTX_KEY].subscribe(_this2.onParentStoreChange);
+    }
+    return _this2;
+  }
+
+  // just some state to change so we can trigger an update when the internal
+  // state changes
+
+
+  _createClass(Ctx, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      this.update(this.props, this.getParentState());
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      if (this.context[CTX_KEY]) {
+        this.context[CTX_KEY].unsubscribe(this.onParentStoreChange);
+      }
+    }
+  }, {
+    key: 'getChildContext',
+    value: function getChildContext() {
+      return _defineProperty({}, CTX_KEY, this.store);
+    }
+  }, {
+    key: 'performMap',
+    value: function performMap(props, input) {
+      var result = input;
+      var whitelist = props.whitelist,
+          blacklist = props.blacklist,
+          map = props.map,
+          inject = props.inject;
+
+      if (whitelist) {
+        result = {};
+        Object.keys(input).forEach(function (key) {
+          if (whitelist.indexOf(key) !== -1) result[key] = input[key];
+        });
+      }
+      if (blacklist) {
+        result = {};
+        Object.keys(input).forEach(function (key) {
+          if (blacklist.indexOf(key) === -1) result[key] = input[key];
+        });
+      }
+      if (map) {
+        result = map(result);
+      }
+      if (inject) {
+        // if none of the previous conditions matched, we still avoid mutating input
+        if (result === input) result = _extends({}, result, inject);else Object.assign(result, inject);
+      }
+
+      return result;
+    }
+  }, {
+    key: 'getParentState',
+    value: function getParentState() {
+      if (this.context[CTX_KEY]) {
+        return this.context[CTX_KEY].state;
+      }
+      return EMPTY_OBJECT;
+    }
+  }, {
+    key: 'update',
+    value: function update(props, parentState) {
+      var now = this.performMap(props, parentState);
+      var prev = this.store.state;
+      // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
+      // console.log(name, this.props.inject, now);
+      if (objShallowEqual(now, prev)) {
+        return;
+      }
+
+      this.store.replaceState(now);
+      this.setState(function (s) {
+        return { updateCount: s.updateCount + 1 };
+      });
+    }
+  }, {
+    key: 'getChildValue',
+    value: function getChildValue() {
+      return this.store.state;
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      this.update(nextProps, this.getParentState());
+    }
+  }, {
+    key: 'getChildValue',
+    value: function getChildValue() {
+      return this.store.state;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      // a little dance becasue flow thinks this.getChildValue() could change the type
+      // of this.props.children
+      var childValue = null;
+      if (typeof this.props.children === 'function') {
+        childValue = this.getChildValue();
+      }
+      if (typeof this.props.children === 'function') {
+        return this.props.children(childValue);
+      }
+      return this.props.children;
+    }
+  }]);
+
+  return Ctx;
+}(React.Component);
+
+Ctx.contextTypes = _defineProperty({}, CTX_KEY, _propTypes2.default.any);
+Ctx.childContextTypes = _defineProperty({}, CTX_KEY, _propTypes2.default.any);
+exports.default = Ctx;
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(47);
+var content = __webpack_require__(48);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -24377,7 +24677,63 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(18)(content, options);
+var update = __webpack_require__(12)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsCtx.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsCtx.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(11)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render based on viewport and element sizes' }, { path: 'ctx', name: 'Ctx', description: 'A stable and declarative interface to the concept of "context" in React.' }];
+
+module.exports = pages;
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(51);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {"hmr":true}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(12)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -24394,10 +24750,10 @@ if(false) {
 }
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(17)(undefined);
+exports = module.exports = __webpack_require__(11)(undefined);
 // imports
 
 
