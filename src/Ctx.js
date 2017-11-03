@@ -3,7 +3,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
-const CTX_KEY = '_rearm:Ctx';
 const EMPTY_OBJECT = {};
 
 function objShallowEqual(a: Object, b: Object) {
@@ -57,120 +56,128 @@ type CtxState = {
   updateCount: number,
 }
 
-class Ctx extends React.Component<CtxProps, CtxState> {
-  store = new CtxStore();
+function makeCtx(contextKey: string) {
+  class Ctx extends React.Component<CtxProps, CtxState> {
+    static makeCtx = makeCtx;
 
-  // just some state to change so we can trigger an update when the internal
-  // state changes
-  state = {
-    updateCount: 0,
-  }
+    store = new CtxStore();
 
-  static contextTypes = {
-    [CTX_KEY]: PropTypes.any,
-  }
+    // just some state to change so we can trigger an update when the internal
+    // state changes
+    state = {
+      updateCount: 0,
+    }
 
-  static childContextTypes = {
-    [CTX_KEY]: PropTypes.any,
-  }
+    static contextTypes = {
+      [contextKey]: PropTypes.any,
+    }
 
-  constructor(props: CtxProps, context: any) {
-    super(props, context);
+    static childContextTypes = {
+      [contextKey]: PropTypes.any,
+    }
 
-    if (this.context[CTX_KEY]) {
-      this.context[CTX_KEY].subscribe(this.onParentStoreChange);
+    constructor(props: CtxProps, context: any) {
+      super(props, context);
+
+      if (this.context[contextKey]) {
+        this.context[contextKey].subscribe(this.onParentStoreChange);
+      }
+    }
+
+    componentWillMount() {
+      this.update(this.props, this.getParentState());
+    }
+
+    componentWillUnmount() {
+      if (this.context[contextKey]) {
+        this.context[contextKey].unsubscribe(this.onParentStoreChange);
+      }
+    }
+
+    getChildContext() {
+      return { [contextKey]: this.store };
+    }
+
+    onParentStoreChange = () => {
+      this.update(this.props, this.getParentState());
+    };
+
+    performMap(props: CtxProps, input: any) {
+      let result = input;
+      const { whitelist, blacklist, map, inject } = props;
+      if (whitelist) {
+        result = {};
+        Object.keys(input).forEach((key) => {
+          if (whitelist.indexOf(key) !== -1) result[key] = input[key];
+        });
+      }
+      if (blacklist) {
+        result = {};
+        Object.keys(input).forEach((key) => {
+          if (blacklist.indexOf(key) === -1) result[key] = input[key];
+        });
+      }
+      if (map) {
+        result = map(result);
+      }
+      if (inject) {
+        // if none of the previous conditions matched, we still avoid mutating input
+        if (result === input) result = { ...result, ...inject };
+        else Object.assign(result, inject);
+      }
+
+      return result;
+    }
+
+    getParentState() {
+      if (this.context[contextKey]) {
+        return this.context[contextKey].state;
+      }
+      return EMPTY_OBJECT;
+    }
+
+    update(props: CtxProps, parentState: any) {
+      const now = this.performMap(props, parentState);
+      const prev = this.store.state;
+      // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
+      // console.log(name, this.props.inject, now);
+      if (objShallowEqual(now, prev)) {
+        return;
+      }
+
+      this.store.replaceState(now);
+      this.setState(s => ({ updateCount: s.updateCount + 1 }));
+    }
+
+    getChildValue() {
+      return this.store.state;
+    }
+
+    componentWillReceiveProps(nextProps: CtxProps) {
+      this.update(nextProps, this.getParentState());
+    }
+
+    getChildValue() {
+      return this.store.state;
+    }
+
+    render() {
+      // a little dance becasue flow thinks this.getChildValue() could change the type
+      // of this.props.children
+      let childValue = null;
+      if (typeof this.props.children === 'function') {
+        childValue = this.getChildValue();
+      }
+      if (typeof this.props.children === 'function') {
+        return this.props.children(childValue);
+      }
+      return this.props.children;
     }
   }
 
-  componentWillMount() {
-    this.update(this.props, this.getParentState());
-  }
-
-  componentWillUnmount() {
-    if (this.context[CTX_KEY]) {
-      this.context[CTX_KEY].unsubscribe(this.onParentStoreChange);
-    }
-  }
-
-  getChildContext() {
-    return { [CTX_KEY]: this.store };
-  }
-
-  onParentStoreChange = () => {
-    this.update(this.props, this.getParentState());
-  };
-
-  performMap(props: CtxProps, input: any) {
-    let result = input;
-    const { whitelist, blacklist, map, inject } = props;
-    if (whitelist) {
-      result = {};
-      Object.keys(input).forEach((key) => {
-        if (whitelist.indexOf(key) !== -1) result[key] = input[key];
-      });
-    }
-    if (blacklist) {
-      result = {};
-      Object.keys(input).forEach((key) => {
-        if (blacklist.indexOf(key) === -1) result[key] = input[key];
-      });
-    }
-    if (map) {
-      result = map(result);
-    }
-    if (inject) {
-      // if none of the previous conditions matched, we still avoid mutating input
-      if (result === input) result = { ...result, ...inject };
-      else Object.assign(result, inject);
-    }
-
-    return result;
-  }
-
-  getParentState() {
-    if (this.context[CTX_KEY]) {
-      return this.context[CTX_KEY].state;
-    }
-    return EMPTY_OBJECT;
-  }
-
-  update(props: CtxProps, parentState: any) {
-    const now = this.performMap(props, parentState);
-    const prev = this.store.state;
-    // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
-    // console.log(name, this.props.inject, now);
-    if (objShallowEqual(now, prev)) {
-      return;
-    }
-
-    this.store.replaceState(now);
-    this.setState(s => ({ updateCount: s.updateCount + 1 }));
-  }
-
-  getChildValue() {
-    return this.store.state;
-  }
-
-  componentWillReceiveProps(nextProps: CtxProps) {
-    this.update(nextProps, this.getParentState());
-  }
-
-  getChildValue() {
-    return this.store.state;
-  }
-
-  render() {
-    // a little dance becasue flow thinks this.getChildValue() could change the type
-    // of this.props.children
-    let childValue = null;
-    if (typeof this.props.children === 'function') {
-      childValue = this.getChildValue();
-    }
-    if (typeof this.props.children === 'function') {
-      return this.props.children(childValue);
-    }
-    return this.props.children;
-  }
+  return Ctx;
 }
 
-export default Ctx;
+const DefaultCtx = makeCtx('_rearm:Ctx');
+
+module.exports = DefaultCtx;
