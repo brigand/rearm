@@ -183,11 +183,11 @@ export default class DocsBreakpoint extends React.Component {
           context key. To get around this, you can create a ||Ctx|| that uses a different
           React context key.
 
-          |||jsx
+          ||||jsx
           const MyCtx = Ctx.makeCtx('my-unique-key');
 
           <MyCtx inject={...}>
-          |||
+          ||||
 
           Then you use ||MyCtx|| in places where you want to receive or inject
           that context. It won't clash with any other ||Ctx|| elements on the page.
