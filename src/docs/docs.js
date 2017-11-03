@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import DocsBreakpoint from './apis/DocsBreakpoint';
+import DocsCtx from './apis/DocsCtx';
 import pages from './pages';
 import './Docs.css';
 
@@ -11,6 +12,7 @@ type Props = {
 
 const pageToDoc = {
   breakpoint: DocsBreakpoint,
+  ctx: DocsCtx,
 };
 
 const urlPartsRaw = window.location.pathname.split('/');
