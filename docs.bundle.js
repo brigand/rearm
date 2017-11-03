@@ -24377,7 +24377,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n        '], ['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n        ']);
+var _templateObject = _taggedTemplateLiteral(['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that filter or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          React context key.\n\n          |||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          |||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n        '], ['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that filter or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          React context key.\n\n          |||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          |||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n        ']);
 
 var _react = __webpack_require__(1);
 
@@ -24439,10 +24439,6 @@ exports.default = DocsBreakpoint;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -24469,7 +24465,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var CTX_KEY = '_rearm:Ctx';
 var EMPTY_OBJECT = {};
 
 function objShallowEqual(a, b) {
@@ -24525,142 +24520,151 @@ var CtxStore = function () {
   return CtxStore;
 }();
 
-var Ctx = function (_React$Component) {
-  _inherits(Ctx, _React$Component);
+function makeCtx(contextKey) {
+  var Ctx = function (_React$Component) {
+    _inherits(Ctx, _React$Component);
 
-  function Ctx(props, context) {
-    _classCallCheck(this, Ctx);
+    function Ctx(props, context) {
+      _classCallCheck(this, Ctx);
 
-    var _this2 = _possibleConstructorReturn(this, (Ctx.__proto__ || Object.getPrototypeOf(Ctx)).call(this, props, context));
+      var _this2 = _possibleConstructorReturn(this, (Ctx.__proto__ || Object.getPrototypeOf(Ctx)).call(this, props, context));
 
-    _this2.store = new CtxStore();
-    _this2.state = {
-      updateCount: 0
-    };
+      _this2.store = new CtxStore();
+      _this2.state = {
+        updateCount: 0
+      };
 
-    _this2.onParentStoreChange = function () {
-      _this2.update(_this2.props, _this2.getParentState());
-    };
+      _this2.onParentStoreChange = function () {
+        _this2.update(_this2.props, _this2.getParentState());
+      };
 
-    if (_this2.context[CTX_KEY]) {
-      _this2.context[CTX_KEY].subscribe(_this2.onParentStoreChange);
-    }
-    return _this2;
-  }
-
-  // just some state to change so we can trigger an update when the internal
-  // state changes
-
-
-  _createClass(Ctx, [{
-    key: 'componentWillMount',
-    value: function componentWillMount() {
-      this.update(this.props, this.getParentState());
-    }
-  }, {
-    key: 'componentWillUnmount',
-    value: function componentWillUnmount() {
-      if (this.context[CTX_KEY]) {
-        this.context[CTX_KEY].unsubscribe(this.onParentStoreChange);
+      if (_this2.context[contextKey]) {
+        _this2.context[contextKey].subscribe(_this2.onParentStoreChange);
       }
+      return _this2;
     }
-  }, {
-    key: 'getChildContext',
-    value: function getChildContext() {
-      return _defineProperty({}, CTX_KEY, this.store);
-    }
-  }, {
-    key: 'performMap',
-    value: function performMap(props, input) {
-      var result = input;
-      var whitelist = props.whitelist,
-          blacklist = props.blacklist,
-          map = props.map,
-          inject = props.inject;
 
-      if (whitelist) {
-        result = {};
-        Object.keys(input).forEach(function (key) {
-          if (whitelist.indexOf(key) !== -1) result[key] = input[key];
+    // just some state to change so we can trigger an update when the internal
+    // state changes
+
+
+    _createClass(Ctx, [{
+      key: 'componentWillMount',
+      value: function componentWillMount() {
+        this.update(this.props, this.getParentState());
+      }
+    }, {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        if (this.context[contextKey]) {
+          this.context[contextKey].unsubscribe(this.onParentStoreChange);
+        }
+      }
+    }, {
+      key: 'getChildContext',
+      value: function getChildContext() {
+        return _defineProperty({}, contextKey, this.store);
+      }
+    }, {
+      key: 'performMap',
+      value: function performMap(props, input) {
+        var result = input;
+        var whitelist = props.whitelist,
+            blacklist = props.blacklist,
+            map = props.map,
+            inject = props.inject;
+
+        if (whitelist) {
+          result = {};
+          Object.keys(input).forEach(function (key) {
+            if (whitelist.indexOf(key) !== -1) result[key] = input[key];
+          });
+        }
+        if (blacklist) {
+          result = {};
+          Object.keys(input).forEach(function (key) {
+            if (blacklist.indexOf(key) === -1) result[key] = input[key];
+          });
+        }
+        if (map) {
+          result = map(result);
+        }
+        if (inject) {
+          // if none of the previous conditions matched, we still avoid mutating input
+          if (result === input) result = _extends({}, result, inject);else Object.assign(result, inject);
+        }
+
+        return result;
+      }
+    }, {
+      key: 'getParentState',
+      value: function getParentState() {
+        if (this.context[contextKey]) {
+          return this.context[contextKey].state;
+        }
+        return EMPTY_OBJECT;
+      }
+    }, {
+      key: 'update',
+      value: function update(props, parentState) {
+        var now = this.performMap(props, parentState);
+        var prev = this.store.state;
+        // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
+        // console.log(name, this.props.inject, now);
+        if (objShallowEqual(now, prev)) {
+          return;
+        }
+
+        this.store.replaceState(now);
+        this.setState(function (s) {
+          return { updateCount: s.updateCount + 1 };
         });
       }
-      if (blacklist) {
-        result = {};
-        Object.keys(input).forEach(function (key) {
-          if (blacklist.indexOf(key) === -1) result[key] = input[key];
-        });
+    }, {
+      key: 'getChildValue',
+      value: function getChildValue() {
+        return this.store.state;
       }
-      if (map) {
-        result = map(result);
+    }, {
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(nextProps) {
+        this.update(nextProps, this.getParentState());
       }
-      if (inject) {
-        // if none of the previous conditions matched, we still avoid mutating input
-        if (result === input) result = _extends({}, result, inject);else Object.assign(result, inject);
+    }, {
+      key: 'getChildValue',
+      value: function getChildValue() {
+        return this.store.state;
       }
+    }, {
+      key: 'render',
+      value: function render() {
+        // a little dance becasue flow thinks this.getChildValue() could change the type
+        // of this.props.children
+        var childValue = null;
+        if (typeof this.props.children === 'function') {
+          childValue = this.getChildValue();
+        }
+        if (typeof this.props.children === 'function') {
+          return this.props.children(childValue);
+        }
+        return this.props.children;
+      }
+    }]);
 
-      return result;
-    }
-  }, {
-    key: 'getParentState',
-    value: function getParentState() {
-      if (this.context[CTX_KEY]) {
-        return this.context[CTX_KEY].state;
-      }
-      return EMPTY_OBJECT;
-    }
-  }, {
-    key: 'update',
-    value: function update(props, parentState) {
-      var now = this.performMap(props, parentState);
-      var prev = this.store.state;
-      // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
-      // console.log(name, this.props.inject, now);
-      if (objShallowEqual(now, prev)) {
-        return;
-      }
+    return Ctx;
+  }(React.Component);
 
-      this.store.replaceState(now);
-      this.setState(function (s) {
-        return { updateCount: s.updateCount + 1 };
-      });
-    }
-  }, {
-    key: 'getChildValue',
-    value: function getChildValue() {
-      return this.store.state;
-    }
-  }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      this.update(nextProps, this.getParentState());
-    }
-  }, {
-    key: 'getChildValue',
-    value: function getChildValue() {
-      return this.store.state;
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      // a little dance becasue flow thinks this.getChildValue() could change the type
-      // of this.props.children
-      var childValue = null;
-      if (typeof this.props.children === 'function') {
-        childValue = this.getChildValue();
-      }
-      if (typeof this.props.children === 'function') {
-        return this.props.children(childValue);
-      }
-      return this.props.children;
-    }
-  }]);
+  Ctx.makeCtx = makeCtx;
+  Ctx.contextTypes = _defineProperty({}, contextKey, _propTypes2.default.any);
+  Ctx.childContextTypes = _defineProperty({}, contextKey, _propTypes2.default.any);
+
 
   return Ctx;
-}(React.Component);
+}
 
-Ctx.contextTypes = _defineProperty({}, CTX_KEY, _propTypes2.default.any);
-Ctx.childContextTypes = _defineProperty({}, CTX_KEY, _propTypes2.default.any);
-exports.default = Ctx;
+var DefaultCtx = makeCtx('_rearm:Ctx');
+
+module.exports = DefaultCtx;
 
 /***/ }),
 /* 47 */
