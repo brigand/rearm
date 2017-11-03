@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/docs/docs.js',
   output: {
     filename: 'docs.bundle.js',
-    path: pathJoin(__dirname, '..', '..', 'gh-pages'),
+    path: pathJoin(__dirname, '..', '..', 'docs-pub'),
   },
   module: {
     rules: [
