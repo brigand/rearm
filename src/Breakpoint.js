@@ -218,6 +218,20 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
 
   getElement(): ?HTMLElement {
     const element = this.props.element || null;
+
+    // default case; direct parent
+    if (element === ':parent:' || !element) {
+      const pElement: ?HTMLElement = this.rootElement;
+      return pElement.parentElement;
+    }
+
+    // the direct child can be used
+    if (element === ':child:') {
+      let pElement: ?HTMLElement = this.rootElement;
+      return pElement;
+    }
+
+    // css selector, follows parent tree
     if (typeof element === 'string') {
       const query = element;
 

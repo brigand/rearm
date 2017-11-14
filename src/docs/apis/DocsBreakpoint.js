@@ -82,8 +82,8 @@ const DemoElementBp = (() => {
 
   const className = `DocsBreakpoint__DemoElementBp`;
   return () => (
-    <div className={className}>
-      <BreakpointRender breakpoints={breakpoints} type="element" element={`.${className}`}>
+    <div>
+      <BreakpointRender breakpoints={breakpoints} type="element" element=":parent:">
         {bp => (
           <div className="DocsBreakpoint__DemoElementBp__Inner">
             {bp.isEq('small') && 'small'}
@@ -255,8 +255,13 @@ export default class DocsBreakpoint extends React.Component {
           ||type|| is set to ||'element'||, which tells it to use element breakpoints
           instead of viewport breakpoints.
 
-          ||element|| is either an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||),
-          or a string selector that will be matched against the closest parent. If that element
+          If ||element|| is an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||)
+          that element will be used.
+
+          If ||element|| isn't defined, it will default to ||':parent:'||. ||':parent:' uses the direct parent
+          of ||BreakpointRender||. Similarly, passing ||':child:'|| will use the direct child of ||BreakpointRender||.
+
+          If ||element|| a string selector it will be matched against the closest parent. If that element
           doesn't match, then we attempt to match it on the grandparent, and so on, until
           it finds a match, or reaches ||document.body|| where it gives up.
 
