@@ -258,7 +258,7 @@ export default class DocsBreakpoint extends React.Component {
           If ||element|| is an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||)
           that element will be used.
 
-          If ||element|| isn't defined, it will default to ||':parent:'||. ||':parent:' uses the direct parent
+          If ||element|| isn't defined, it will default to ||':parent:'||. ||':parent:'|| uses the direct parent
           of ||BreakpointRender||. Similarly, passing ||':child:'|| will use the direct child of ||BreakpointRender||.
 
           If ||element|| a string selector it will be matched against the closest parent. If that element
