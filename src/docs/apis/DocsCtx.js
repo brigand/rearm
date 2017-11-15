@@ -5,7 +5,7 @@ import Ctx from '../../Ctx';
 import './DocsCtx.css';
 
 
-export default class DocsBreakpoint extends React.Component {
+export default class DocsCtx extends React.Component {
   render() {
     return (
       <div>
