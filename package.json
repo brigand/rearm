@@ -9,7 +9,8 @@
     "build-docs": "webpack --config ./src/docs/webpack.config.js && node ./scripts/buildDocs.js",
     "build": "babel src --out-dir lib --ignore src/docs,src/__tests__",
     "prepare": "npm run build",
-    "gh-pages": "npm run build-docs && gh-pages -d docs-pub"
+    "gh-pages": "npm run build-docs && gh-pages -d docs-pub",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
