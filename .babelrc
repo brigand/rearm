@@ -1,4 +1,9 @@
 {
   "presets": ["latest", "react"],
-  "plugins": ["transform-object-rest-spread", "transform-class-properties"]
+  "plugins": ["transform-object-rest-spread", "transform-class-properties"],
+  "env": {
+    "production": {
+      "plugins": ["./scripts/babel-plugin-react-no-star.js"]
+    }
+  }
 }
