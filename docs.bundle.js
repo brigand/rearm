@@ -22332,10 +22332,12 @@ var DemoTwo = function () {
 var DemoElementBp = function () {
   var breakpoints = [{ name: 'small', maxWidth: 300 }, { name: 'medium', minWidth: 'small', maxWidth: 600 }, { name: 'large', minWidth: 'medium' }];
 
+  var className = 'DocsBreakpoint__DemoElementBp';
+
   return function () {
     return React.createElement(
       'div',
-      null,
+      { className: className },
       React.createElement(
         _Breakpoint.BreakpointRender,
         { breakpoints: breakpoints, type: 'element', element: ':parent:' },
