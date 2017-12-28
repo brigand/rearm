@@ -11,6 +11,10 @@ export type Breakpoint = {
 
   // the breakpoint name
   name: string,
+
+  // pass the exact size and render on any size change while this
+  // breakpoint is active (isEq would return true)
+  exact?: boolean,
 };
 
 export type BreakpointHocOptsViewport = {
@@ -31,6 +35,8 @@ type Relationships = {
   gt: Array<string>,
   eq: Array<string>,
   key: string,
+  width: ?number,
+  height: ?number,
 };
 
 const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
@@ -72,6 +78,7 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
     throw new TypeError(`Failed to solve for breakpoint ${bp.name} on ${key} with value ${bp[key] != null ? bp[key] : 'null'}`);
   };
 
+  let needsExact = false;
   bps.forEach((bp) => {
     const minWidth = solveFor(bp, 'minWidth');
     const maxWidth = solveFor(bp, 'maxWidth');
@@ -85,15 +92,24 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
     }
     if (size.width >= minWidth && size.width <= maxWidth) {
       eq.push(bp.name);
+      if (bp.exact) {
+        needsExact = true;
+      }
       keys.push(`eq:${bp.name}`);
     }
   });
+
+  if (needsExact) {
+    keys.push(`exact:${size.width}:${size.height}`);
+  }
 
   return {
     lt,
     gt,
     eq,
     key: keys.join('|||'),
+    width: needsExact ? size.width : null,
+    height: needsExact ? size.height : null,
   };
 };
 
@@ -166,6 +182,8 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
       isEq: (key: string) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
       isGte: (key: string) => this.state.bp.isGt(key) || this.state.bp.isEq(key),
       isLte: (key: string) => this.state.bp.isLt(key) || this.state.bp.isEq(key),
+      width: () => (this.state.current && this.state.current.width) || null,
+      height: () => (this.state.current && this.state.current.height) || null,
     };
   }
 
@@ -205,8 +223,9 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     if (relationships.key !== this.state.previousKey) {
       this.setState({
         current: relationships,
+        size,
         previousKey: relationships.key,
-        bp: this.createBp(),
+        bp: this.createBp(size),
       });
     }
   }
@@ -222,7 +241,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     // default case; direct parent
     if (element === ':parent:' || !element) {
       const pElement: ?HTMLElement = this.rootElement;
-      return pElement.parentElement;
+      return pElement && pElement.parentElement;
     }
 
     // the direct child can be used

@@ -29,7 +29,7 @@ const DemoOne = (() => {
   const breakpoints = [
     { name: 'small', maxWidth: 600 },
     { name: 'medium', minWidth: 'small', maxWidth: 'large' },
-    { name: 'large', minWidth: 1200 },
+    { name: 'large', minWidth: 1200, exact: true },
   ];
 
   // eslint-disable-next-line
@@ -45,7 +45,14 @@ const DemoOne = (() => {
         ))}
       </div>
     ));
-    return <div>{results}</div>;
+    return (
+      <div>
+        {results}
+        <div>
+          {`bp.width(): ${bp.width()} bp.height(): ${bp.height()}`}
+        </div>
+      </div>
+    );
   };
   return BreakpointHoc({ breakpoints, type: 'viewport' })(C);
 })();
@@ -80,7 +87,6 @@ const DemoElementBp = (() => {
     { name: 'large', minWidth: 'medium' },
   ];
 
-  const className = `DocsBreakpoint__DemoElementBp`;
   return () => (
     <div>
       <BreakpointRender breakpoints={breakpoints} type="element" element=":parent:">
@@ -152,7 +158,7 @@ export default class DocsBreakpoint extends React.Component {
           const breakpoints = [
             { name: 'small', maxWidth: 600 },
             { name: 'medium', minWidth: 601, maxWidth: 1199 },
-            { name: 'large', minWidth: 1200 },
+            { name: 'large', minWidth: 1200, exact: true },
           ];
           export default BreakpointHoc({ breakpoints, type: 'viewport' });
           ||||
@@ -190,9 +196,22 @@ export default class DocsBreakpoint extends React.Component {
           const breakpoints = [
             { name: 'small', maxWidth: 600 },
             { name: 'medium', minWidth: 'small', maxWidth: 'large' },
-            { name: 'large', minWidth: 1200 },
+            { name: 'large', minWidth: 1200, exact: true },
           ];
           ||||
+
+          In the demo above, we also have ||bp.width()|| and ||bp.height()||. These
+          are provided when the current breakpoint has an 'exact' property.
+
+          Normally, we only render your component when you go from e.g. small to
+          medium. For our 'large' breakpoint we specified 'exact', so when
+          ||bp.isEq('large')|| would return true, we update your component on
+          every size change, until it goes into the 'medium' breakpoint where
+          we go back to not rendering again until it moves to 'small' or 'large'.
+
+          Often you only need to do some math based on the width or height for
+          certain size ranges. The 'exact' option gives you the hard numbers when
+          you need them, and the higher performance when you don't.
         `}
         {md`
           The render variant is similar, but can be used more easily in some
