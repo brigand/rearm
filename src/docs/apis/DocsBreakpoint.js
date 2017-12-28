@@ -87,8 +87,10 @@ const DemoElementBp = (() => {
     { name: 'large', minWidth: 'medium' },
   ];
 
+  const className = `DocsBreakpoint__DemoElementBp`;
+
   return () => (
-    <div>
+    <div className={className}>
       <BreakpointRender breakpoints={breakpoints} type="element" element=":parent:">
         {bp => (
           <div className="DocsBreakpoint__DemoElementBp__Inner">
