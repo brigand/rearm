@@ -65,6 +65,21 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports = __webpack_require__(22);
+} else {
+  module.exports = __webpack_require__(23);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -254,21 +269,6 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(22);
-} else {
-  module.exports = __webpack_require__(23);
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -368,7 +368,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 4 */
@@ -469,99 +469,6 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-
-
-var emptyObject = {};
-
-if (process.env.NODE_ENV !== 'production') {
-  Object.freeze(emptyObject);
-}
-
-module.exports = emptyObject;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-
-
-var emptyFunction = __webpack_require__(2);
-
-/**
- * Similar to invariant but only logs a warning if the condition is not met.
- * This can be used to log issues in development environments in critical
- * paths. Removing the logging code for production environments will keep the
- * same logic and follow the same code paths.
- */
-
-var warning = emptyFunction;
-
-if (process.env.NODE_ENV !== 'production') {
-  var printWarning = function printWarning(format) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    var argIndex = 0;
-    var message = 'Warning: ' + format.replace(/%s/g, function () {
-      return args[argIndex++];
-    });
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-
-  warning = function warning(condition, format) {
-    if (format === undefined) {
-      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-    }
-
-    if (format.indexOf('Failed Composite propType: ') === 0) {
-      return; // Ignore CompositeComponent proptype check.
-    }
-
-    if (!condition) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-        args[_key2 - 2] = arguments[_key2];
-      }
-
-      printWarning.apply(undefined, [format].concat(args));
-    }
-  };
-}
-
-module.exports = warning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports) {
 
 /*
@@ -643,7 +550,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -1015,7 +922,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1024,158 +931,91 @@ function updateLink (link, options, obj) {
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
  */
 
 
+
+var emptyObject = {};
 
 if (process.env.NODE_ENV !== 'production') {
-  var invariant = __webpack_require__(3);
-  var warning = __webpack_require__(6);
-  var ReactPropTypesSecret = __webpack_require__(10);
-  var loggedTypeFailures = {};
+  Object.freeze(emptyObject);
 }
 
-/**
- * Assert that the values match with the type specs.
- * Error messages are memorized and will only be shown once.
+module.exports = emptyObject;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * @param {object} typeSpecs Map of name to a ReactPropType
- * @param {object} values Runtime values that need to be type-checked
- * @param {string} location e.g. "prop", "context", "child context"
- * @param {string} componentName Name of the component for error messages.
- * @param {?Function} getStack Returns the component stack.
- * @private
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
  */
-function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
-  if (process.env.NODE_ENV !== 'production') {
-    for (var typeSpecName in typeSpecs) {
-      if (typeSpecs.hasOwnProperty(typeSpecName)) {
-        var error;
-        // Prop type validation may throw. In case they do, we don't want to
-        // fail the render phase where it didn't fail before. So we log it.
-        // After these have been cleaned up, we'll let them throw.
-        try {
-          // This is intentionally an invariant that gets caught. It's the same
-          // behavior as without this statement except with a better message.
-          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
-          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
-        } catch (ex) {
-          error = ex;
-        }
-        warning(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
-        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
-          // Only monitor this failure once because there tends to be a lot of the
-          // same error.
-          loggedTypeFailures[error.message] = true;
 
-          var stack = getStack ? getStack() : '';
 
-          warning(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
-        }
-      }
+
+var emptyFunction = __webpack_require__(2);
+
+/**
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+var warning = emptyFunction;
+
+if (process.env.NODE_ENV !== 'production') {
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
     }
-  }
-}
 
-module.exports = checkPropTypes;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-
-var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
-
-module.exports = ReactPropTypesSecret;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-
-
-var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-
-/**
- * Simple, lightweight module assisting with the detection and context of
- * Worker. Helps avoid circular dependencies and allows code to reason about
- * whether or not they are in a Worker, even if they never include the main
- * `ReactWorker` dependency.
- */
-var ExecutionEnvironment = {
-
-  canUseDOM: canUseDOM,
-
-  canUseWorkers: typeof Worker !== 'undefined',
-
-  canUseEventListeners: canUseDOM && !!(window.addEventListener || window.attachEvent),
-
-  canUseViewport: canUseDOM && !!window.screen,
-
-  isInWorker: !canUseDOM // For now, this is true - might change in the future.
-
-};
-
-module.exports = ExecutionEnvironment;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-if (process.env.NODE_ENV !== 'production') {
-  var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
-    Symbol.for &&
-    Symbol.for('react.element')) ||
-    0xeac7;
-
-  var isValidElement = function(object) {
-    return typeof object === 'object' &&
-      object !== null &&
-      object.$$typeof === REACT_ELEMENT_TYPE;
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
   };
 
-  // By explicitly using `prop-types` you are opting into new development behavior.
-  // http://fb.me/prop-types-in-prod
-  var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(34)(isValidElement, throwOnDirectAccess);
-} else {
-  // By explicitly using `prop-types` you are opting into new production behavior.
-  // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(35)();
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+module.exports = warning;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 13 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1186,7 +1026,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = md;
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
@@ -1313,6 +1153,166 @@ function md(strings) {
 }
 
 /***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+
+if (process.env.NODE_ENV !== 'production') {
+  var invariant = __webpack_require__(3);
+  var warning = __webpack_require__(8);
+  var ReactPropTypesSecret = __webpack_require__(11);
+  var loggedTypeFailures = {};
+}
+
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+  if (process.env.NODE_ENV !== 'production') {
+    for (var typeSpecName in typeSpecs) {
+      if (typeSpecs.hasOwnProperty(typeSpecName)) {
+        var error;
+        // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
+        } catch (ex) {
+          error = ex;
+        }
+        warning(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures[error.message] = true;
+
+          var stack = getStack ? getStack() : '';
+
+          warning(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+        }
+      }
+    }
+  }
+}
+
+module.exports = checkPropTypes;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+
+var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+module.exports = ReactPropTypesSecret;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+
+
+var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+
+/**
+ * Simple, lightweight module assisting with the detection and context of
+ * Worker. Helps avoid circular dependencies and allows code to reason about
+ * whether or not they are in a Worker, even if they never include the main
+ * `ReactWorker` dependency.
+ */
+var ExecutionEnvironment = {
+
+  canUseDOM: canUseDOM,
+
+  canUseWorkers: typeof Worker !== 'undefined',
+
+  canUseEventListeners: canUseDOM && !!(window.addEventListener || window.attachEvent),
+
+  canUseViewport: canUseDOM && !!window.screen,
+
+  isInWorker: !canUseDOM // For now, this is true - might change in the future.
+
+};
+
+module.exports = ExecutionEnvironment;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== 'production') {
+  var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
+    Symbol.for &&
+    Symbol.for('react.element')) ||
+    0xeac7;
+
+  var isValidElement = function(object) {
+    return typeof object === 'object' &&
+      object !== null &&
+      object.$$typeof === REACT_ELEMENT_TYPE;
+  };
+
+  // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+  var throwOnDirectAccess = true;
+  module.exports = __webpack_require__(34)(isValidElement, throwOnDirectAccess);
+} else {
+  // By explicitly using `prop-types` you are opting into new production behavior.
+  // http://fb.me/prop-types-in-prod
+  module.exports = __webpack_require__(35)();
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1356,7 +1356,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = __webpack_require__(27);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 15 */
@@ -1437,7 +1437,7 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 16 */
@@ -1638,11 +1638,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 /* eslint-disable */
 
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
-var _propTypes = __webpack_require__(12);
+var _propTypes = __webpack_require__(13);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
@@ -1868,7 +1868,7 @@ module.exports = DefaultCtx;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
@@ -1888,11 +1888,15 @@ var _DocsCtxState = __webpack_require__(49);
 
 var _DocsCtxState2 = _interopRequireDefault(_DocsCtxState);
 
-var _pages = __webpack_require__(53);
+var _DocsPortalGun = __webpack_require__(53);
+
+var _DocsPortalGun2 = _interopRequireDefault(_DocsPortalGun);
+
+var _pages = __webpack_require__(57);
 
 var _pages2 = _interopRequireDefault(_pages);
 
-__webpack_require__(54);
+__webpack_require__(58);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1907,7 +1911,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var pageToDoc = {
   breakpoint: _DocsBreakpoint2.default,
   ctx: _DocsCtx2.default,
-  ctxstate: _DocsCtxState2.default
+  ctxstate: _DocsCtxState2.default,
+  portalgun: _DocsPortalGun2.default
 };
 
 var urlPartsRaw = window.location.pathname.split('/');
@@ -2043,7 +2048,7 @@ if (root) {
  This source code is licensed under the MIT license found in the
  LICENSE file in the root directory of this source tree.
 */
-var f=__webpack_require__(4),p=__webpack_require__(5);__webpack_require__(3);var r=__webpack_require__(2);
+var f=__webpack_require__(4),p=__webpack_require__(7);__webpack_require__(3);var r=__webpack_require__(2);
 function t(a){for(var b=arguments.length-1,d="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,e=0;e<b;e++)d+="\x26args[]\x3d"+encodeURIComponent(arguments[e+1]);b=Error(d+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}
 var u={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}};function v(a,b,d){this.props=a;this.context=b;this.refs=p;this.updater=d||u}v.prototype.isReactComponent={};v.prototype.setState=function(a,b){"object"!==typeof a&&"function"!==typeof a&&null!=a?t("85"):void 0;this.updater.enqueueSetState(this,a,b,"setState")};v.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate")};
 function w(a,b,d){this.props=a;this.context=b;this.refs=p;this.updater=d||u}function x(){}x.prototype=v.prototype;var y=w.prototype=new x;y.constructor=w;f(y,v.prototype);y.isPureReactComponent=!0;function z(a,b,d){this.props=a;this.context=b;this.refs=p;this.updater=d||u}var A=z.prototype=new x;A.constructor=z;f(A,v.prototype);A.unstable_isAsyncReactComponent=!0;A.render=function(){return this.props.children};
@@ -2081,11 +2086,11 @@ if (process.env.NODE_ENV !== "production") {
 'use strict';
 
 var objectAssign$1 = __webpack_require__(4);
-var require$$0 = __webpack_require__(6);
-var emptyObject = __webpack_require__(5);
+var require$$0 = __webpack_require__(8);
+var emptyObject = __webpack_require__(7);
 var invariant = __webpack_require__(3);
 var emptyFunction = __webpack_require__(2);
-var checkPropTypes = __webpack_require__(9);
+var checkPropTypes = __webpack_require__(10);
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3763,7 +3768,7 @@ module.exports = ReactEntry;
 })();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 24 */
@@ -3780,7 +3785,7 @@ module.exports = ReactEntry;
  LICENSE file in the root directory of this source tree.
  Modernizr 3.0.0pre (Custom Build) | MIT
 */
-var aa=__webpack_require__(1);__webpack_require__(3);var l=__webpack_require__(11),n=__webpack_require__(4),ba=__webpack_require__(15),ca=__webpack_require__(2),da=__webpack_require__(5),ea=__webpack_require__(16),fa=__webpack_require__(17),ha=__webpack_require__(18),ia=__webpack_require__(19);
+var aa=__webpack_require__(0);__webpack_require__(3);var l=__webpack_require__(12),n=__webpack_require__(4),ba=__webpack_require__(15),ca=__webpack_require__(2),da=__webpack_require__(7),ea=__webpack_require__(16),fa=__webpack_require__(17),ha=__webpack_require__(18),ia=__webpack_require__(19);
 function w(a){for(var b=arguments.length-1,c="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,d=0;d<b;d++)c+="\x26args[]\x3d"+encodeURIComponent(arguments[d+1]);b=Error(c+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}aa?void 0:w("227");
 function ja(a){switch(a){case "svg":return"http://www.w3.org/2000/svg";case "math":return"http://www.w3.org/1998/Math/MathML";default:return"http://www.w3.org/1999/xhtml"}}
 var ka={Namespaces:{html:"http://www.w3.org/1999/xhtml",mathml:"http://www.w3.org/1998/Math/MathML",svg:"http://www.w3.org/2000/svg"},getIntrinsicNamespace:ja,getChildNamespace:function(a,b){return null==a||"http://www.w3.org/1999/xhtml"===a?ja(b):"http://www.w3.org/2000/svg"===a&&"foreignObject"===b?"http://www.w3.org/1999/xhtml":a}},la=null,oa={};
@@ -4105,19 +4110,19 @@ if (process.env.NODE_ENV !== "production") {
 
 'use strict';
 
-var react = __webpack_require__(1);
+var react = __webpack_require__(0);
 var invariant = __webpack_require__(3);
-var ExecutionEnvironment = __webpack_require__(11);
+var ExecutionEnvironment = __webpack_require__(12);
 var _assign = __webpack_require__(4);
 var EventListener = __webpack_require__(15);
-var require$$0 = __webpack_require__(6);
+var require$$0 = __webpack_require__(8);
 var hyphenateStyleName = __webpack_require__(28);
 var emptyFunction = __webpack_require__(2);
 var camelizeStyleName = __webpack_require__(30);
 var performanceNow = __webpack_require__(32);
-var propTypes = __webpack_require__(12);
-var emptyObject = __webpack_require__(5);
-var checkPropTypes = __webpack_require__(9);
+var propTypes = __webpack_require__(13);
+var emptyObject = __webpack_require__(7);
+var checkPropTypes = __webpack_require__(10);
 var shallowEqual = __webpack_require__(16);
 var containsNode = __webpack_require__(17);
 var focusNode = __webpack_require__(18);
@@ -21311,7 +21316,7 @@ module.exports = ReactDOMFiberEntry;
 })();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 28 */
@@ -21522,7 +21527,7 @@ module.exports = performanceNow;
 
 
 
-var ExecutionEnvironment = __webpack_require__(11);
+var ExecutionEnvironment = __webpack_require__(12);
 
 var performance;
 
@@ -21548,11 +21553,11 @@ module.exports = performance || {};
 
 var emptyFunction = __webpack_require__(2);
 var invariant = __webpack_require__(3);
-var warning = __webpack_require__(6);
+var warning = __webpack_require__(8);
 var assign = __webpack_require__(4);
 
-var ReactPropTypesSecret = __webpack_require__(10);
-var checkPropTypes = __webpack_require__(9);
+var ReactPropTypesSecret = __webpack_require__(11);
+var checkPropTypes = __webpack_require__(10);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -22080,7 +22085,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 35 */
@@ -22098,7 +22103,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
 var emptyFunction = __webpack_require__(2);
 var invariant = __webpack_require__(3);
-var ReactPropTypesSecret = __webpack_require__(10);
+var ReactPropTypesSecret = __webpack_require__(11);
 
 module.exports = function() {
   function shim(props, propName, componentName, location, propFullName, secret) {
@@ -22166,15 +22171,15 @@ var _templateObject = _taggedTemplateLiteral(['\n          # Breakpoint\n\n     
     _templateObject4 = _taggedTemplateLiteral(['\n          ## Element Breakpoints\n\n          Viewport breakpoints are great for laying out entire pages, but often\n          an element should only be concerned with its own size, or the size of\n          a close parent element.\n\n          We can declaratively access the size of an element, and use breakpoints\n          like we did for the viewport above.\n\n          You can use either the high order component or render callback for element\n          breakpoints, but often the render callback is more convenient since it\'s\n          relative to the position of the ||BreakpointRender|| in the tree.\n\n          We\'ll use the previous example of ||BreakpointRender||, with some alterations.\n\n          ||||js\n          <div className="SomeClass">\n            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">\n              {bp => (\n                <div>\n                  <dl>\n                    <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                    <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                    <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                  </dl>\n                </div>\n              )}\n            </BreakpointRender>\n          </div>\n          ||||\n\n          Let\'s break down the props:\n\n          ||breakpoints|| is the same as viewport, except now it\'s relative to our\n          outer ||div|| here.\n\n          ||type|| is set to ||\'element\'||, which tells it to use element breakpoints\n          instead of viewport breakpoints.\n\n          If ||element|| is an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||)\n          that element will be used.\n\n          If ||element|| isn\'t defined, it will default to ||\':parent:\'||. ||\':parent:\'|| uses the direct parent\n          of ||BreakpointRender||. Similarly, passing ||\':child:\'|| will use the direct child of ||BreakpointRender||.\n\n          If ||element|| a string selector it will be matched against the closest parent. If that element\n          doesn\'t match, then we attempt to match it on the grandparent, and so on, until\n          it finds a match, or reaches ||document.body|| where it gives up.\n\n          If an element isn\'t found immediately, we schedule low priority tasks to\n          attempt to find the element again. This will be the case on the initial render\n          unless you pass an ||HTMLElement|| as the ||element|| property.\n\n          So what do we do if we don\'t have an element to check the size of?\n          We\'ll, that\'s up to you. By default, we simply don\'t render the\n          child until we\'re able to create a valid breakpoint object. You can override\n          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,\n          and we don\'t have a breakpoint, we\'ll pass ||bp|| as ||null||. It\'s up\n          to you to do something appropriate with the lack of information.\n\n          We handle all sources of the element size changing without using\n          timers, nor requiring you to make any special effort. There\'s no significant performance\n          cost in listening for element resizes.\n\n          In this example, we\'re using a CSS animation to change the size of the element.\n        '], ['\n          ## Element Breakpoints\n\n          Viewport breakpoints are great for laying out entire pages, but often\n          an element should only be concerned with its own size, or the size of\n          a close parent element.\n\n          We can declaratively access the size of an element, and use breakpoints\n          like we did for the viewport above.\n\n          You can use either the high order component or render callback for element\n          breakpoints, but often the render callback is more convenient since it\'s\n          relative to the position of the ||BreakpointRender|| in the tree.\n\n          We\'ll use the previous example of ||BreakpointRender||, with some alterations.\n\n          ||||js\n          <div className="SomeClass">\n            <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">\n              {bp => (\n                <div>\n                  <dl>\n                    <dt>Equal to small? {String(bp.isEq(\'small\'))}</dt>\n                    <dt>Equal to medium? {String(bp.isEq(\'medium\'))}</dt>\n                    <dt>Equal to large? {String(bp.isEq(\'large\'))}</dt>\n                  </dl>\n                </div>\n              )}\n            </BreakpointRender>\n          </div>\n          ||||\n\n          Let\'s break down the props:\n\n          ||breakpoints|| is the same as viewport, except now it\'s relative to our\n          outer ||div|| here.\n\n          ||type|| is set to ||\'element\'||, which tells it to use element breakpoints\n          instead of viewport breakpoints.\n\n          If ||element|| is an ||HTMLElement|| (e.g. from a ref or ||document.getElementById||)\n          that element will be used.\n\n          If ||element|| isn\'t defined, it will default to ||\':parent:\'||. ||\':parent:\'|| uses the direct parent\n          of ||BreakpointRender||. Similarly, passing ||\':child:\'|| will use the direct child of ||BreakpointRender||.\n\n          If ||element|| a string selector it will be matched against the closest parent. If that element\n          doesn\'t match, then we attempt to match it on the grandparent, and so on, until\n          it finds a match, or reaches ||document.body|| where it gives up.\n\n          If an element isn\'t found immediately, we schedule low priority tasks to\n          attempt to find the element again. This will be the case on the initial render\n          unless you pass an ||HTMLElement|| as the ||element|| property.\n\n          So what do we do if we don\'t have an element to check the size of?\n          We\'ll, that\'s up to you. By default, we simply don\'t render the\n          child until we\'re able to create a valid breakpoint object. You can override\n          this with the ||canRenderWithNullBp|| boolean prop. If set to ||true||,\n          and we don\'t have a breakpoint, we\'ll pass ||bp|| as ||null||. It\'s up\n          to you to do something appropriate with the lack of information.\n\n          We handle all sources of the element size changing without using\n          timers, nor requiring you to make any special effort. There\'s no significant performance\n          cost in listening for element resizes.\n\n          In this example, we\'re using a CSS animation to change the size of the element.\n        ']),
     _templateObject5 = _taggedTemplateLiteral(['\n          ## Caveats\n\n          We do our best to render the child without a wrapper node. If the type\n          of the child element is a ||React.Component|| subclass, or an element\n          type string (e.g. ||<div />|| has type ||\'div\'||), then we can render\n          it without a wrapper.\n\n          If it\'s e.g. a number, or the type is a functional component, we wrap\n          it in a ||<span>|| with only a ||ref|| prop, and pass your element\n          as the child.\n\n          When using the high order component variant, your render method should\n          return exactly one element or ||null||. With the render callback variant, your callback\n          should render exactly one node or ||null||.\n        '], ['\n          ## Caveats\n\n          We do our best to render the child without a wrapper node. If the type\n          of the child element is a ||React.Component|| subclass, or an element\n          type string (e.g. ||<div />|| has type ||\'div\'||), then we can render\n          it without a wrapper.\n\n          If it\'s e.g. a number, or the type is a functional component, we wrap\n          it in a ||<span>|| with only a ||ref|| prop, and pass your element\n          as the child.\n\n          When using the high order component variant, your render method should\n          return exactly one element or ||null||. With the render callback variant, your callback\n          should render exactly one node or ||null||.\n        ']);
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
-var _propTypes = __webpack_require__(12);
+var _propTypes = __webpack_require__(13);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _md = __webpack_require__(13);
+var _md = __webpack_require__(9);
 
 var _md2 = _interopRequireDefault(_md);
 
@@ -23873,7 +23878,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
@@ -24515,7 +24520,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
+var update = __webpack_require__(6)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -24535,7 +24540,7 @@ if(false) {
 /* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(5)(undefined);
 // imports
 
 
@@ -24655,11 +24660,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _templateObject = _taggedTemplateLiteral(['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that filter or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          React context key.\n\n          ||||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          ||||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n        '], ['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that filter or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          React context key.\n\n          ||||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          ||||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n        ']);
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
-var _md = __webpack_require__(13);
+var _md = __webpack_require__(9);
 
 var _md2 = _interopRequireDefault(_md);
 
@@ -24723,7 +24728,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
+var update = __webpack_require__(6)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -24743,7 +24748,7 @@ if(false) {
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(5)(undefined);
 // imports
 
 
@@ -24768,11 +24773,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _templateObject = _taggedTemplateLiteral(['\n          # CtxState\n\n          The ||CtxState|| module provides a simple and high performance state\n          manager.\n\n          The state can be accessed by children of the ||ProvidesState|| element\n          by using a ||GetState|| element. Unlike ||setState|| in React, only\n          the components interested in the state are updated. Unlike Redux,\n          the state is scoped to the part of the app that needs it, and multiple\n          instances of a component can each have their own state.\n\n          ## Status: Alpha\n\n          The basic functionality is there, but more information from usage is\n          required.\n\n          ## Usage\n\n          While a default state provider is provided, I recommend creating\n          a state component pair for each feature using state.\n\n          The default state provider can be imported like so:\n\n          ||||js\n          import { ProvidesState, GetState } from \'rearm/lib/CtxState\';\n          ||||\n\n          Or you can create one or more state providers using ||makeCtxState||.\n          The optional name can aid in debugging, but we generate a random context id\n          when ||makeCtxState|| is called.\n\n          ||||js\n          import { makeCtxState } from \'rearm/lib/CtxState\';\n          const { ProvidesState, GetState } = makeCtxState(\'optional name\');\n          ||||\n\n          ## Example\n\n          The ||ProvidesState|| component creates a state context for its children.\n          We\'ll explain what the ||SuperExpensiveComponent|| illustrates later.\n\n          ||||jsx\n          const C = () => {\n            <ProvidesState initial={{count: 0}}>\n              <Display />\n              <Incr />\n              <SuperExpensiveComponent />\n            </ProvidesState>\n          };\n          ||||\n\n          We can then access the state in children, no matter how deep in the\n          tree they are. Here we\'re implementing one of the elements used in\n          the previous code block.\n\n          ||||jsx\n          const Display = () => (\n            <GetState>\n              {s => `Count is ${s.count}`}\n            </GetState>\n          );\n          ||||\n\n          Children can also update the state, similar to a ||setState|| call. The\n          properties are shallowly merged into the ||ProvidesState||\'s state,\n          and then components (e.g. ||Display||) that use the state will be updated.\n\n          ||||jsx\n          const Incr = () => (\n            <GetState>\n              {s => <button onClick={() => {\n                s.set({ count: s.count + 1 });\n              }}>Increment</button>}\n            </GetState>\n          );\n          ||||\n\n          When the state updates, all subscribing elements are updated. Remember\n          the ||SuperExpensiveComponent|| from the first code block? It isn\'t updated\n          because it doesn\'t subscribe to the state. It might have a child of a child\n          of a child that uses ||GetState||, which will update, but not the whole\n          component.\n\n          This is an important part of ||CtxState||, in that it can give significant\n          performance boosts when used properly.\n\n          ## Updating State from the parent\n\n          Since ||ProvidesState|| only takes the initial state as a prop, there\'s\n          no declarative way to update its state. While you should avoid this,\n          there is an escape hatch for updating its state from the parent.\n\n          You can place a ||ref|| on the ||ProvidesState|| and call its one public method.\n\n          ||||jsx\n          <ProvidesState initial={{count: 0}} ref={(ps) => { this.ps = ps; }}>\n          ||||\n\n          Somewhere else in that component:\n\n          ||||jsx\n          this.ps.public.updateState({ count: 1 });\n          ||||\n\n          ## Redux\n\n          This is not intended as a full replacement for redux; simply an alternative\n          when redux doesn\'t elegantly solve your state management problems. Not\n          all state should go in one global store. ||CtxState|| can be used in combination with\n          redux or any other state store, or used on its own.\n\n          ## Summary\n\n          ||CtxState|| allows you to perform high performance state updates without\n          relying on global state stores like redux.\n\n          ## TODO\n\n          Some features aren\'t documented yet, such as ||GetState|| supporting the full\n          ||Ctx|| api, or the ||updaters|| api. If you\'re interested, check out the\n          [source on GitHub](https://github.com/brigand/rearm/blob/master/src/CtxState.js).\n        '], ['\n          # CtxState\n\n          The ||CtxState|| module provides a simple and high performance state\n          manager.\n\n          The state can be accessed by children of the ||ProvidesState|| element\n          by using a ||GetState|| element. Unlike ||setState|| in React, only\n          the components interested in the state are updated. Unlike Redux,\n          the state is scoped to the part of the app that needs it, and multiple\n          instances of a component can each have their own state.\n\n          ## Status: Alpha\n\n          The basic functionality is there, but more information from usage is\n          required.\n\n          ## Usage\n\n          While a default state provider is provided, I recommend creating\n          a state component pair for each feature using state.\n\n          The default state provider can be imported like so:\n\n          ||||js\n          import { ProvidesState, GetState } from \'rearm/lib/CtxState\';\n          ||||\n\n          Or you can create one or more state providers using ||makeCtxState||.\n          The optional name can aid in debugging, but we generate a random context id\n          when ||makeCtxState|| is called.\n\n          ||||js\n          import { makeCtxState } from \'rearm/lib/CtxState\';\n          const { ProvidesState, GetState } = makeCtxState(\'optional name\');\n          ||||\n\n          ## Example\n\n          The ||ProvidesState|| component creates a state context for its children.\n          We\'ll explain what the ||SuperExpensiveComponent|| illustrates later.\n\n          ||||jsx\n          const C = () => {\n            <ProvidesState initial={{count: 0}}>\n              <Display />\n              <Incr />\n              <SuperExpensiveComponent />\n            </ProvidesState>\n          };\n          ||||\n\n          We can then access the state in children, no matter how deep in the\n          tree they are. Here we\'re implementing one of the elements used in\n          the previous code block.\n\n          ||||jsx\n          const Display = () => (\n            <GetState>\n              {s => \\`Count is \\${s.count}\\`}\n            </GetState>\n          );\n          ||||\n\n          Children can also update the state, similar to a ||setState|| call. The\n          properties are shallowly merged into the ||ProvidesState||\'s state,\n          and then components (e.g. ||Display||) that use the state will be updated.\n\n          ||||jsx\n          const Incr = () => (\n            <GetState>\n              {s => <button onClick={() => {\n                s.set({ count: s.count + 1 });\n              }}>Increment</button>}\n            </GetState>\n          );\n          ||||\n\n          When the state updates, all subscribing elements are updated. Remember\n          the ||SuperExpensiveComponent|| from the first code block? It isn\'t updated\n          because it doesn\'t subscribe to the state. It might have a child of a child\n          of a child that uses ||GetState||, which will update, but not the whole\n          component.\n\n          This is an important part of ||CtxState||, in that it can give significant\n          performance boosts when used properly.\n\n          ## Updating State from the parent\n\n          Since ||ProvidesState|| only takes the initial state as a prop, there\'s\n          no declarative way to update its state. While you should avoid this,\n          there is an escape hatch for updating its state from the parent.\n\n          You can place a ||ref|| on the ||ProvidesState|| and call its one public method.\n\n          ||||jsx\n          <ProvidesState initial={{count: 0}} ref={(ps) => { this.ps = ps; }}>\n          ||||\n\n          Somewhere else in that component:\n\n          ||||jsx\n          this.ps.public.updateState({ count: 1 });\n          ||||\n\n          ## Redux\n\n          This is not intended as a full replacement for redux; simply an alternative\n          when redux doesn\'t elegantly solve your state management problems. Not\n          all state should go in one global store. ||CtxState|| can be used in combination with\n          redux or any other state store, or used on its own.\n\n          ## Summary\n\n          ||CtxState|| allows you to perform high performance state updates without\n          relying on global state stores like redux.\n\n          ## TODO\n\n          Some features aren\'t documented yet, such as ||GetState|| supporting the full\n          ||Ctx|| api, or the ||updaters|| api. If you\'re interested, check out the\n          [source on GitHub](https://github.com/brigand/rearm/blob/master/src/CtxState.js).\n        ']);
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
-var _md = __webpack_require__(13);
+var _md = __webpack_require__(9);
 
 var _md2 = _interopRequireDefault(_md);
 
@@ -24832,7 +24837,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var React = _interopRequireWildcard(_react);
 
@@ -25015,7 +25020,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
+var update = __webpack_require__(6)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -25035,7 +25040,7 @@ if(false) {
 /* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(5)(undefined);
 // imports
 
 
@@ -25052,18 +25057,280 @@ exports.push([module.i, "", ""]);
 "use strict";
 
 
-var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render based on viewport and element sizes' }, { path: 'ctx', name: 'Ctx', description: 'A stable and declarative interface to the concept of "context" in React.' }, { path: 'ctxstate', name: 'CtxState', description: 'A high performance and simple state manager built on Ctx' }];
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-module.exports = pages;
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _templateObject = _taggedTemplateLiteral(['\n          # Portal Gun\n\n          The ||PortalGun|| module allows defining UI in one place in the tree,\n          and shooting it to a near-by location elsewhere in the tree.\n\n          ## Status: Unstable\n\n          The basic functionality is here, but it\'s in the process of being\n          integrated in an existing app, and may change based on that experience.\n\n          ', '\n\n\n          ## Example\n\n          You use PortalGun by first creating a scope. This takes the form of a\n          render callback component. It receives two arguments which are the\n          Source and Dest components.\n\n          First you\'ll need a component that renders a ||PortalGun||. Each instance\n          gets its own Source and Dest component. Note that ||Source|| should\n          only be used in one place, but you can use ||Dest|| anywhere you like.\n\n          ||||js\n          const ExampleOne = () => (\n            <PortalGun>\n              {(Source, Dest) => (\n                <div>\n                  <h2>Make Selections</h2>\n                  <Options Source={Source} />\n                  <h2>Your selections:</h2>\n                  <Dest />\n                </div>\n              )}\n            </PortalGun>\n          );\n          ||||\n\n          Then you\'ll need a component to provide the value for ||Source||.\n          In this example, that\'ll be done inside ||Options||.\n\n          ||||js\n          class Options extends React.Component {\n            state = { a: false, b: false, c: false }\n            render() {\n              const { Source } = this.props;\n          \n              const toggle = // updates state\n          \n              return (\n                <div>\n                  <label><input type="checkbox" onClick={toggle(\'a\')} /> A</label>\n                  {/* etc */}\n                  <Source>\n                    <ul>\n                      {/* render list item */}\n                    </ul>\n                  </Source>\n                </div>\n              );\n            }\n          }\n          ||||\n\n          Note that in this case, ||Options|| holds the full state and defines the UI\n          for representing that state, but ||ExampleOne|| decides where to put the rendered\n          output. In this case, it wants to put an ||<h2>|| element between ||Options|| and ||Dest||.\n\n          There are no restrictions on where ||Source|| and ||Dest|| appear in the tree.\n\n          If there isn\'t currently a ||Source|| element, then ||Dest|| will render nothing.\n        '], ['\n          # Portal Gun\n\n          The ||PortalGun|| module allows defining UI in one place in the tree,\n          and shooting it to a near-by location elsewhere in the tree.\n\n          ## Status: Unstable\n\n          The basic functionality is here, but it\'s in the process of being\n          integrated in an existing app, and may change based on that experience.\n\n          ', '\n\n\n          ## Example\n\n          You use PortalGun by first creating a scope. This takes the form of a\n          render callback component. It receives two arguments which are the\n          Source and Dest components.\n\n          First you\'ll need a component that renders a ||PortalGun||. Each instance\n          gets its own Source and Dest component. Note that ||Source|| should\n          only be used in one place, but you can use ||Dest|| anywhere you like.\n\n          ||||js\n          const ExampleOne = () => (\n            <PortalGun>\n              {(Source, Dest) => (\n                <div>\n                  <h2>Make Selections</h2>\n                  <Options Source={Source} />\n                  <h2>Your selections:</h2>\n                  <Dest />\n                </div>\n              )}\n            </PortalGun>\n          );\n          ||||\n\n          Then you\'ll need a component to provide the value for ||Source||.\n          In this example, that\'ll be done inside ||Options||.\n\n          ||||js\n          class Options extends React.Component {\n            state = { a: false, b: false, c: false }\n            render() {\n              const { Source } = this.props;\n          \n              const toggle = // updates state\n          \n              return (\n                <div>\n                  <label><input type="checkbox" onClick={toggle(\'a\')} /> A</label>\n                  {/* etc */}\n                  <Source>\n                    <ul>\n                      {/* render list item */}\n                    </ul>\n                  </Source>\n                </div>\n              );\n            }\n          }\n          ||||\n\n          Note that in this case, ||Options|| holds the full state and defines the UI\n          for representing that state, but ||ExampleOne|| decides where to put the rendered\n          output. In this case, it wants to put an ||<h2>|| element between ||Options|| and ||Dest||.\n\n          There are no restrictions on where ||Source|| and ||Dest|| appear in the tree.\n\n          If there isn\'t currently a ||Source|| element, then ||Dest|| will render nothing.\n        ']);
+
+var _react = __webpack_require__(0);
+
+var React = _interopRequireWildcard(_react);
+
+var _md = __webpack_require__(9);
+
+var _md2 = _interopRequireDefault(_md);
+
+var _PortalGun = __webpack_require__(54);
+
+var _PortalGun2 = _interopRequireDefault(_PortalGun);
+
+__webpack_require__(55);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsPortalGun = function (_React$Component) {
+  _inherits(DocsPortalGun, _React$Component);
+
+  function DocsPortalGun() {
+    _classCallCheck(this, DocsPortalGun);
+
+    return _possibleConstructorReturn(this, (DocsPortalGun.__proto__ || Object.getPrototypeOf(DocsPortalGun)).apply(this, arguments));
+  }
+
+  _createClass(DocsPortalGun, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        (0, _md2.default)(_templateObject, /*## Why? TODO */''),
+        React.createElement(ExampleOne, null)
+      );
+    }
+  }]);
+
+  return DocsPortalGun;
+}(React.Component);
+
+exports.default = DocsPortalGun;
+
+
+var ExampleOne = function ExampleOne() {
+  return React.createElement(
+    _PortalGun2.default,
+    null,
+    function (Source, Dest) {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'h2',
+          null,
+          'Make Selections'
+        ),
+        React.createElement(Options, { Source: Source }),
+        React.createElement(
+          'h2',
+          null,
+          'Your selections:'
+        ),
+        React.createElement(Dest, null)
+      );
+    }
+  );
+};
+
+var Options = function (_React$Component2) {
+  _inherits(Options, _React$Component2);
+
+  function Options() {
+    var _ref;
+
+    var _temp, _this2, _ret;
+
+    _classCallCheck(this, Options);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref = Options.__proto__ || Object.getPrototypeOf(Options)).call.apply(_ref, [this].concat(args))), _this2), _this2.state = { a: false, b: false, c: false }, _temp), _possibleConstructorReturn(_this2, _ret);
+  }
+
+  _createClass(Options, [{
+    key: 'render',
+    value: function render() {
+      var _this3 = this;
+
+      var Source = this.props.Source;
+
+
+      var toggle = function toggle(l) {
+        return function () {
+          return _this3.setState(_defineProperty({}, l, !_this3.state[l]));
+        };
+      };
+
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'label',
+          null,
+          React.createElement('input', { type: 'checkbox', onClick: toggle('a') }),
+          ' A'
+        ),
+        React.createElement(
+          'label',
+          null,
+          React.createElement('input', { type: 'checkbox', onClick: toggle('b') }),
+          ' B'
+        ),
+        React.createElement(
+          'label',
+          null,
+          React.createElement('input', { type: 'checkbox', onClick: toggle('c') }),
+          ' C'
+        ),
+        React.createElement(
+          Source,
+          null,
+          React.createElement(
+            'ul',
+            null,
+            Object.entries(this.state).map(function (_ref2) {
+              var _ref3 = _slicedToArray(_ref2, 2),
+                  k = _ref3[0],
+                  v = _ref3[1];
+
+              return React.createElement(
+                'li',
+                { key: k },
+                k + ': ' + (v ? 'checked' : 'not checked')
+              );
+            })
+          )
+        )
+      );
+    }
+  }]);
+
+  return Options;
+}(React.Component);
 
 /***/ }),
 /* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var React = _interopRequireWildcard(_react);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PortalGun = function (_React$Component) {
+  _inherits(PortalGun, _React$Component);
+
+  function PortalGun(props) {
+    _classCallCheck(this, PortalGun);
+
+    var _this = _possibleConstructorReturn(this, (PortalGun.__proto__ || Object.getPrototypeOf(PortalGun)).call(this, props));
+
+    _this.listeners = [];
+    _this.element = null;
+
+    _this.Source = function (_ref) {
+      var children = _ref.children;
+
+      _this.element = children;
+      _this.listeners.forEach(function (l) {
+        return l(_this.element);
+      });
+      return null;
+    };
+
+    var gun = _this;
+    _this.Dest = function (_React$Component2) {
+      _inherits(PortalGunDest, _React$Component2);
+
+      function PortalGunDest(props) {
+        _classCallCheck(this, PortalGunDest);
+
+        var _this2 = _possibleConstructorReturn(this, (PortalGunDest.__proto__ || Object.getPrototypeOf(PortalGunDest)).call(this, props));
+
+        _this2.state = { element: gun.element };
+        return _this2;
+      }
+
+      _createClass(PortalGunDest, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+          var _this3 = this;
+
+          this.listener = function () {
+            _this3.setState({ element: gun.element });
+          };
+          gun.listeners.push(this.listener);
+        }
+      }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+          gun.listeners.splice(gun.listeners.indexOf(this.listener), 1);
+        }
+      }, {
+        key: 'render',
+        value: function render() {
+          return this.state.element || null;
+        }
+      }]);
+
+      return PortalGunDest;
+    }(React.Component);
+    return _this;
+  }
+
+  _createClass(PortalGun, [{
+    key: 'render',
+    value: function render() {
+      return this.props.children(this.Source, this.Dest);
+    }
+  }]);
+
+  return PortalGun;
+}(React.Component);
+
+exports.default = PortalGun;
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(55);
+var content = __webpack_require__(56);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -25071,7 +25338,63 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
+var update = __webpack_require__(6)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsPortalGun.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsPortalGun.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render based on viewport and element sizes' }, { path: 'ctx', name: 'Ctx', description: 'A stable and declarative interface to the concept of "context" in React.' }, { path: 'ctxstate', name: 'CtxState', description: 'A high performance and simple state manager built on Ctx' }, { path: 'portalgun', name: 'PortalGun', description: 'Shoot some UI a short distance away' }];
+
+module.exports = pages;
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(59);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {"hmr":true}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(6)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -25088,10 +25411,10 @@ if(false) {
 }
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(5)(undefined);
 // imports
 
 
