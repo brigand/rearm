@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import DocsBreakpoint from './apis/DocsBreakpoint';
 import DocsCtx from './apis/DocsCtx';
 import DocsCtxState from './apis/DocsCtxState';
+import DocsPortalGun from './apis/DocsPortalGun';
 import pages from './pages';
 import './Docs.css';
 
@@ -15,6 +16,7 @@ const pageToDoc = {
   breakpoint: DocsBreakpoint,
   ctx: DocsCtx,
   ctxstate: DocsCtxState,
+  portalgun: DocsPortalGun,
 };
 
 const urlPartsRaw = window.location.pathname.split('/');
