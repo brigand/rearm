@@ -114,6 +114,7 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
 };
 
 type BreakpointResultProp = {
+  key: ?string,
   isGt: (key: string) => boolean,
   isLt: (key: string) => boolean,
   isEq: (key: string) => boolean,
@@ -177,6 +178,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
 
   createBp() {
     return {
+      key: this.state.current ? this.state.current.key : null,
       isGt: (key: string) => !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
       isLt: (key: string) => !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
       isEq: (key: string) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
@@ -207,25 +209,25 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   }
 
   maybeUpdate() {
-    let size = null;
-    if (this.props.type === 'viewport') {
-      size = getViewportSize();
-    } else if (this.props.type === 'element') {
+    let size;
+    if (this.props.type === 'element') {
       const element = this.getElement();
       if (element) {
         size = getElementSize(element);
+      } else {
+        // shouldn't ever happen, but we need some valid value here
+        size = getViewportSize();
       }
+    } else {
+      size = getViewportSize();
     }
-
-    if (!size) return;
 
     const relationships = calcBreakpoints(this.props.breakpoints, size);
     if (relationships.key !== this.state.previousKey) {
       this.setState({
         current: relationships,
-        size,
         previousKey: relationships.key,
-        bp: this.createBp(size),
+        bp: this.createBp(),
       });
     }
   }
@@ -241,12 +243,12 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
     // default case; direct parent
     if (element === ':parent:' || !element) {
       const pElement: ?HTMLElement = this.rootElement;
-      return pElement && pElement.parentElement;
+      return pElement && (pElement.parentElement: any);
     }
 
     // the direct child can be used
     if (element === ':child:') {
-      let pElement: ?HTMLElement = this.rootElement;
+      const pElement: ?HTMLElement = this.rootElement;
       return pElement;
     }
 

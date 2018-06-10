@@ -73,6 +73,7 @@ class Docs extends React.Component<Props> {
         {pages.map(page => this.renderLink(page))}
         {this.renderLink({
           absolute: `https://github.com/brigand/rearm`,
+          path: '',
           name: [githubIcon, ` GitHub`],
           description: `The official github repo`,
         })}
