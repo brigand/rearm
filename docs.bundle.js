@@ -578,14 +578,26 @@ var isOldIE = memoize(function () {
 	return window && document && document.all && !window.atob;
 });
 
+var getTarget = function (target) {
+  return document.querySelector(target);
+};
+
 var getElement = (function (fn) {
 	var memo = {};
 
-	return function(selector) {
-		if (typeof memo[selector] === "undefined") {
-			var styleTarget = fn.call(this, selector);
+	return function(target) {
+                // If passing function in options, then use it for resolve "head" element.
+                // Useful for Shadow Root style i.e
+                // {
+                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
+                // }
+                if (typeof target === 'function') {
+                        return target();
+                }
+                if (typeof memo[target] === "undefined") {
+			var styleTarget = getTarget.call(this, target);
 			// Special case to return head of iframe instead of iframe itself
-			if (styleTarget instanceof window.HTMLIFrameElement) {
+			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
 				try {
 					// This will throw an exception if access to iframe is blocked
 					// due to cross-origin restrictions
@@ -594,13 +606,11 @@ var getElement = (function (fn) {
 					styleTarget = null;
 				}
 			}
-			memo[selector] = styleTarget;
+			memo[target] = styleTarget;
 		}
-		return memo[selector]
+		return memo[target]
 	};
-})(function (target) {
-	return document.querySelector(target)
-});
+})();
 
 var singleton = null;
 var	singletonCounter = 0;
@@ -619,10 +629,10 @@ module.exports = function(list, options) {
 
 	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
 	// tags it will allow on a page
-	if (!options.singleton) options.singleton = isOldIE();
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
 
 	// By default, add <style> tags to the <head> element
-	if (!options.insertInto) options.insertInto = "head";
+        if (!options.insertInto) options.insertInto = "head";
 
 	// By default, add <style> tags to the bottom of the target
 	if (!options.insertAt) options.insertAt = "bottom";
@@ -746,7 +756,9 @@ function removeStyleElement (style) {
 function createStyleElement (options) {
 	var style = document.createElement("style");
 
-	options.attrs.type = "text/css";
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
 
 	addAttrs(style, options.attrs);
 	insertStyleElement(options, style);
@@ -757,7 +769,9 @@ function createStyleElement (options) {
 function createLinkElement (options) {
 	var link = document.createElement("link");
 
-	options.attrs.type = "text/css";
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
 	options.attrs.rel = "stylesheet";
 
 	addAttrs(link, options.attrs);
@@ -1646,6 +1660,10 @@ var _propTypes = __webpack_require__(13);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _toIdentifier = __webpack_require__(47);
+
+var _toIdentifier2 = _interopRequireDefault(_toIdentifier);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -1713,9 +1731,28 @@ var CtxStore = function () {
   return CtxStore;
 }();
 
-function makeCtx(contextKey) {
+var makeCtxCreatedCounter = 0;
+
+function makeCtx() {
+  var label = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'unknown';
+
+  makeCtxCreatedCounter += 1;
+
+  var contextKey = 'rearm-ctx_' + makeCtxCreatedCounter + '_' + (0, _toIdentifier2.default)(label);
+
   var Ctx = function (_React$Component) {
     _inherits(Ctx, _React$Component);
+
+    _createClass(Ctx, [{
+      key: 'getChildContext',
+      value: function getChildContext() {
+        return _defineProperty({}, contextKey, this.store);
+      }
+
+      // just some state to change so we can trigger an update when the internal
+      // state changes
+
+    }]);
 
     function Ctx(props, context) {
       _classCallCheck(this, Ctx);
@@ -1734,17 +1771,17 @@ function makeCtx(contextKey) {
       if (_this2.context[contextKey]) {
         _this2.context[contextKey].subscribe(_this2.onParentStoreChange);
       }
+
+      _this2.update(_this2.props, _this2.getParentState());
       return _this2;
     }
 
-    // just some state to change so we can trigger an update when the internal
-    // state changes
-
-
     _createClass(Ctx, [{
-      key: 'componentWillMount',
-      value: function componentWillMount() {
-        this.update(this.props, this.getParentState());
+      key: 'shouldComponentUpdate',
+      value: function shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.updateCount !== nextState.updateCount) return true;
+
+        return !nextProps.ignoreRenders;
       }
     }, {
       key: 'componentWillUnmount',
@@ -1754,31 +1791,13 @@ function makeCtx(contextKey) {
         }
       }
     }, {
-      key: 'getChildContext',
-      value: function getChildContext() {
-        return _defineProperty({}, contextKey, this.store);
-      }
-    }, {
       key: 'performMap',
       value: function performMap(props, input) {
         var result = input;
-        var whitelist = props.whitelist,
-            blacklist = props.blacklist,
-            map = props.map,
+        var map = props.map,
             inject = props.inject;
 
-        if (whitelist) {
-          result = {};
-          Object.keys(input).forEach(function (key) {
-            if (whitelist.indexOf(key) !== -1) result[key] = input[key];
-          });
-        }
-        if (blacklist) {
-          result = {};
-          Object.keys(input).forEach(function (key) {
-            if (blacklist.indexOf(key) === -1) result[key] = input[key];
-          });
-        }
+
         if (map) {
           result = map(result);
         }
@@ -1788,6 +1807,20 @@ function makeCtx(contextKey) {
         }
 
         return result;
+      }
+    }, {
+      key: 'performSubscribe',
+      value: function performSubscribe(props, input) {
+        if (typeof props.subscribe === 'function') {
+          return props.subscribe(input);
+        } else if (Array.isArray(props.subscribe)) {
+          var result = {};
+          props.subscribe.forEach(function (key) {
+            result[key] = input[key];
+          });
+          return result;
+        }
+        return null;
       }
     }, {
       key: 'getParentState',
@@ -1802,21 +1835,23 @@ function makeCtx(contextKey) {
       value: function update(props, parentState) {
         var now = this.performMap(props, parentState);
         var prev = this.store.state;
-        // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
-        // console.log(name, this.props.inject, now);
-        if (objShallowEqual(now, prev)) {
-          return;
+
+        var nowSub = this.performSubscribe(props, now) || now;
+        var prevSub = this.prevSub || {};
+
+        var mapEq = objShallowEqual(now, prev);
+        var subEq = objShallowEqual(nowSub, prevSub);
+        this.prevSub = nowSub;
+
+        if (!mapEq) {
+          this.store.replaceState(now);
         }
 
-        this.store.replaceState(now);
-        this.setState(function (s) {
-          return { updateCount: s.updateCount + 1 };
-        });
-      }
-    }, {
-      key: 'getChildValue',
-      value: function getChildValue() {
-        return this.store.state;
+        if (!subEq && typeof this.props.children === 'function') {
+          this.setState(function (s) {
+            return { updateCount: s.updateCount + 1 };
+          });
+        }
       }
     }, {
       key: 'componentWillReceiveProps',
@@ -1826,7 +1861,7 @@ function makeCtx(contextKey) {
     }, {
       key: 'getChildValue',
       value: function getChildValue() {
-        return this.store.state;
+        return this.prevSub || this.store.state;
       }
     }, {
       key: 'render',
@@ -1837,6 +1872,7 @@ function makeCtx(contextKey) {
         if (typeof this.props.children === 'function') {
           childValue = this.getChildValue();
         }
+
         if (typeof this.props.children === 'function') {
           return this.props.children(childValue);
         }
@@ -1848,6 +1884,7 @@ function makeCtx(contextKey) {
   }(React.Component);
 
   Ctx.makeCtx = makeCtx;
+  Ctx.contextKey = contextKey;
   Ctx.contextTypes = _defineProperty({}, contextKey, _propTypes2.default.any);
   Ctx.childContextTypes = _defineProperty({}, contextKey, _propTypes2.default.any);
 
@@ -1884,19 +1921,23 @@ var _DocsCtx = __webpack_require__(46);
 
 var _DocsCtx2 = _interopRequireDefault(_DocsCtx);
 
-var _DocsCtxState = __webpack_require__(49);
+var _DocsCtxState = __webpack_require__(50);
 
 var _DocsCtxState2 = _interopRequireDefault(_DocsCtxState);
 
-var _DocsPortalGun = __webpack_require__(53);
+var _DocsPortalGun = __webpack_require__(54);
 
 var _DocsPortalGun2 = _interopRequireDefault(_DocsPortalGun);
 
-var _pages = __webpack_require__(57);
+var _pages = __webpack_require__(58);
 
 var _pages2 = _interopRequireDefault(_pages);
 
-__webpack_require__(58);
+var _githubIcon = __webpack_require__(59);
+
+var _githubIcon2 = _interopRequireDefault(_githubIcon);
+
+__webpack_require__(60);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1995,6 +2036,11 @@ var Docs = function (_React$Component) {
         this.renderLink({ path: null, name: 'Home', description: 'The home page' }),
         _pages2.default.map(function (page) {
           return _this2.renderLink(page);
+        }),
+        this.renderLink({
+          absolute: 'https://github.com/brigand/rearm',
+          name: [_githubIcon2.default, ' GitHub'],
+          description: 'The official github repo'
         })
       );
     }
@@ -2012,7 +2058,7 @@ var Docs = function (_React$Component) {
       return React.createElement(
         'a',
         {
-          href: '/rearm/' + (page.path ? 'docs/' + page.path : ''),
+          href: page.absolute ? page.absolute : '/rearm/' + (page.path ? 'docs/' + page.path : ''),
           className: className,
           title: page.description,
           key: page.path
@@ -24509,30 +24555,49 @@ function getViewportSize() {
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
 
-// load the styles
 var content = __webpack_require__(44);
+
 if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
+
 var transform;
+var insertInto;
+
+
 
 var options = {"hmr":true}
+
 options.transform = transform
-// add the styles to the DOM
+options.insertInto = undefined;
+
 var update = __webpack_require__(6)(content, options);
+
 if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
+
 if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsBreakpoint.css", function() {
-			var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsBreakpoint.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
+	module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsBreakpoint.css", function() {
+		var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsBreakpoint.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
 	module.hot.dispose(function() { update(); });
 }
 
@@ -24540,7 +24605,7 @@ if(false) {
 /* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(false);
 // imports
 
 
@@ -24618,7 +24683,7 @@ module.exports = function (css) {
 			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
 
 		// already a full url? no change
-		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
 		  return fullMatch;
 		}
 
@@ -24658,7 +24723,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that filter or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          React context key.\n\n          ||||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          ||||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n        '], ['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, filtering, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Alpha\n\n          The component needs more tests and use in real apps. Try it out and\n          report any issues you run into.\n\n          ## Why?\n\n          Context in React is very powerful, but the basic usage of it has an\n          unfriendly api, and has issues like either requiring the entire\n          tree to render on context changes, or the children missing updates\n          entirely.\n\n          We avoid the update/performance issues by using an event emitter where\n          each ||Ctx|| instance listens for changes to the nearest parent ||Ctx||.\n\n          The API of ||Ctx|| works like implicit props, allowing components below\n          the ||Ctx|| to access data without every component passing the props around.\n          This can be useful for, e.g. themes, dependency injection, or global state management.\n\n          Further, the refinement of the data using ||blacklist||, ||whitelist||, and ||map||\n          (explained below) allow you to control which parts of the state the children see.\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. This render\n          callback will run any time a parent ||Ctx|| updates.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Filtering\n\n          Filtering is the process of ignoring context properties the children shouldn\'t care about.\n\n          The technical use case for filtering is an optimization. In the previous example,\n          we said "any time a parent ||Ctx|| changes". This means it would update\n          even if a key other than \'color\' was updated. In this case, we only need\n          one key, so we can ignore the others, and not receive updates from them.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx whitelist={[\'color\']}>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          Note that this affects the entire subtree under the ||Ctx|| using ||whitelist||. All\n          other properties are invisilbe.\n\n          In the future, distinguishing the desired subtree context from the immediate\n          subscription may be added.\n\n          Conversely you may use ||blacklist|| to specify properties you\'re\n          not interested in.\n\n          The more subjective quality of filtering is that you can hide information\n          from the children. If well applied, this can reduce the number of locations\n          in your code where state can be accessed or updated.\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. ||inject||, ||whitelist||,\n          and ||blacklist|| could all be implemented with ||map||.\n\n          In this example, we\'ll say ||c|| is ||{ x: 4 }||. We also use\n          "object spread" syntax to pass through the other values of context.\n          If we did ||c => ({ x: Math.pow(c.x, 2) })|| then all other\n          context keys would be omitted in the subtree context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx map={c => ({ ...c, x: Math.pow(c.x, 2) })}\n            );\n          }\n          ||||\n\n          After ||map|| runs, any values from ||inject|| are added to the result.\n\n          If we pass a render callback to ||Ctx|| while using these props, it\n          will see the result after these transforms.\n\n          ## Sending data back up\n\n          Much like normal usage of props in React, you can pass callback functions\n          through the context, and a child can access and call them.\n\n          Take this component for example where we hold a piece of state (a counter)\n          and pass both the current count and a function to increment it down the tree.\n\n          ||||jsx\n          class C extends React.Component {\n            state = {\n              count: 1,\n            }\n            incr = () => this.setState({ count: this.state.count + 1 });\n\n            render() {\n              const context = {\n                counter: { count: this.state.count, incr: this.incr },\n              };\n              return (\n                <Ctx inject={context}>\n                  <SomeChild />\n                </Ctx>\n              );\n            }\n          }\n          ||||\n\n          Then in ||SomeChild|| or one of its children, we can access the context,\n          and call the ||incr|| function.\n\n          ||||\n          const SomeChild = () => (\n            <Ctx>\n              {c => (\n                <button onClick={c.counter.incr}>\n                  Clicked {c.counter.incr} times\n                </button>\n              )}\n            </Ctx>\n          );\n          ||||\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that filter or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          React context key.\n\n          ||||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          ||||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n        ']);
+var _templateObject = _taggedTemplateLiteral(['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Beta\n\n          This component is being tested in a big app, and has undergone a partial redesign\n          based on that experience.\n\n          ## Why?\n\n          Context in React is very powerful, and recently redesigned, but each version of\n          the context API has had different issues. Formerly, the API required class components,\n          significant boilerplate, and you had to implement subscriptions yourself. This gave\n\n          The new official context API lacks refinement in subscriptions, which are important\n          in general, but would also allow context to be used as a powerful optimization\n          tool.\n\n          We avoid the update/performance issues by using events to communicate between\n          ||Ctx|| usages.\n          \n          We allow refinement in subscriptions (see ||subscribe||), and the ability to decline updates from\n          other sources (see ||ignoreRenders||).\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/lib/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. The render\n          callback will run any time the nearest parent ||Ctx|| updates, since we haven\'t defined\n          any refinement props (more on that later).\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Subscrbe\n\n          You may only be interested in part of the context. For separate features, you should use ||makeCtx||,\n          described below, to get separate instances of the ||Ctx|| component.\n\n          You might use the ||subscribe|| prop to e.g. access a specific item by id, or a specific field of\n          a piece of data.\n\n          In the simplest case, you can pass an array of properties to access.\n\n          ||||jsx\n          <Ctx subscribe={[\'foo\', \'bar\']}>\n            {({ foo, bar }) => <div>{foo} {bar}</div>}\n          </Ctx>\n          ||||\n\n          A function can be passed, which allows you to produce any result you want, and its properties\n          will be shallowly compared to the previous result. The argument is the state provided by the\n          parent ||Ctx||, if any. In this case, we want to access a specific user by id, and then render\n          their name. This will update any time ||users[props.userId]|| changes.\n\n          ||||jsx\n          <Ctx subscribe={(users) => ({ user: users[props.userId] })}>\n            {({ user }) => <div>{user.name}</div>}\n          </Ctx>\n          ||||\n\n          Of course, we can be more specific in this case, and only subscribe to the user\'s name changing.\n\n          ||||jsx\n          <Ctx subscribe={(users) => ({ name: users[props.userId].name })}>\n            {({ name }) => <div>{name}</div>}\n          </Ctx>\n          ||||\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. It\'s identical to the function variant of ||subscribe||,\n          except that it also replaces what any children ||Ctx|| instances will see.\n\n          Most of the time you should use ||inject|| or ||subscribe|| instead. We can implement ||inject|| with ||map||,\n          for example:\n\n          ||||jsx\n          <Ctx inject={{ x: 1 }}>...</Ctx>\n          ||||\n\n          This is identical:\n\n          ||||jsx\n          <Ctx map={(parent) => ({ ...parent, x: 1 })}>...</Ctx>\n          ||||\n\n          We can also remove properties by not including them in the result of the ||map| call.\n\n          ## ignoreRenders\n\n          There\'s one more problem with our performance story; one that\'s intrinsic to using\n          declarative components to provide context: context is provided when **Ctx is rendered**,\n          then its **children will render**, and so on, down the tree.\n\n          Sometimes those updates will get blocked by a ||PureComponent|| class or similar, but\n          we can at least stop a ||Ctx|| from rendering when its parent changes. This is a slightly\n          dangerous tool, but it\'s fairly easy to get right when you know the trick.\n\n          First, let\'s introduce the ||ignoreRenders|| prop. When ||ignoreRenders|| is provided (and\n          set to a "truthy" value), the ||Ctx|| won\'t implicitly render when the parent rerenders.\n\n          Instead, it invokes ||subscribe||/||map||, and will update if those change. Let\'s start\n          by defining a **broken** component that uses ||ignoreRenders||.\n\n          ||||jsx\n          const MyComponent = (props) => (\n            <div>\n              Name: {props.name}\n              Age: {props.age}\n\n              <Ctx\n                ignoreRenders\n                subscribe={theme => ({ color: theme.color })}\n              >\n                {({ color }) => (\n                  <div\n                    style={{ color }}\n                  >\n                    {props.name}\n                  </div>\n                )}\n              </Ctx>\n            </div>\n          )\n          ||||\n          \n          Since we\'ve defined ||ignoreRenders|| on ||Ctx||, it won\'t update when ||MyComponent|| updates.\n          Instead, it\'ll update when ||theme.color|| in the context changes. This means we\'re\n          missing changes to ||props.name||. This is bad, but how do we fix it?\n\n          Simple, we subscribe to ||props.name||!\n\n          ||||jsx\n          <Ctx\n            ignoreRenders\n            subscribe={theme => ({ color: theme.color, name: props.name })}\n          >\n            {({ color, name }) => (\n              <div\n                style={{ color }}\n              >\n                {name}\n              </div>\n            )}\n          </Ctx>\n          ||||\n\n          Now our themed element will update in exactly two cases:\n\n          - the context contains a new ||theme.color||\n          - ||MyComponent|| receives a new ||name||.\n\n          We also had ||props.age||, but since we don\'t need that inside the ||Ctx||,\n          we simply don\'t subscribe to it.\n\n          The combination of ||ignoreRenders|| and ||subscribe|| could even be useful\n          when not using context at all!\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that inject or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          namespace.\n\n          ||||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          ||||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n\n\n          ## Summary\n\n          The ||map|| and ||inject|| props allow us to define the context our indirect\n          children will see.\n\n          By using ||subscribe|| and ||ignoreRender|| we know exactly what will cause us\n          to rerender.\n\n          With ||makeCtx|| we can avoid creating massive string-based namespaces for our apps.\n\n          We can use ||Ctx|| to allow for powerful management of data flowing through our\n          app, and to gain control of performance when we need it.\n        '], ['\n          # Ctx\n\n          The ||Ctx|| module provides a stable and declarative interface to the concept\n          of "context" in React.\n\n          One component is used for creating, transforming, and accessing\n          context. It can do any combination of these operations.\n\n          ## Status: Beta\n\n          This component is being tested in a big app, and has undergone a partial redesign\n          based on that experience.\n\n          ## Why?\n\n          Context in React is very powerful, and recently redesigned, but each version of\n          the context API has had different issues. Formerly, the API required class components,\n          significant boilerplate, and you had to implement subscriptions yourself. This gave\n\n          The new official context API lacks refinement in subscriptions, which are important\n          in general, but would also allow context to be used as a powerful optimization\n          tool.\n\n          We avoid the update/performance issues by using events to communicate between\n          ||Ctx|| usages.\n          \n          We allow refinement in subscriptions (see ||subscribe||), and the ability to decline updates from\n          other sources (see ||ignoreRenders||).\n\n          ## Basic Usage\n\n          First import ||Ctx||.\n\n          ||||jsx\n          import Ctx from \'rearm/lib/Ctx\';\n          ||||\n\n          Anywhere in the tree you can define some context keys. The ||inject||\n          value is shallowly merged into the parent context, if any exists. This\n          in no way affects the parent context.\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx inject={{ color: \'hotpink\' }}>\n                <Something />\n              </Ctx>\n            );\n          }\n          ||||\n\n          Within the children of ||Ctx||, no matter how deep, we can extract properties\n          from the context in render by passing a render callback child to ||Ctx||. The render\n          callback will run any time the nearest parent ||Ctx|| updates, since we haven\'t defined\n          any refinement props (more on that later).\n\n          ||||jsx\n          render() {\n            return (\n              <Ctx>\n                {c => <div style={{ color: c.color }}>Hello, world!</div>}\n              </Ctx>\n            );\n          }\n          ||||\n\n          ## Subscrbe\n\n          You may only be interested in part of the context. For separate features, you should use ||makeCtx||,\n          described below, to get separate instances of the ||Ctx|| component.\n\n          You might use the ||subscribe|| prop to e.g. access a specific item by id, or a specific field of\n          a piece of data.\n\n          In the simplest case, you can pass an array of properties to access.\n\n          ||||jsx\n          <Ctx subscribe={[\'foo\', \'bar\']}>\n            {({ foo, bar }) => <div>{foo} {bar}</div>}\n          </Ctx>\n          ||||\n\n          A function can be passed, which allows you to produce any result you want, and its properties\n          will be shallowly compared to the previous result. The argument is the state provided by the\n          parent ||Ctx||, if any. In this case, we want to access a specific user by id, and then render\n          their name. This will update any time ||users[props.userId]|| changes.\n\n          ||||jsx\n          <Ctx subscribe={(users) => ({ user: users[props.userId] })}>\n            {({ user }) => <div>{user.name}</div>}\n          </Ctx>\n          ||||\n\n          Of course, we can be more specific in this case, and only subscribe to the user\'s name changing.\n\n          ||||jsx\n          <Ctx subscribe={(users) => ({ name: users[props.userId].name })}>\n            {({ name }) => <div>{name}</div>}\n          </Ctx>\n          ||||\n\n          ## Mapping\n\n          The ||map|| prop is a function that takes the entire parent context and returns a new object\n          that will become the context for the subtree. It\'s identical to the function variant of ||subscribe||,\n          except that it also replaces what any children ||Ctx|| instances will see.\n\n          Most of the time you should use ||inject|| or ||subscribe|| instead. We can implement ||inject|| with ||map||,\n          for example:\n\n          ||||jsx\n          <Ctx inject={{ x: 1 }}>...</Ctx>\n          ||||\n\n          This is identical:\n\n          ||||jsx\n          <Ctx map={(parent) => ({ ...parent, x: 1 })}>...</Ctx>\n          ||||\n\n          We can also remove properties by not including them in the result of the ||map| call.\n\n          ## ignoreRenders\n\n          There\'s one more problem with our performance story; one that\'s intrinsic to using\n          declarative components to provide context: context is provided when **Ctx is rendered**,\n          then its **children will render**, and so on, down the tree.\n\n          Sometimes those updates will get blocked by a ||PureComponent|| class or similar, but\n          we can at least stop a ||Ctx|| from rendering when its parent changes. This is a slightly\n          dangerous tool, but it\'s fairly easy to get right when you know the trick.\n\n          First, let\'s introduce the ||ignoreRenders|| prop. When ||ignoreRenders|| is provided (and\n          set to a "truthy" value), the ||Ctx|| won\'t implicitly render when the parent rerenders.\n\n          Instead, it invokes ||subscribe||/||map||, and will update if those change. Let\'s start\n          by defining a **broken** component that uses ||ignoreRenders||.\n\n          ||||jsx\n          const MyComponent = (props) => (\n            <div>\n              Name: {props.name}\n              Age: {props.age}\n\n              <Ctx\n                ignoreRenders\n                subscribe={theme => ({ color: theme.color })}\n              >\n                {({ color }) => (\n                  <div\n                    style={{ color }}\n                  >\n                    {props.name}\n                  </div>\n                )}\n              </Ctx>\n            </div>\n          )\n          ||||\n          \n          Since we\'ve defined ||ignoreRenders|| on ||Ctx||, it won\'t update when ||MyComponent|| updates.\n          Instead, it\'ll update when ||theme.color|| in the context changes. This means we\'re\n          missing changes to ||props.name||. This is bad, but how do we fix it?\n\n          Simple, we subscribe to ||props.name||!\n\n          ||||jsx\n          <Ctx\n            ignoreRenders\n            subscribe={theme => ({ color: theme.color, name: props.name })}\n          >\n            {({ color, name }) => (\n              <div\n                style={{ color }}\n              >\n                {name}\n              </div>\n            )}\n          </Ctx>\n          ||||\n\n          Now our themed element will update in exactly two cases:\n\n          - the context contains a new ||theme.color||\n          - ||MyComponent|| receives a new ||name||.\n\n          We also had ||props.age||, but since we don\'t need that inside the ||Ctx||,\n          we simply don\'t subscribe to it.\n\n          The combination of ||ignoreRenders|| and ||subscribe|| could even be useful\n          when not using context at all!\n\n          ## makeCtx\n\n          The default ||Ctx|| uses one namespace for all of your context properties.\n          This also means the operations that inject or map the context can impact\n          children. Intermediate ||Ctx|| elements can accidentally override a parent\n          context key. To get around this, you can create a ||Ctx|| that uses a different\n          namespace.\n\n          ||||jsx\n          const MyCtx = Ctx.makeCtx(\'my-unique-key\');\n\n          <MyCtx inject={...}>\n          ||||\n\n          Then you use ||MyCtx|| in places where you want to receive or inject\n          that context. It won\'t clash with any other ||Ctx|| elements on the page.\n\n\n          ## Summary\n\n          The ||map|| and ||inject|| props allow us to define the context our indirect\n          children will see.\n\n          By using ||subscribe|| and ||ignoreRender|| we know exactly what will cause us\n          to rerender.\n\n          With ||makeCtx|| we can avoid creating massive string-based namespaces for our apps.\n\n          We can use ||Ctx|| to allow for powerful management of data flowing through our\n          app, and to gain control of performance when we need it.\n        ']);
 
 var _react = __webpack_require__(0);
 
@@ -24672,7 +24737,7 @@ var _Ctx = __webpack_require__(20);
 
 var _Ctx2 = _interopRequireDefault(_Ctx);
 
-__webpack_require__(47);
+__webpack_require__(48);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24713,42 +24778,163 @@ var DocsCtx = function (_React$Component) {
 
 exports.default = DocsCtx;
 
+var B = function (_React$PureComponent) {
+  _inherits(B, _React$PureComponent);
+
+  function B() {
+    var _ref;
+
+    var _temp, _this2, _ret;
+
+    _classCallCheck(this, B);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref = B.__proto__ || Object.getPrototypeOf(B)).call.apply(_ref, [this].concat(args))), _this2), _this2.render = function () {
+      return React.createElement(
+        _Ctx2.default,
+        null,
+        function (data) {
+          return React.createElement(
+            'span',
+            { id: 'target' },
+            (console.log(data.x), data.x)
+          );
+        }
+      );
+    }, _temp), _possibleConstructorReturn(_this2, _ret);
+  }
+
+  return B;
+}(React.PureComponent);
+
+;
+
+var Example = function (_React$Component2) {
+  _inherits(Example, _React$Component2);
+
+  function Example() {
+    var _ref2;
+
+    var _temp2, _this3, _ret2;
+
+    _classCallCheck(this, Example);
+
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    return _ret2 = (_temp2 = (_this3 = _possibleConstructorReturn(this, (_ref2 = Example.__proto__ || Object.getPrototypeOf(Example)).call.apply(_ref2, [this].concat(args))), _this3), _this3.state = {
+      x: 100
+    }, _temp2), _possibleConstructorReturn(_this3, _ret2);
+  }
+
+  _createClass(Example, [{
+    key: 'render',
+    value: function render() {
+      var _this4 = this;
+
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'button',
+          { type: 'button', onClick: function onClick() {
+              return _this4.setState({ x: _this4.state.x + 1 });
+            } },
+          'incr'
+        ),
+        React.createElement(
+          _Ctx2.default,
+          { ignoreRenders: true, inject: { x: this.state.x } },
+          React.createElement(
+            'div',
+            null,
+            this.state.x,
+            React.createElement(B, null)
+          )
+        )
+      );
+    }
+  }]);
+
+  return Example;
+}(React.Component);
+
 /***/ }),
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
+"use strict";
 
-// load the styles
-var content = __webpack_require__(48);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
 
-var options = {"hmr":true}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(6)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsCtx.css", function() {
-			var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsCtx.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = toIdentifier;
+function toIdentifier(text) {
+  var joiner = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '_';
+
+  return text.split(/[^a-zA-Z0-9]+/g).filter(Boolean).join(joiner);
 }
 
 /***/ }),
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+
+var content = __webpack_require__(49);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(6)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsCtx.css", function() {
+		var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsCtx.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(false);
 // imports
 
 
@@ -24759,7 +24945,7 @@ exports.push([module.i, "", ""]);
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24781,11 +24967,11 @@ var _md = __webpack_require__(9);
 
 var _md2 = _interopRequireDefault(_md);
 
-var _CtxState = __webpack_require__(50);
+var _CtxState = __webpack_require__(51);
 
 var _CtxState2 = _interopRequireDefault(_CtxState);
 
-__webpack_require__(51);
+__webpack_require__(52);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24827,7 +25013,7 @@ var DocsCtxState = function (_React$Component) {
 exports.default = DocsCtxState;
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25006,41 +25192,60 @@ var DefaultCtxState = makeCtxState('default');
 module.exports = DefaultCtxState;
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
 
-// load the styles
-var content = __webpack_require__(52);
+var content = __webpack_require__(53);
+
 if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
+
 var transform;
+var insertInto;
+
+
 
 var options = {"hmr":true}
+
 options.transform = transform
-// add the styles to the DOM
+options.insertInto = undefined;
+
 var update = __webpack_require__(6)(content, options);
+
 if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
+
 if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsCtxState.css", function() {
-			var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsCtxState.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
+	module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsCtxState.css", function() {
+		var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsCtxState.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
 	module.hot.dispose(function() { update(); });
 }
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(false);
 // imports
 
 
@@ -25051,7 +25256,7 @@ exports.push([module.i, "", ""]);
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25075,11 +25280,11 @@ var _md = __webpack_require__(9);
 
 var _md2 = _interopRequireDefault(_md);
 
-var _PortalGun = __webpack_require__(54);
+var _PortalGun = __webpack_require__(55);
 
 var _PortalGun2 = _interopRequireDefault(_PortalGun);
 
-__webpack_require__(55);
+__webpack_require__(56);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25226,7 +25431,7 @@ var Options = function (_React$Component2) {
 }(React.Component);
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25324,41 +25529,60 @@ var PortalGun = function (_React$Component) {
 exports.default = PortalGun;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
 
-// load the styles
-var content = __webpack_require__(56);
+var content = __webpack_require__(57);
+
 if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
+
 var transform;
+var insertInto;
+
+
 
 var options = {"hmr":true}
+
 options.transform = transform
-// add the styles to the DOM
+options.insertInto = undefined;
+
 var update = __webpack_require__(6)(content, options);
+
 if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
+
 if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsPortalGun.css", function() {
-			var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsPortalGun.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
+	module.hot.accept("!!../../../node_modules/css-loader/index.js!./DocsPortalGun.css", function() {
+		var newContent = require("!!../../../node_modules/css-loader/index.js!./DocsPortalGun.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
 	module.hot.dispose(function() { update(); });
 }
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(false);
 // imports
 
 
@@ -25369,7 +25593,7 @@ exports.push([module.i, "", ""]);
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25380,41 +25604,79 @@ var pages = [{ path: 'breakpoint', name: 'Breakpoint', description: 'Render base
 module.exports = pages;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
+"use strict";
 
-// load the styles
-var content = __webpack_require__(59);
+
+var _react = __webpack_require__(0);
+
+var React = _interopRequireWildcard(_react);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+module.exports = React.createElement(
+  "svg",
+  { "aria-labelledby": "simpleicons-github-icon", role: "img", width: "1em", height: "1em", style: { display: 'inline-block' }, viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
+  React.createElement("path", { d: "M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" })
+);
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(61);
+
 if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
+
 var transform;
+var insertInto;
+
+
 
 var options = {"hmr":true}
+
 options.transform = transform
-// add the styles to the DOM
+options.insertInto = undefined;
+
 var update = __webpack_require__(6)(content, options);
+
 if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
+
 if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../node_modules/css-loader/index.js!./Docs.css", function() {
-			var newContent = require("!!../../node_modules/css-loader/index.js!./Docs.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
+	module.hot.accept("!!../../node_modules/css-loader/index.js!./Docs.css", function() {
+		var newContent = require("!!../../node_modules/css-loader/index.js!./Docs.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
 	module.hot.dispose(function() { update(); });
 }
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(false);
 // imports
 
 
