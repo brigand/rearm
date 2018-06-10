@@ -233,23 +233,19 @@ export default class DocsCtx extends React.Component {
           We can use ||Ctx|| to allow for powerful management of data flowing through our
           app, and to gain control of performance when we need it.
         `}
-        <Example />
       </div>
     );
   }
 }
-function pureHoc(C) {
-  return class PureWrapper extends React.PureComponent {
-    render() {
-      return <C {...this.props} />;
-    }
-  };
-}
-const B = pureHoc(() => (
-  <Ctx>
-    {data => <span id="target">{ (console.log(data.x), data.x) }</span>}
-  </Ctx>
-));
+
+class B extends React.PureComponent {
+  render = () => (
+    <Ctx>
+      {data => <span id="target">{(console.log(data.x), data.x)}</span>}
+    </Ctx>
+  )
+};
+
 class Example extends React.Component {
   state = {
     x: 100,
