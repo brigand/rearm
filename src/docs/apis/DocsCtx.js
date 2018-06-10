@@ -258,9 +258,12 @@ class Example extends React.Component {
     return (
       <div>
         <button type="button" onClick={() => this.setState({ x: this.state.x + 1 })}>incr</button>
-      <Ctx ignoreRender inject={{ x: this.state.x }}>
-        <B />
-      </Ctx>
+        <Ctx ignoreRenders inject={{ x: this.state.x }}>
+          <div>
+            {this.state.x}
+            <B />
+          </div>
+        </Ctx>
       </div>
     );
   }

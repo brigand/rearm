@@ -166,7 +166,7 @@ function makeCtx(label: string = 'unknown') {
         this.store.replaceState(now);
       }
 
-      if (!subEq) {
+      if (!subEq && typeof this.props.children === 'function') {
         this.setState(s => ({ updateCount: s.updateCount + 1 }))
       }
     }

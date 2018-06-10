@@ -77,9 +77,9 @@ it(`updates two levels`, () => {
     render() {
       return (
         <Ctx inject={{ x: this.state.x }}>
-        <div>
-        {this.state.x}
-          <B />
+          <div>
+            {this.state.x}
+            <B />
           </div>
         </Ctx>
       );
