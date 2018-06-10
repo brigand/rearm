@@ -27,7 +27,7 @@ export default class DocsCtx extends React.Component {
 
           Context in React is very powerful, and recently redesigned, but each version of
           the context API has had different issues. Formerly, the API required class components,
-          significant boilerplate, and you had to implement subscriptions yourself. This gave
+          significant boilerplate, and you had to implement subscriptions yourself.
 
           The new official context API lacks refinement in subscriptions, which are important
           in general, but would also allow context to be used as a powerful optimization
@@ -130,7 +130,7 @@ export default class DocsCtx extends React.Component {
           <Ctx map={(parent) => ({ ...parent, x: 1 })}>...</Ctx>
           ||||
 
-          We can also remove properties by not including them in the result of the ||map| call.
+          We can also remove properties by not including them in the result of the ||map|| call.
 
           ## ignoreRenders
 
