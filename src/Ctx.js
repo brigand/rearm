@@ -98,7 +98,7 @@ function makeCtx(label: string = 'unknown') {
         this.context[contextKey].subscribe(this.onParentStoreChange);
       }
 
-      this.update(this.props, this.getParentState())
+      this.update(this.props, this.getParentState(), true)
     }
 
     shouldComponentUpdate(nextProps: CtxProps, nextState: CtxState) {
@@ -153,7 +153,7 @@ function makeCtx(label: string = 'unknown') {
       return EMPTY_OBJECT;
     }
 
-    update(props: CtxProps, parentState: any) {
+    update(props: CtxProps, parentState: any, isConstructor: boolean = false) {
       const now = this.performMap(props, parentState);
       const prev = this.store.state;
 
@@ -168,7 +168,7 @@ function makeCtx(label: string = 'unknown') {
         this.store.replaceState(now);
       }
 
-      if (!subEq && typeof this.props.children === 'function') {
+      if (!subEq && typeof this.props.children === 'function' && !isConstructor) {
         this.setState(s => ({ updateCount: s.updateCount + 1 }))
       }
     }
