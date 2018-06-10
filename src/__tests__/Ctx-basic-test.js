@@ -5,12 +5,20 @@ import Ctx from '../Ctx';
 
 configure({ adapter: new Adapter() });
 
+function pureHoc(C) {
+  return class PureWrapper extends React.PureComponent {
+    render() {
+      return <C {...this.props} />;
+    }
+  };
+}
+
 it(`works`, () => {
-  const B = () => (
+  const B = pureHoc(() => (
     <Ctx>
       {data => <span id="target">{ data.x }</span>}
     </Ctx>
-  );
+  ));
   class A extends React.Component {
     render() {
       return (
@@ -27,11 +35,11 @@ it(`works`, () => {
 });
 
 it(`updates one level`, () => {
-  const B = () => (
+  const B = pureHoc(() => (
     <Ctx>
-      {data => <span id="target">{ data.x }</span>}
+      {data => <span id="target">{ (console.log(data.x), data.x) }</span>}
     </Ctx>
-  );
+  ));
   class A extends React.Component {
     state = {
       x: 'foo',
@@ -69,7 +77,10 @@ it(`updates two levels`, () => {
     render() {
       return (
         <Ctx inject={{ x: this.state.x }}>
+        <div>
+        {this.state.x}
           <B />
+          </div>
         </Ctx>
       );
     }

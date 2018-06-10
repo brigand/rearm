@@ -2,6 +2,7 @@
 /* eslint-disable */
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import toIdentifier from './utils/toIdentifier'
 
 const EMPTY_OBJECT = {};
 
@@ -23,11 +24,11 @@ function objShallowEqual(a: Object, b: Object) {
 }
 
 type CtxProps = {
-  whitelist?: Array<string>,
-  blacklist?: Array<string>,
   map?: (data: any) => any,
+  subscribe?: (data: any) => any,
   inject: any,
   children: ((data: any) => React.Node) | React.Node,
+  ignoreRenders?: boolean,
 }
 
 // A simple store, similar to redux but with replaceState instead of dispatch
@@ -56,9 +57,17 @@ type CtxState = {
   updateCount: number,
 }
 
-function makeCtx(contextKey: string) {
+let makeCtxCreatedCounter = 0;
+
+function makeCtx(label: string = 'unknown') {
+  makeCtxCreatedCounter += 1;
+
+  const contextKey = `rearm-ctx_${makeCtxCreatedCounter}_${toIdentifier(label)}`;
   class Ctx extends React.Component<CtxProps, CtxState> {
     static makeCtx = makeCtx;
+    static contextKey = contextKey;
+
+    prevSub: any;
 
     store = new CtxStore();
 
@@ -76,16 +85,24 @@ function makeCtx(contextKey: string) {
       [contextKey]: PropTypes.any,
     }
 
+    getChildContext() {
+      return { [contextKey]: this.store };
+    }
+
     constructor(props: CtxProps, context: any) {
       super(props, context);
 
       if (this.context[contextKey]) {
         this.context[contextKey].subscribe(this.onParentStoreChange);
       }
+
+      this.update(this.props, this.getParentState())
     }
 
-    componentWillMount() {
-      this.update(this.props, this.getParentState());
+    shouldComponentUpdate(nextProps: CtxProps, nextState: CtxState) {
+      if (this.state.updateCount !== nextState.updateCount) return true;
+
+      return !nextProps.ignoreRenders;
     }
 
     componentWillUnmount() {
@@ -94,29 +111,14 @@ function makeCtx(contextKey: string) {
       }
     }
 
-    getChildContext() {
-      return { [contextKey]: this.store };
-    }
-
     onParentStoreChange = () => {
       this.update(this.props, this.getParentState());
     };
 
     performMap(props: CtxProps, input: any) {
       let result = input;
-      const { whitelist, blacklist, map, inject } = props;
-      if (whitelist) {
-        result = {};
-        Object.keys(input).forEach((key) => {
-          if (whitelist.indexOf(key) !== -1) result[key] = input[key];
-        });
-      }
-      if (blacklist) {
-        result = {};
-        Object.keys(input).forEach((key) => {
-          if (blacklist.indexOf(key) === -1) result[key] = input[key];
-        });
-      }
+      const { map, inject } = props;
+
       if (map) {
         result = map(result);
       }
@@ -129,6 +131,19 @@ function makeCtx(contextKey: string) {
       return result;
     }
 
+    performSubscribe(props: CtxProps, input: any) {
+      if (typeof props.subscribe === 'function') {
+        return props.subscribe(input);
+      } else if (Array.isArray(props.subscribe)) {
+        const result = {};
+        props.subscribe.forEach((key) => {
+          result[key] = input[key];
+        });
+        return result;
+      }
+      return null;
+    }
+
     getParentState() {
       if (this.context[contextKey]) {
         return this.context[contextKey].state;
@@ -139,18 +154,21 @@ function makeCtx(contextKey: string) {
     update(props: CtxProps, parentState: any) {
       const now = this.performMap(props, parentState);
       const prev = this.store.state;
-      // const name = this.props.children.type && this.props.children.type.name || '(unknown)';
-      // console.log(name, this.props.inject, now);
-      if (objShallowEqual(now, prev)) {
-        return;
+
+      const nowSub = this.performSubscribe(props, now) || now;
+      const prevSub = this.prevSub || {};
+
+      const mapEq = objShallowEqual(now, prev);
+      const subEq = objShallowEqual(nowSub, prevSub);
+      this.prevSub = nowSub;
+
+      if (!mapEq) {
+        this.store.replaceState(now);
       }
 
-      this.store.replaceState(now);
-      this.setState(s => ({ updateCount: s.updateCount + 1 }));
-    }
-
-    getChildValue() {
-      return this.store.state;
+      if (!subEq) {
+        this.setState(s => ({ updateCount: s.updateCount + 1 }))
+      }
     }
 
     componentWillReceiveProps(nextProps: CtxProps) {
@@ -158,7 +176,7 @@ function makeCtx(contextKey: string) {
     }
 
     getChildValue() {
-      return this.store.state;
+      return this.prevSub || this.store.state;
     }
 
     render() {
@@ -168,6 +186,7 @@ function makeCtx(contextKey: string) {
       if (typeof this.props.children === 'function') {
         childValue = this.getChildValue();
       }
+      
       if (typeof this.props.children === 'function') {
         return this.props.children(childValue);
       }
