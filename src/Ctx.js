@@ -23,11 +23,13 @@ function objShallowEqual(a: Object, b: Object) {
   return false;
 }
 
+type ChildrenFunc = (data: any, fullState: any) => React.Node;
+
 type CtxProps = {
   map?: (data: any) => any,
   subscribe?: (data: any) => any,
   inject: any,
-  children: ((data: any) => React.Node) | React.Node,
+  children: any,
   ignoreRenders?: boolean,
 }
 
@@ -179,6 +181,10 @@ function makeCtx(label: string = 'unknown') {
       return this.prevSub || this.store.state;
     }
 
+    getFullState() {
+      return this.store.state;
+    }
+
     render() {
       // a little dance becasue flow thinks this.getChildValue() could change the type
       // of this.props.children
@@ -188,7 +194,7 @@ function makeCtx(label: string = 'unknown') {
       }
       
       if (typeof this.props.children === 'function') {
-        return this.props.children(childValue);
+        return this.props.children(childValue, this.getFullState());
       }
       return this.props.children;
     }
