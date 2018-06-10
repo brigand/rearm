@@ -6,6 +6,7 @@ import DocsCtx from './apis/DocsCtx';
 import DocsCtxState from './apis/DocsCtxState';
 import DocsPortalGun from './apis/DocsPortalGun';
 import pages from './pages';
+import githubIcon from './githubIcon';
 import './Docs.css';
 
 type Props = {
@@ -70,6 +71,11 @@ class Docs extends React.Component<Props> {
       <div className="Docs__Sidebar">
         {this.renderLink({ path: null, name: 'Home', description: `The home page` })}
         {pages.map(page => this.renderLink(page))}
+        {this.renderLink({
+          absolute: `https://github.com/brigand/rearm`,
+          name: [githubIcon, ` GitHub`],
+          description: `The official github repo`,
+        })}
       </div>
     );
   }
@@ -83,7 +89,7 @@ class Docs extends React.Component<Props> {
 
     return (
       <a
-        href={`/rearm/${page.path ? `docs/${page.path}` : ''}`}
+        href={page.absolute ? page.absolute : `/rearm/${page.path ? `docs/${page.path}` : ''}`}
         className={className}
         title={page.description}
         key={page.path}
