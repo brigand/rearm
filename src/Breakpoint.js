@@ -114,7 +114,7 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
 };
 
 type BreakpointResultProp = {
-  key: ?string,
+  key: () => ?string,
   isGt: (key: string) => boolean,
   isLt: (key: string) => boolean,
   isEq: (key: string) => boolean,
@@ -178,7 +178,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
 
   createBp() {
     return {
-      key: this.state.current ? this.state.current.key : null,
+      key: () => this.state.current ? this.state.current.key : null,
       isGt: (key: string) => !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
       isLt: (key: string) => !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
       isEq: (key: string) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
