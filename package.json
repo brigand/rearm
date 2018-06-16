@@ -1,6 +1,6 @@
 {
   "name": "rearm",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "powerful react.js abstractions for non-trivial apps",
   "main": "lib/index.js",
   "scripts": {
