@@ -5,12 +5,22 @@
 html, body {
   height: 100%;
   background: #eaedf1;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Encode Sans Semi Expanded', sans-serif;
   font-size: 16px;
+}
+
+code, pre {
+  font-family: 'Inconsolata', monospace;
+  font-size: inherit;
+}
+
+html {
+  font-size: calc(14px + (18 - 14) * ((100vw - 300px) / (1800 - 300)));
 }
 
 #root, .Docs {
   height: 100%;
+  z-index: 0;
 }
 
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -22,16 +32,27 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   position: relative;
   background: #fafafa;
   color: #575757;
-  width: 100%;
-  max-width: 45em;
+  width: 60em;
+  max-width: 95vw;
   padding: 1em;
   margin: 1em auto;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3), 0 0 1.4em 1px rgba(0, 0, 0, 0.15);
+}
+
+.Docs__Content {
 }
 
 .Docs__Sidebar {
   position: absolute;
-  right: 100%;
+  right: calc(100% + 0.6em);
   top: 0;
+  box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+.Docs__Sidebar__Title {
+  text-align: center;
+  margin: 0.4em 0;
 }
 
 .Docs__Link {
@@ -39,13 +60,13 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   width: 10em;
   padding: 0.6em 1em;
   border-left: 4px solid transparent;
-  background: #f6f6f6;
   color: #686868;
   text-decoration: none;
 }
 
 .Docs__Link:hover {
   background: white;
+  color: hotpink;
 }
 
 .Docs__Link--active {
@@ -57,7 +78,6 @@ h1 {
 }
 
 code {
-  font-family: 'Source Code Pro', monospace;
   color: #da1884;
 }
 
@@ -72,24 +92,23 @@ pre code {
   color: inherit;
 }
 
-
 pre code .high-reset {
   color: #575757;
 }
 
 pre code .high-str {
-  color: #aa3311;
+  color: #da1884;
 }
 
 pre code .high-jsx {
-  color: green;
+  color: rgb(0, 88, 0);
 }
 
 pre code .high-num {
-  color: blue;
+  color: rgb(11, 11, 175);
 }
 
 pre code .high-comment {
   font-size: 0.9em;
-  color: #467a56;
+  color: #47737a;
 }

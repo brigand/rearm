@@ -47,7 +47,7 @@ class Docs extends React.Component<Props> {
 
   renderHome() {
     return (
-      <div>
+      <div className="Docs__Content">
         <h1>Rearm</h1>
         <div>
           {`A collection of React.js abstractions for non-trivial apps`}
@@ -63,12 +63,13 @@ class Docs extends React.Component<Props> {
     if (!Page) {
       return <h2>404 Not found</h2>;
     }
-    return <Page />;
+    return <div className="Docs__Content"><Page /></div>;
   }
 
   renderSidebar() {
     return (
       <div className="Docs__Sidebar">
+        <h3 className="Docs__Sidebar__Title">Rearm</h3>
         {this.renderLink({ path: null, name: 'Home', description: `The home page` })}
         {pages.map(page => this.renderLink(page))}
         {this.renderLink({
