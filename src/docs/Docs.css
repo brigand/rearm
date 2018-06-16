@@ -18,6 +18,10 @@ html {
   font-size: calc(14px + (18 - 14) * ((100vw - 300px) / (1800 - 300)));
 }
 
+h1, h2, h3, h4, h5, h6, h7 {
+  letter-spacing: 0.07em;
+}
+
 #root, .Docs {
   height: 100%;
   z-index: 0;
@@ -26,6 +30,19 @@ html {
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   text-decoration: none;
   color: inherit;
+}
+
+.Docs__Sidebar__Title {
+  font-size: 0.8em;
+  color: rgb(122, 92, 108);
+}
+
+.Docs__Sidebar__Title * {
+  color: inherit;
+}
+
+.Docs__Sidebar__Title strong {
+  color: hotpink;
 }
 
 .Docs__Page {
@@ -123,11 +140,12 @@ pre code .high-comment {
 
   .Docs__Sidebar__Content {
     position: absolute;
+    font-size: 1.3em;
     top: 4em;
     right: 2em;
     z-index: 1000;
     background: white;
-    padding: 2em 0.6em;
+    padding: 0.6em;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -162,7 +180,7 @@ pre code .high-comment {
 
   .Docs__Page {
     width: 60em;
-    max-width: calc(95vw - 11.234em - 0.6em);
+    max-width: calc(95vw - 11.234em);
   }
 }
 

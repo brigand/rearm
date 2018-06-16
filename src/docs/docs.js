@@ -70,7 +70,11 @@ class Docs extends React.Component<Props> {
   renderSidebar() {
     return (
       <div className="Docs__Sidebar">
-        <h3 className="Docs__Sidebar__Title">Rearm</h3>
+        <h3 className="Docs__Sidebar__Title">
+          <code>
+            npm install -s <strong >rearm</strong>
+          </code>
+        </h3>
         <label className="Docs__Sidebar__Toggle" htmlFor={this.toggleId}>
           <icons.Hamburger />
         </label>
