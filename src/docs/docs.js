@@ -6,7 +6,7 @@ import DocsCtx from './apis/DocsCtx';
 import DocsCtxState from './apis/DocsCtxState';
 import DocsPortalGun from './apis/DocsPortalGun';
 import pages from './pages';
-import githubIcon from './githubIcon';
+import * as icons from './icons';
 import './Docs.css';
 
 type Props = {
@@ -66,18 +66,25 @@ class Docs extends React.Component<Props> {
     return <div className="Docs__Content"><Page /></div>;
   }
 
+  toggleId = `sidebar-toggle-gyn9p8jogg`;
   renderSidebar() {
     return (
       <div className="Docs__Sidebar">
         <h3 className="Docs__Sidebar__Title">Rearm</h3>
-        {this.renderLink({ path: null, name: 'Home', description: `The home page` })}
-        {pages.map(page => this.renderLink(page))}
-        {this.renderLink({
-          absolute: `https://github.com/brigand/rearm`,
-          path: '',
-          name: [githubIcon, ` GitHub`],
-          description: `The official github repo`,
-        })}
+        <label className="Docs__Sidebar__Toggle" htmlFor={this.toggleId}>
+          <icons.Hamburger />
+        </label>
+        <input type="checkbox" className="Docs__Sidebar__Check" id={this.toggleId} />
+        <div className="Docs__Sidebar__Content">
+          {this.renderLink({ path: null, name: 'Home', description: `The home page` })}
+          {pages.map(page => this.renderLink(page))}
+          {this.renderLink({
+            absolute: `https://github.com/brigand/rearm`,
+            path: '',
+            name: [<icons.Github />, ` GitHub`],
+            description: `The official github repo`,
+          })}
+        </div>
       </div>
     );
   }

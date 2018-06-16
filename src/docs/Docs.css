@@ -30,29 +30,14 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 .Docs__Page {
   position: relative;
-  background: #fafafa;
+  background: white;
   color: #575757;
-  width: 60em;
-  max-width: 95vw;
+
+  /* size defined in media query */
+
   padding: 1em;
   margin: 1em auto;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3), 0 0 1.4em 1px rgba(0, 0, 0, 0.15);
-}
-
-.Docs__Content {
-}
-
-.Docs__Sidebar {
-  position: absolute;
-  right: calc(100% + 0.6em);
-  top: 0;
-  box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.2);
-  background: white;
-}
-
-.Docs__Sidebar__Title {
-  text-align: center;
-  margin: 0.4em 0;
 }
 
 .Docs__Link {
@@ -111,4 +96,79 @@ pre code .high-num {
 pre code .high-comment {
   font-size: 0.9em;
   color: #47737a;
+}
+
+/* sidebar toggle for mobile */
+
+.Docs__Sidebar__Toggle, .Docs__Sidebar__Check {
+  display: none;
+}
+
+/* small screens */
+@media (max-width: 740px) {
+  .Docs__Sidebar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+  }
+  .Docs__Sidebar__Toggle {
+    display: block;
+    height: 1em;
+    width: 1em;
+    margin-left: auto;
+    font-size: 2em;
+    color: #999999;
+  }
+
+  .Docs__Sidebar__Content {
+    position: absolute;
+    top: 4em;
+    right: 2em;
+    z-index: 1000;
+    background: white;
+    padding: 2em 0.6em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .Docs__Sidebar__Check:checked {
+    color: hotpink;
+  }
+
+  .Docs__Sidebar__Check:checked + .Docs__Sidebar__Content {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    pointer-events: inherit;
+  }
+}
+
+/* large screens */
+@media (min-width: 741px) {
+  .Docs__Sidebar {
+    position: absolute;
+    right: calc(100% + 0.6em);
+    top: 0;
+    box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.2);
+    background: white;
+    width: 11.234em;
+  }
+
+  .Docs__Sidebar__Title {
+    text-align: center;
+    margin: 0.4em 0;
+  }
+
+  .Docs__Page {
+    width: 60em;
+    max-width: calc(95vw - 11.234em - 0.6em);
+  }
+}
+
+@media (max-width: 1390px) and (min-width: 741px) {
+  .Docs__Page {
+    margin-left: auto;
+    margin-right: 0.6em;
+  } 
 }
