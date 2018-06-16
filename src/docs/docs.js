@@ -33,6 +33,8 @@ const urlParts = urlPartsRaw.filter((x) => {
 const isHome = urlParts.length === 0;
 const activePage = isHome ? null : urlParts[1] || urlParts[0];
 
+const getPageUrl = page => page.absolute ? page.absolute : `/rearm/${page.path ? `docs/${page.path}` : ''}`;
+
 class Docs extends React.Component<Props> {
   render() {
     return (
@@ -52,6 +54,19 @@ class Docs extends React.Component<Props> {
         <div>
           {`A collection of React.js abstractions for non-trivial apps`}
         </div>
+
+        {pages.map((page) => {
+          return (
+            <a className="Docs__Home__Link" key={page.path} href={getPageUrl(page)}>
+              <span className="Docs__Home__Link__Title">
+                {page.name}
+              </span>
+              <span className="Docs__Home__Link__Description">
+                {page.description}
+              </span>
+            </a>
+          );
+        })}
       </div>
     );
   }
@@ -102,7 +117,7 @@ class Docs extends React.Component<Props> {
 
     return (
       <a
-        href={page.absolute ? page.absolute : `/rearm/${page.path ? `docs/${page.path}` : ''}`}
+        href={getPageUrl(page)}
         className={className}
         title={page.description}
         key={page.path}

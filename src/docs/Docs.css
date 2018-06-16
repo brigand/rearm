@@ -20,6 +20,7 @@ html {
 
 h1, h2, h3, h4, h5, h6, h7 {
   letter-spacing: 0.07em;
+  margin-top: 1.6rem;
 }
 
 #root, .Docs {
@@ -52,7 +53,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
   /* size defined in media query */
 
-  padding: 1em;
+  padding: 0.001em 1.8em 2em 1.8em;
   margin: 1em auto;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3), 0 0 1.4em 1px rgba(0, 0, 0, 0.15);
 }
@@ -115,6 +116,19 @@ pre code .high-comment {
   color: #47737a;
 }
 
+.Docs__Home__Link {
+  text-decoration: none;
+  color: inherit;
+  margin: 1.2em 0;
+  display: block;
+}
+
+.Docs__Home__Link__Title {
+  display: block;
+  color: rgb(16, 110, 173);
+  font-size: 1.14em;
+}
+
 /* sidebar toggle for mobile */
 
 .Docs__Sidebar__Toggle, .Docs__Sidebar__Check {
@@ -175,12 +189,12 @@ pre code .high-comment {
 
   .Docs__Sidebar__Title {
     text-align: center;
-    margin: 0.4em 0;
+    margin: 1.2em 0;
   }
 
   .Docs__Page {
-    width: 60em;
-    max-width: calc(95vw - 11.234em);
+    width: 54em;
+    max-width: calc(96vw - 11.234em);
   }
 }
 
