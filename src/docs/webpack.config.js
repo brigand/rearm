@@ -23,4 +23,9 @@ module.exports = {
     contentBase: pathJoin(__dirname),
     historyApiFallback: true,
   },
+  resolve: {
+    alias: {
+      outdent: require.resolve(`outdent/lib`),
+    },
+  },
 };
