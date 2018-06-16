@@ -178,7 +178,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
 
   createBp() {
     return {
-      key: () => this.state.current ? this.state.current.key : null,
+      key: () => (this.state.current ? this.state.current.key : null),
       isGt: (key: string) => !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
       isLt: (key: string) => !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
       isEq: (key: string) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
@@ -351,7 +351,7 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
 
     if (typeof childNode.type === 'function'
       // and is not functional component
-      && Object.getPrototypeOf(childNode.type) !== Function.prototype) {
+      && childNode.type.prototype !== Function.prototype) {
       return React.cloneElement(childNode, {
         ref: (instance: React.Component<any>) => {
           if (!instance) this.rootElement = null;
