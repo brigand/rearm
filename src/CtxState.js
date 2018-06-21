@@ -76,7 +76,7 @@ function makeCtxState(key: string) {
 
     render() {
       return (
-        <StateCtx inject={this.currState}>
+        <StateCtx set={this.currState}>
           <UpdateIfChanged updateIfChanged={this.props.children}>
             {this.props.children}
           </UpdateIfChanged>
