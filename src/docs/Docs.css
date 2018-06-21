@@ -7,6 +7,7 @@ html, body {
   background: #eaedf1;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
   font-size: 16px;
+  line-height: 1.6;
 }
 
 code, pre {
@@ -15,7 +16,7 @@ code, pre {
 }
 
 html {
-  font-size: calc(14px + (18 - 14) * ((100vw - 300px) / (1800 - 300)));
+  font-size: calc(14px + (18 - 14) * ((100vw - 300px) / (1600 - 300)));
 }
 
 h1, h2, h3, h4, h5, h6, h7 {
