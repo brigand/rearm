@@ -41,30 +41,30 @@ export default class DocsCtx extends React.Component {
 
           ## Basic Usage
 
-          First import ||Ctx||.
+          First import ||makeCtx||, and then create a ||Ctx|| component.
 
           ||||jsx
-          import Ctx from 'rearm/lib/Ctx';
+          import { makeCtx } from 'rearm/lib/Ctx';
+          const Ctx = makeCtx('some-description');
           ||||
 
-          Anywhere in the tree you can define some context keys. The ||inject||
-          value is shallowly merged into the parent context, if any exists. This
-          in no way affects the parent context.
+          Anywhere in the tree you can define the context by using the ||set|| prop.
+          This in no way affects the parent context.
 
           ||||jsx
           render() {
             return (
-              <Ctx inject={{ color: 'hotpink' }}>
+              <Ctx set={{ color: 'hotpink' }}>
                 <Something />
               </Ctx>
             );
           }
           ||||
 
-          Within the children of ||Ctx||, no matter how deep, we can extract properties
-          from the context in render by passing a render callback child to ||Ctx||. The render
+          Within the children of ||Ctx||, no matter how deep, we can map the context to React
+          nodes in render  by passing a render callback child to ||Ctx||. The render
           callback will run any time the nearest parent ||Ctx|| updates, since we haven't defined
-          any refinement props (more on that later).
+          any refinement (more on that later).
 
           ||||jsx
           render() {
@@ -76,61 +76,39 @@ export default class DocsCtx extends React.Component {
           }
           ||||
 
-          ## Subscrbe
+          ## select
 
-          You may only be interested in part of the context. For separate features, you should use ||makeCtx||,
-          described below, to get separate instances of the ||Ctx|| component.
+          You may only be interested in part of the context.
 
-          You might use the ||subscribe|| prop to e.g. access a specific item by id, or a specific field of
+          You might use the ||select|| prop to e.g. access a specific item by id, or a specific field of
           a piece of data.
 
           In the simplest case, you can pass an array of properties to access.
 
           ||||jsx
-          <Ctx subscribe={['foo', 'bar']}>
+          <Ctx select={['foo', 'bar']}>
             {({ foo, bar }) => <div>{foo} {bar}</div>}
           </Ctx>
           ||||
 
-          A function can be passed, which allows you to produce any result you want, and its properties
-          will be shallowly compared to the previous result. The argument is the state provided by the
+          A function can be passed, which allows you to produce any result you want, and if it's an object/array,
+          its properties will be shallowly compared to the previous result. The argument is the state provided by the
           parent ||Ctx||, if any. In this case, we want to access a specific user by id, and then render
           their name. This will update any time ||users[props.userId]|| changes.
 
           ||||jsx
-          <Ctx subscribe={(users) => ({ user: users[props.userId] })}>
-            {({ user }) => <div>{user.name}</div>}
+          <Ctx select={(users) => users[props.userId])}>
+            {user => <div>{user.name}</div>}
           </Ctx>
           ||||
 
           Of course, we can be more specific in this case, and only subscribe to the user's name changing.
 
           ||||jsx
-          <Ctx subscribe={(users) => ({ name: users[props.userId].name })}>
-            {({ name }) => <div>{name}</div>}
+          <Ctx select={(users) => users[props.userId].name}>
+            {name) => <div>{name}</div>}
           </Ctx>
           ||||
-
-          ## Mapping
-
-          The ||map|| prop is a function that takes the entire parent context and returns a new object
-          that will become the context for the subtree. It's identical to the function variant of ||subscribe||,
-          except that it also replaces what any children ||Ctx|| instances will see.
-
-          Most of the time you should use ||inject|| or ||subscribe|| instead. We can implement ||inject|| with ||map||,
-          for example:
-
-          ||||jsx
-          <Ctx inject={{ x: 1 }}>...</Ctx>
-          ||||
-
-          This is identical:
-
-          ||||jsx
-          <Ctx map={(parent) => ({ ...parent, x: 1 })}>...</Ctx>
-          ||||
-
-          We can also remove properties by not including them in the result of the ||map|| call.
 
           ## ignoreRenders
 
@@ -145,7 +123,7 @@ export default class DocsCtx extends React.Component {
           First, let's introduce the ||ignoreRenders|| prop. When ||ignoreRenders|| is provided (and
           set to a "truthy" value), the ||Ctx|| won't implicitly render when the parent rerenders.
 
-          Instead, it invokes ||subscribe||/||map||, and will update if those change. Let's start
+          Instead, it invokes ||select||, and will update if that produces a new result. Let's start
           by defining a **broken** component that uses ||ignoreRenders||.
 
           ||||jsx
@@ -156,9 +134,9 @@ export default class DocsCtx extends React.Component {
 
               <Ctx
                 ignoreRenders
-                subscribe={theme => ({ color: theme.color })}
+                select={theme => theme.color}
               >
-                {({ color }) => (
+                {color => (
                   <div
                     style={{ color }}
                   >
@@ -179,9 +157,9 @@ export default class DocsCtx extends React.Component {
           ||||jsx
           <Ctx
             ignoreRenders
-            subscribe={theme => ({ color: theme.color, name: props.name })}
+            select={theme => [theme.color,props.name]}
           >
-            {({ color, name }) => (
+            {([color, name]) => (
               <div
                 style={{ color }}
               >
@@ -199,34 +177,16 @@ export default class DocsCtx extends React.Component {
           We also had ||props.age||, but since we don't need that inside the ||Ctx||,
           we simply don't subscribe to it.
 
-          The combination of ||ignoreRenders|| and ||subscribe|| could even be useful
+          The combination of ||ignoreRenders|| and ||select|| could even be useful
           when not using context at all!
-
-          ## makeCtx
-
-          The default ||Ctx|| uses one namespace for all of your context properties.
-          This also means the operations that inject or map the context can impact
-          children. Intermediate ||Ctx|| elements can accidentally override a parent
-          context key. To get around this, you can create a ||Ctx|| that uses a different
-          namespace.
-
-          ||||jsx
-          const MyCtx = Ctx.makeCtx('my-unique-key');
-
-          <MyCtx inject={...}>
-          ||||
-
-          Then you use ||MyCtx|| in places where you want to receive or inject
-          that context. It won't clash with any other ||Ctx|| elements on the page.
-
 
           ## Summary
 
-          The ||map|| and ||inject|| props allow us to define the context our indirect
+          The ||set|| prop allow us to define the context our indirect
           children will see.
 
-          By using ||subscribe|| and ||ignoreRender|| we know exactly what will cause us
-          to rerender.
+          By using ||select|| and ||ignoreRender|| we know exactly what will cause us
+          to re-render.
 
           With ||makeCtx|| we can avoid creating massive string-based namespaces for our apps.
 

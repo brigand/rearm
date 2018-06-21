@@ -6,9 +6,20 @@ import toIdentifier from './utils/toIdentifier'
 
 const EMPTY_OBJECT = {};
 
+function isPlainValue(x: any) {
+  if (!x || typeof x !== 'object') return true;
+  const proto = Object.getPrototypeOf(x);
+  // $FlowFixMe
+  return proto === Object.prototype || proto === Array.prototype;
+}
+
+function isPrimitive(x: any) {
+  return !x || typeof x !== 'object';
+}
+
 function objShallowEqual(a: Object, b: Object) {
-  if (a && !b) return false;
-  if (b && !a) return false;
+  if (isPrimitive(a) || isPrimitive(b)) return a === b;
+  if (!isPlainValue(a) || !isPlainValue(b)) return false;
 
   const keysA = Object.keys(a);
   const keysB = Object.keys(b);
@@ -26,9 +37,8 @@ function objShallowEqual(a: Object, b: Object) {
 type ChildrenFunc = (data: any, fullState: any) => React.Node;
 
 type CtxProps = {
-  map?: (data: any) => any,
-  subscribe?: (data: any) => any,
-  inject: any,
+  select?: (data: any) => any,
+  set: any,
   children: any,
   ignoreRenders?: boolean,
 }
@@ -119,26 +129,21 @@ function makeCtx(label: string = 'unknown') {
 
     performMap(props: CtxProps, input: any) {
       let result = input;
-      const { map, inject } = props;
+      const { set } = props;
 
-      if (map) {
-        result = map(result);
-      }
-      if (inject) {
-        // if none of the previous conditions matched, we still avoid mutating input
-        if (result === input) result = { ...result, ...inject };
-        else Object.assign(result, inject);
+      if (set) {
+        result = set;
       }
 
       return result;
     }
 
-    performSubscribe(props: CtxProps, input: any) {
-      if (typeof props.subscribe === 'function') {
-        return props.subscribe(input);
-      } else if (Array.isArray(props.subscribe)) {
+    performSelect(props: CtxProps, input: any) {
+      if (typeof props.select === 'function') {
+        return props.select(input);
+      } else if (Array.isArray(props.select)) {
         const result = {};
-        props.subscribe.forEach((key) => {
+        props.select.forEach((key) => {
           result[key] = input[key];
         });
         return result;
@@ -150,14 +155,14 @@ function makeCtx(label: string = 'unknown') {
       if (this.context[contextKey]) {
         return this.context[contextKey].state;
       }
-      return EMPTY_OBJECT;
+      return null;
     }
 
     update(props: CtxProps, parentState: any, isConstructor: boolean = false) {
       const now = this.performMap(props, parentState);
       const prev = this.store.state;
 
-      const nowSub = this.performSubscribe(props, now) || now;
+      const nowSub = this.performSelect(props, now) || now;
       const prevSub = this.prevSub || {};
 
       const mapEq = objShallowEqual(now, prev);
@@ -203,6 +208,4 @@ function makeCtx(label: string = 'unknown') {
   return Ctx;
 }
 
-const DefaultCtx = makeCtx('_rearm:Ctx');
-
-module.exports = DefaultCtx;
+module.exports.makeCtx = makeCtx;
