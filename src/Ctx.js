@@ -17,7 +17,7 @@ function isPrimitive(x: any) {
   return !x || typeof x !== 'object';
 }
 
-function objShallowEqual(a: Object, b: Object) {
+function objShallowEqual(a: any, b: any) {
   if (isPrimitive(a) || isPrimitive(b)) return a === b;
   if (!isPlainValue(a) || !isPlainValue(b)) return false;
 
@@ -162,7 +162,7 @@ function makeCtx(label: string = 'unknown') {
       const now = this.performMap(props, parentState);
       const prev = this.store.state;
 
-      const nowSub = this.performSelect(props, now) || now;
+      const nowSub = this.performSelect(props, now);
       const prevSub = this.prevSub || {};
 
       const mapEq = objShallowEqual(now, prev);
