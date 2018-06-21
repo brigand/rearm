@@ -16,7 +16,9 @@ export default class PortalGun extends React.Component {
       }
       render() {
         gun.element = this.props.children;
-        gun.listeners.forEach(listener => listener());
+        process.nextTick(() => {
+          gun.listeners.forEach(listener => listener());
+        });
         return null;
       }
     };
