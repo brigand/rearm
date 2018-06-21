@@ -9,6 +9,8 @@ major Ctx changes, reducing API
 - support primitives for state
 - consider non-plain objects as always non-equal
 
+Removes CtxState. It was a bad API.
+
 ## pre 0.12.0
 
 Changelog didn't exist, but all APIs were
