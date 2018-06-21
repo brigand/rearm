@@ -163,7 +163,7 @@ function makeCtx(label: string = 'unknown') {
       const prev = this.store.state;
 
       const nowSub = this.performSelect(props, now);
-      const prevSub = this.prevSub || {};
+      const prevSub = this.prevSub;
 
       const mapEq = objShallowEqual(now, prev);
       const subEq = objShallowEqual(nowSub, prevSub);
