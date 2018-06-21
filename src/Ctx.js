@@ -183,7 +183,7 @@ function makeCtx(label: string = 'unknown') {
     }
 
     getChildValue() {
-      return this.prevSub || this.store.state;
+      return this.props.select ? this.prevSub : this.store.state;
     }
 
     getFullState() {
