@@ -1,4 +1,12 @@
 
+## 0.13.0
+
+PortalGun bug fixes and supports multiple Source's
+
+It's mostly a rewrite of PortalGun to behave correctly
+in more cases. It tries to work better with the React
+lifecycle, and update exactly when it needs to.
+
 ## 0.12.0
 
 major Ctx changes, reducing API
