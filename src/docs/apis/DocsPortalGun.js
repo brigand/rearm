@@ -18,9 +18,6 @@ export default class DocsPortalGun extends React.Component {
           The basic functionality is here, but it's in the process of being
           integrated in an existing app, and may change based on that experience.
 
-          ${/*## Why? TODO */''}
-
-
           ## Example
 
           You use PortalGun by first creating a scope. This takes the form of a
@@ -28,8 +25,9 @@ export default class DocsPortalGun extends React.Component {
           Source and Dest components.
 
           First you'll need a component that renders a ||PortalGun||. Each instance
-          gets its own Source and Dest component. Note that ||Source|| should
-          only be used in one place, but you can use ||Dest|| anywhere you like.
+          gets its own ||Source|| and ||Dest|| component. You may use ||Dest|| multiple
+          times, but with multiple ||Source|| elements the order of results is
+          undefined.
 
           ||||js
           const ExampleOne = () => (
@@ -99,6 +97,7 @@ const ExampleOne = () => (
   </PortalGun>
 );
 
+/* eslint-disable */
 class Options extends React.Component {
   state = { a: false, b: false, c: false }
   render() {
