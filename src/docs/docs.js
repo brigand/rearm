@@ -73,7 +73,15 @@ class Docs extends React.Component<Props> {
   renderPage() {
     if (!activePage) return null;
 
+    if (process.env.NODE_ENV === 'development' && activePage.indexOf('scratch') === 0) {
+      // eslint-disable-next-line global-require
+      const SM = require('./scratch/ScratchMain');
+      const el = React.createElement(SM.default ? SM.default : SM);
+      return <div className="Docs__Content">{el}</div>;
+    }
+
     const Page = pageToDoc[activePage];
+
     if (!Page) {
       return <h2>404 Not found</h2>;
     }
@@ -101,6 +109,12 @@ class Docs extends React.Component<Props> {
             path: '<github>',
             name: <React.Fragment><icons.Github /> Github</React.Fragment>,
             description: `The official github repo`,
+          })}
+
+          {process.env.NODE_ENV === 'development' && this.renderLink({
+            path: 'scratch',
+            name: 'Scratch',
+            description: 'only exists in development',
           })}
         </div>
       </div>
