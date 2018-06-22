@@ -94,12 +94,12 @@ class Docs extends React.Component<Props> {
         </label>
         <input type="checkbox" className="Docs__Sidebar__Check" id={this.toggleId} />
         <div className="Docs__Sidebar__Content">
-          {this.renderLink({ path: null, name: 'Home', description: `The home page` })}
+          {this.renderLink({ path: '', name: 'Home', description: `The home page` })}
           {pages.map(page => this.renderLink(page))}
           {this.renderLink({
             absolute: `https://github.com/brigand/rearm`,
-            path: '',
-            name: [<icons.Github />, ` GitHub`],
+            path: '<github>',
+            name: <React.Fragment><icons.Github /> Github</React.Fragment>,
             description: `The official github repo`,
           })}
         </div>
