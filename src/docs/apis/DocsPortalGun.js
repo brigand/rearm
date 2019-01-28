@@ -52,9 +52,9 @@ export default class DocsPortalGun extends React.Component {
             state = { a: false, b: false, c: false }
             render() {
               const { Source } = this.props;
-          
+
               const toggle = // updates state
-          
+
               return (
                 <div>
                   <label><input type="checkbox" onClick={toggle('a')} /> A</label>
@@ -77,8 +77,29 @@ export default class DocsPortalGun extends React.Component {
           There are no restrictions on where ||Source|| and ||Dest|| appear in the tree.
 
           If there isn't currently a ||Source|| element, then ||Dest|| will render nothing.
+
+           )}
         `}
         <ExampleOne />
+        {md`
+          ## Transform ||Dest||
+
+          Often you'll want to position the element passed to ||Source|| on the receiving end, but
+          not produce an element when no ||Source|| is rendered. The ||Dest|| component accepts a "render callback"
+          to allow you to transform the contents for each ||Source||.
+
+          ||||
+          <Dest>
+           {(node) => (
+             <div
+               style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0}}
+              >
+                {node}
+              </div>
+            )}
+          </Dest>
+          ||||
+        `}
       </div>
     );
   }

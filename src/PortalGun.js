@@ -86,7 +86,7 @@ export default class PortalGun extends React.Component {
       render() {
         return sourceIds.map(id => (
           <React.Fragment key={id}>
-            {idsToNodes[id]}
+            {typeof this.props.children === 'function' ? this.props.children(idsToNodes[id]) : idsToNodes[id]}
           </React.Fragment>
         ));
       }
