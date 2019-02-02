@@ -77,8 +77,6 @@ export default class DocsPortalGun extends React.Component {
           There are no restrictions on where ||Source|| and ||Dest|| appear in the tree.
 
           If there isn't currently a ||Source|| element, then ||Dest|| will render nothing.
-
-           )}
         `}
         <ExampleOne />
         {md`

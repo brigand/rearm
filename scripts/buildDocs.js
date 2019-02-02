@@ -4,7 +4,7 @@ const pages = require('../src/docs/pages');
 
 const buildId = Math.floor(Math.random() * 2**45);
 const html = fs.readFileSync('src/docs/index.html', 'utf-8');
-const adjusted = html.replace('docs.bundle.js', 'rearm/docs.bundle.js?' + buildId);
+const adjusted = html.replace('docs.bundle.js', 'rearm/docs.bundle.js?' + buildId).replace('rearm-icon.png', 'rearm/rearm-icon.png');
 
 mkdirp.sync('docs-pub');
 mkdirp.sync('docs-pub/docs');
