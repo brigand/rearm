@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import Ctx from '../Ctx';
+import { makeCtx } from '../Ctx';
+
+const Ctx = makeCtx('AppStore');
 
 configure({ adapter: new Adapter() });
 
@@ -22,7 +24,7 @@ it(`works`, () => {
   class A extends React.Component {
     render() {
       return (
-        <Ctx inject={{ x: 'test' }}>
+        <Ctx set={{ x: 'test' }}>
           <B />
         </Ctx>
       );
