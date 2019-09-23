@@ -1,11 +1,10 @@
+import '@testing-library/jest-dom/extend-expect';
 import * as React from 'react';
-import { configure, mount } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import '@babel/polyfill';
+import { render, fireEvent } from '@testing-library/react';
 import { makeCtx } from '../Ctx';
 
 const Ctx = makeCtx('AppStore');
-
-configure({ adapter: new Adapter() });
 
 function pureHoc(C) {
   return class PureWrapper extends React.PureComponent {
@@ -31,35 +30,31 @@ it(`works`, () => {
     }
   }
 
-  const inst = mount(<A />);
-  const text = inst.find('span').props().children;
-  expect(text).toBe('test');
+  const { getByText } = render(<A />);
+  expect(getByText('test')).toBeTruthy();
 });
 
-// These tests don't work because of enzyme weirdness
-xit(`updates one level`, () => {
+xit(`updates one level`, async () => {
   const B = pureHoc(() => (
     <Ctx>
       {data => <span id="target">{data.x}</span>}
     </Ctx>
   ));
+
   class A extends React.Component {
-    state = {
-      x: 'foo',
-    }
     render() {
       return (
-        <Ctx inject={{ x: this.state.x }}>
+        <Ctx set={{ x: this.props.x }}>
           <B />
         </Ctx>
       );
     }
   }
 
-  const inst = mount(<A />);
-  expect(inst.find('span').props().children).toBe('foo');
-  inst.setState({ x: 'bar' });
-  expect(inst.find('span').props().children).toBe('bar');
+  const { getByText, findByText, rerender } = render(<A x="foo" />);
+  expect(getByText('foo')).toBeTruthy();
+  await rerender(<A x="bar" />);
+  expect(await findByText('bar')).toBeTruthy();
 });
 
 xit(`updates two levels`, () => {
