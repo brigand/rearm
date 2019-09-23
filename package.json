@@ -8,6 +8,7 @@
     "docs-dev": "webpack-dev-server --mode=development --port 9398 --config ./src/docs/webpack.config.js",
     "build-docs": "webpack --mode=production --config ./src/docs/webpack.config.js && node ./scripts/buildDocs.js",
     "build": "env NODE_ENV=production babel src --out-dir lib --ignore src/docs,src/__tests__",
+    "lint": "eslint src",
     "prepare": "npm run build",
     "gh-pages": "npm run build-docs && gh-pages -d docs-pub",
     "prepublish": "npm run build"
