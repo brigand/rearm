@@ -23,8 +23,11 @@ class CtxStore {
     return unsub;
   }
 
-  replaceStateAndNotify(newState: any) {
+  replaceState(newState: any) {
     this.state = newState;
+  }
+
+  notifyAll() {
     this.subs.forEach(sub => sub());
   }
 }
@@ -62,8 +65,10 @@ function makeCtx() {
 
   return {
     Provider: function CtxComponent({ value, children }) {
+      store.state = value;
+
       React.useEffect(() => {
-        store.replaceStateAndNotify(value);
+        store.notifyAll();
       }, [value]);
 
       return (
