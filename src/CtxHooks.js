@@ -33,20 +33,21 @@ class CtxStore {
   }
 }
 
-function createUseSelector(Context) {
-  const execSelector = (value, selector) => {
-    if (typeof selector === 'function') {
-      return selector(value);
-    } else if (selector === null || selector === undefined) {
-      return value;
-    } else {
-      throw new Error('Invalid selector');
-    }
-  };
+function execSelector(value, selector) {
+  if (typeof selector === 'function') {
+    return selector(value);
+  } else if (selector === null || selector === undefined) {
+    return value;
+  } else {
+    throw new Error('Expected the selector to be a function or null/undefined');
+  }
+}
 
+function createUseSelector(Context) {
   return function useSelector(selector) {
     const store = React.useContext(Context);
     const [, forceUpdate] = React.useState(false);
+
     const prevState = React.useRef();
 
     React.useEffect(() => {
@@ -60,7 +61,7 @@ function createUseSelector(Context) {
       });
 
       // detach when unmount
-      return () => unsub();
+      return unsub();
     }, [selector]);
 
     prevState.current = execSelector(store.state, selector);
@@ -74,9 +75,10 @@ function makeCtx() {
   const Context = React.createContext();
 
   return {
-    Provider: function CtxComponent({ value, children }) {
+    Provider: function CtxProvider({ value, children }) {
       if (typeof children === 'function') throw new Error("The 'children' prop cannot be a function");
 
+      // const store = React.useMemo(() => new CtxStore(), []);
       store.state = value;
 
       React.useEffect(() => {

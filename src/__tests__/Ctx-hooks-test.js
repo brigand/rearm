@@ -10,13 +10,13 @@ it(`works`, () => {
 
   function B() {
     const x = Ctx.use(state => state.x);
-    return <p>Hello {x}</p>;
+    return <p>state.x: {x}</p>;
   }
 
   class A extends React.Component {
     render() {
       return (
-        <Ctx.Provider value={{ x: this.props.x, y: 'a' }}>
+        <Ctx.Provider value={{ x: this.props.x }}>
           <B />
         </Ctx.Provider>
       );
@@ -24,7 +24,7 @@ it(`works`, () => {
   }
 
   const { getByText } = render(<A x="foo" />);
-  expect(getByText('Hello foo')).toBeTruthy();
+  expect(getByText('state.x: foo')).toBeTruthy();
 });
 
 it(`changes value`, () => {
@@ -32,13 +32,13 @@ it(`changes value`, () => {
 
   function B() {
     const x = Ctx.use(state => state.x);
-    return <p>Hello {x}</p>;
+    return <p>state.x: {x}</p>;
   }
 
   class A extends React.Component {
     render() {
       return (
-        <Ctx.Provider value={{ x: this.props.x, y: 'a' }}>
+        <Ctx.Provider value={{ x: this.props.x }}>
           <B />
         </Ctx.Provider>
       );
@@ -47,7 +47,7 @@ it(`changes value`, () => {
 
   const { getByText, rerender } = render(<A x="foo" />);
   rerender(<A x="bar" />);
-  expect(getByText('Hello bar')).toBeTruthy();
+  expect(getByText('state.x: bar')).toBeTruthy();
 });
 
 it(`declines update`, () => {
@@ -57,13 +57,13 @@ it(`declines update`, () => {
 
   function B() {
     const x = Ctx.use(state => state.x);
-    return <p>Hello {x}</p>;
+    return <p>state.x: {x}</p>;
   }
 
   class A extends React.Component {
     render() {
       return (
-        <Ctx.Provider value={{ x: this.props.x, y: 'a' }}>
+        <Ctx.Provider value={{ x: this.props.x }}>
           <NeverUpdate><B /></NeverUpdate>
         </Ctx.Provider>
       );
@@ -72,6 +72,6 @@ it(`declines update`, () => {
 
   const { getByText, rerender } = render(<A x="foo" />);
   rerender(<A x="bar" />);
-  expect(getByText('Hello bar')).toBeTruthy();
+  expect(getByText('state.x: bar')).toBeTruthy();
 });
 
