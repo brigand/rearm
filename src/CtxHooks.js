@@ -61,10 +61,10 @@ function makeCtx() {
   const Context = React.createContext();
 
   return {
-    Provider: function CtxComponent({ set, children }) {
+    Provider: function CtxComponent({ value, children }) {
       React.useEffect(() => {
-        store.replaceStateAndNotify(set);
-      }, [set]);
+        store.replaceStateAndNotify(value);
+      }, [value]);
 
       return (
         <Context.Provider value={store}>
