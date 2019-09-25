@@ -50,7 +50,7 @@ it(`changes value`, () => {
   expect(getByText('state.x: bar')).toBeTruthy();
 });
 
-it(`declines update`, () => {
+it(`.use() component self-updates on store change`, () => {
   const Ctx = makeCtx();
 
   class NeverUpdate extends React.Component { shouldComponentUpdate() { return false; } render() { return this.props.children; } }

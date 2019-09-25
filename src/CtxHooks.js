@@ -71,14 +71,13 @@ function createUseSelector(Context) {
 }
 
 function makeCtx() {
-  const store = new CtxStore();
   const Context = React.createContext();
 
   return {
     Provider: function CtxProvider({ value, children }) {
       if (typeof children === 'function') throw new Error("The 'children' prop cannot be a function");
 
-      // const store = React.useMemo(() => new CtxStore(), []);
+      const store = React.useMemo(() => new CtxStore(), []);
       store.state = value;
 
       React.useEffect(() => {
