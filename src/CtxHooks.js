@@ -27,28 +27,32 @@ class CtxStore {
     this.state = newState;
     this.subs.forEach(sub => sub());
   }
-
-  getState() {
-    return this.state;
-  }
 }
 
 function createUseSelector(Context) {
   return function useSelector(selector) {
     const store = React.useContext(Context);
-    const [, forceUpdate] = React.useState(0);
-    let selectedState;
+    const [, forceUpdate] = React.useState(false);
+
+    const prevState = React.useRef();
 
     React.useEffect(() => {
-      const unsub = store.subscribe(selector);
-      forceUpdate(x => !x);
+      const unsub = store.subscribe((state) => {
+        const newState = selector(state);
+
+        if (newState !== prevState.current) {
+          prevState.current = newState;
+          forceUpdate(x => !x);
+        }
+      });
+
       // detach when unmount
       return () => unsub();
-    }, [store]);
+    }, [selector]);
 
-    selectedState = selector(store.getState());
+    prevState.current = selector(store.state);
 
-    return selectedState;
+    return prevState.current;
   };
 }
 
@@ -57,7 +61,7 @@ function makeCtx() {
   const Context = React.createContext();
 
   return {
-    provider: function CtxComponent({ set, children }) {
+    Provider: function CtxComponent({ set, children }) {
       React.useEffect(() => {
         store.replaceStateAndNotify(set);
       }, [set]);

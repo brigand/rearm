@@ -15,9 +15,9 @@ it(`works`, () => {
   class A extends React.Component {
     render() {
       return (
-        <Ctx.provider set={{ x: this.props.x, y: 'a' }}>
+        <Ctx.Provider set={{ x: this.props.x, y: 'a' }}>
           <B />
-        </Ctx.provider>
+        </Ctx.Provider>
       );
     }
   }
