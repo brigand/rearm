@@ -1,3 +1,4 @@
+/* eslint react/prop-types: 0 */
 // @flow
 import * as React from 'react';
 
@@ -33,15 +34,24 @@ class CtxStore {
 }
 
 function createUseSelector(Context) {
+  const execSelector = (value, selector) => {
+    if (typeof selector === 'function') {
+      return selector(value);
+    } else if (selector === null || selector === undefined) {
+      return value;
+    } else {
+      throw new Error('Invalid selector');
+    }
+  };
+
   return function useSelector(selector) {
     const store = React.useContext(Context);
     const [, forceUpdate] = React.useState(false);
-
     const prevState = React.useRef();
 
     React.useEffect(() => {
       const unsub = store.subscribe((state) => {
-        const newState = selector(state);
+        const newState = execSelector(state, selector);
 
         if (newState !== prevState.current) {
           prevState.current = newState;
@@ -53,7 +63,7 @@ function createUseSelector(Context) {
       return () => unsub();
     }, [selector]);
 
-    prevState.current = selector(store.state);
+    prevState.current = execSelector(store.state, selector);
 
     return prevState.current;
   };
@@ -65,6 +75,8 @@ function makeCtx() {
 
   return {
     Provider: function CtxComponent({ value, children }) {
+      if (typeof children === 'function') throw new Error("The 'children' prop cannot be a function");
+
       store.state = value;
 
       React.useEffect(() => {
