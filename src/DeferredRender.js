@@ -12,7 +12,12 @@ function createRIC() {
     };
   } else {
     rIC = (handler) => {
-      const id = requestAnimationFrame(() => requestAnimationFrame(handler));
+      let id;
+
+      id = requestAnimationFrame(() => {
+        id = requestAnimationFrame(handler);
+      });
+
       return () => cancelAnimationFrame(id);
     };
   }
