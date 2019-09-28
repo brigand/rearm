@@ -2,31 +2,40 @@
 // @flow
 import * as React from 'react';
 
-let rIC;
+function createRIC() {
+  let rIC;
 
-if (window.requestIdleCallback) {
-  rIC = window.requestIdleCallback;
-} else {
-  rIC = (handler, { timeout }) => setTimeout(handler, timeout);
+  if (window.requestIdleCallback) {
+    rIC = (handler, options) => {
+      const id = requestIdleCallback(handler, options);
+      return () => cancelIdleCallback(id);
+    };
+  } else {
+    rIC = (handler) => {
+      const id = requestAnimationFrame(() => requestAnimationFrame(handler));
+      return () => cancelAnimationFrame(id);
+    };
+  }
+
+  return rIC;
 }
 
-window.cancelIdleCallback = window.cancelIdleCallback || function clear(id) {
-  clearTimeout(id);
-};
+const rIC = createRIC();
 
 function DeferredRender({ children, options }) {
   const [render, setRender] = React.useState(false);
 
   React.useEffect(() => {
     if (render) setRender(false);
-    const id = rIC(() => setRender(true), { timeout: options.timeout });
+    const cancel = rIC(() => setRender(true), { timeout: options.idleTimeout });
 
-    return () => cancelIdleCallback(id);
-  }, [options.timeout]);
+    return cancel;
+  }, [options.idleTimeout]);
 
   if (!render) return null;
 
   return children;
 }
+
 
 export default DeferredRender;
