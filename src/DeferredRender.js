@@ -25,25 +25,21 @@ function createRIC() {
   return rIC;
 }
 
-function useDeferredRender({ idleTimeout }) {
-  const rIC = createRIC();
+const rIC = createRIC();
 
-  return {
-    DeferredRender: function DeferredRender({ children }) {
-      const [render, setRender] = React.useState(false);
+function DeferredRender({ children, idleTimeout }) {
+  const [render, setRender] = React.useState(false);
 
-      React.useEffect(() => {
-        if (render) setRender(false);
-        const cancel = rIC(() => setRender(true), { timeout: idleTimeout });
+  React.useEffect(() => {
+    if (render) setRender(false);
+    const cancel = rIC(() => setRender(true), { timeout: idleTimeout });
 
-        return cancel;
-      }, [idleTimeout]);
+    return cancel;
+  }, [idleTimeout]);
 
-      if (!render) return null;
+  if (!render) return null;
 
-      return children;
-    },
-  };
+  return children;
 }
 
-export default useDeferredRender;
+export default DeferredRender;
