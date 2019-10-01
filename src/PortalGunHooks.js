@@ -2,23 +2,29 @@
 import * as React from 'react';
 
 class Store {
-  id = 100000;
+  static id = 100000;
 
   listeners = [];
   sourceIds = [];
   idsToNodes = {};
 
-  increment() {
-    this.id = this.id + 1;
+  addNode(node, id) {
+    this.sourceIds.push(id);
+    this.idsToNodes[id] = node;
   }
 
-  addNodeAndPush(node) {
-    this.sourceIds.push(this.id);
-    this.idsToNodes[this.id] = node;
+  deleteNode(id) {
+    delete this.idsToNodes[id];
+    this.sourceIds.splice(this.sourceIds.indexOf(id), 1);
+    this.queueUpdate();
   }
 
   addListener(handler) {
     this.listeners.push(handler);
+  }
+
+  removeListener(handler) {
+    this.listeners.splice(this.listeners.indexOf(handler), 1);
   }
 
   queueUpdate() {
@@ -27,11 +33,13 @@ class Store {
 }
 
 function SourceCmp({ children, store }) {
-  store.increment();
-  store.addNodeAndPush(children);
+  const [id] = React.useState(() => Store.id + 1);
 
   React.useEffect(() => {
+    store.addNode(children, id);
     store.queueUpdate();
+
+    return () => store.deleteNode(id);
   }, [children]);
 
   return null;
@@ -43,6 +51,8 @@ function DestCmp({ children, store }) {
 
   React.useEffect(() => {
     store.addListener(listener);
+
+    return () => store.removeListener(listener);
   }, [counter]);
 
   return (
