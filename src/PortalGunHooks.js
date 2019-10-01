@@ -5,17 +5,14 @@ class Store {
   static id = 100000;
 
   listeners = [];
-  sourceIds = [];
-  idsToNodes = {};
+  idsToNodes = new Map();
 
   addNode(node, id) {
-    this.sourceIds.push(id);
-    this.idsToNodes[id] = node;
+    this.idsToNodes.set(id, node);
   }
 
   deleteNode(id) {
-    delete this.idsToNodes[id];
-    this.sourceIds.splice(this.sourceIds.indexOf(id), 1);
+    this.idsToNodes.delete(id);
     this.queueUpdate();
   }
 
@@ -56,9 +53,9 @@ function DestCmp({ children, store }) {
   }, [counter]);
 
   return (
-    store.sourceIds.map(id => (
+    Array.from(store.idsToNodes.keys()).map(id => (
       <React.Fragment key={id}>
-        {typeof children === 'function' ? children(store.idsToNodes[id]) : store.idsToNodes[id]}
+        {typeof children === 'function' ? children(store.idsToNodes.get(id)) : store.idsToNodes.get(id)}
       </React.Fragment>
     ))
   );
