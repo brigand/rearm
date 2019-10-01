@@ -7,7 +7,7 @@ class Store {
   listeners = [];
   idsToNodes = new Map();
 
-  addNode(node, id) {
+  addNode(id, node) {
     this.idsToNodes.set(id, node);
   }
 
@@ -29,11 +29,20 @@ class Store {
   }
 }
 
+const useId = () => {
+  const ref = React.useRef();
+  if (!ref.current) {
+    Store.id += 1;
+    ref.current = Store.id;
+  }
+  return ref.current;
+};
+
 function SourceCmp({ children, store }) {
-  const [id] = React.useState(() => Store.id + 1);
+  const id = useId();
 
   React.useEffect(() => {
-    store.addNode(children, id);
+    store.addNode(id, children);
     store.queueUpdate();
 
     return () => store.deleteNode(id);
@@ -62,10 +71,14 @@ function DestCmp({ children, store }) {
 }
 
 function usePortalGun() {
-  const store = new Store();
+  const { Source, Dest } = React.useMemo(() => {
+    const store = new Store();
+    const Source = props => SourceCmp({ ...props, store });
+    const Dest = props => DestCmp({ ...props, store });
 
-  const Source = props => SourceCmp({ ...props, store });
-  const Dest = props => DestCmp({ ...props, store });
+    return { Source, Dest };
+  }, []);
+
 
   return [Source, Dest];
 }
