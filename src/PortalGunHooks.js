@@ -41,12 +41,12 @@ const useId = () => {
 function SourceCmp({ children, store }) {
   const id = useId();
 
-  React.useEffect(() => {
-    store.addNode(id, children);
-    store.queueUpdate();
+  store.addNode(id, children);
+  React.useEffect(() => store.queueUpdate(), [children]);
 
+  React.useEffect(() => {
     return () => store.deleteNode(id);
-  }, [children]);
+  }, []);
 
   return null;
 }
