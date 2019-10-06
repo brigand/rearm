@@ -1,0 +1,174 @@
+---
+name: Breakpoint
+route: /breakpoint
+menu: Components
+---
+
+
+# Intent
+
+The Breakpoint module provides information about the current viewport size, or the size of a specific element. It watches for changes to either of these, and renders your component with new props.
+
+Managing breakpoints from JS gives you full control over the view. You can render totally different components for different sizes. Additionally, you can pass a breakpoint object to child components without them knowing what the actual numbers are; only the names of each breakpoint.
+
+This module can also do breakpoints on any element in the DOM; it's not restricted to `window`. This means your component doesn't have to assume it'll be used in any specific container. The component's concern is that it renders appropriately for the space it's given.
+
+## Usage
+
+With the high order component variant, you receive one prop which is the 'bp' object. It has methods such as `props.bp.isGte('medium')`.
+
+With the render callback variant, you receive 'bp' as the first argument to the function.
+
+They can be imported like this:
+
+```javascript
+import { BreakpointHoc } from 'rearm/lib/Breakpoint';
+// or the render variant
+import { BreakpointRender } from 'rearm/lib/Breakpoint';
+```
+You configure it by providing an array of breakpoint objects containing constraints.
+
+If you don't provide `minWidth`, it defaults to `0`. If you don't proivide `maxWidth`, it defaults to `Infinity`.
+
+```javascript
+const MyComponent = ({ bp }) => (
+  bp.isLt('medium') ? <MobileView /> : <DesktopView />
+);
+const breakpoints = [
+  { name: 'small', maxWidth: 600 },
+  { name: 'medium', minWidth: 601, maxWidth: 1199 },
+  { name: 'large', minWidth: 1200, exact: true },
+];
+export default BreakpointHoc({ breakpoints, type: 'viewport' });
+```
+
+Or use the render callback variant:
+
+```javascript
+const MyComponent = () => (
+  <BreakpointRender breakpoints={breakpoints} type="viewport">
+    {bp => bp.isLt('medium') ? <MobileView /> : <DesktopView />}
+  </BreakpointRender>
+);
+export default MyComponent;
+```
+
+Here are the outputs of all of the bp methods given these breakpoints. If you resize your browser, they will change.
+
+```
+isLt('small')false
+isLte('small')false
+isGt('small')true
+isGte('small')true
+isEq('small')false
+isLt('medium')false
+isLte('medium')false
+isGt('medium')true
+isGte('medium')true
+isEq('medium')false
+isLt('large')false
+isLte('large')true
+isGt('large')false
+isGte('large')true
+isEq('large')true
+```
+bp.width(): 1680 bp.height(): 885
+
+In the previous example we hard coded the minWidth of medium to be one pixel more than the maxWidth of small. This works, but it's more expressive to name the breakpoint you want to base the property on.
+
+In this code, 'medium' sets its minWidth based on 'small'. When you reference another breakpoint, the key is inverted.
+
+So the minWidth of 'medium' becomes the maxWidth of 'small', plus one.
+
+The maxWidth of 'medium' becomes the minWidth of 'large', minus one.
+
+```javascript
+const breakpoints = [
+  { name: 'small', maxWidth: 600 },
+  { name: 'medium', minWidth: 'small', maxWidth: 'large' },
+  { name: 'large', minWidth: 1200, exact: true },
+];
+```
+
+In the demo above, we also have bp.width() and bp.height(). These are provided when the current breakpoint has an 'exact' property.
+
+Normally, we only render your component when you go from e.g. small to medium. For our 'large' breakpoint we specified 'exact', so when bp.isEq('large') would return true, we update your component on every size change, until it goes into the 'medium' breakpoint where we go back to not rendering again until it moves to 'small' or 'large'.
+
+Often you only need to do some math based on the width or height for certain size ranges. The 'exact' option gives you the hard numbers when you need them, and the higher performance when you don't.
+
+The render variant is similar, but can be used more easily in some situations. We'll use this code (styles omitted for brevity):
+
+```javascript
+<BreakpointRender breakpoints={breakpoints} type="viewport">
+  {bp => (
+    <div>
+      <dl>
+        <dt>Equal to small? {String(bp.isEq('small'))}</dt>
+        <dt>Equal to medium? {String(bp.isEq('medium'))}</dt>
+        <dt>Equal to large? {String(bp.isEq('large'))}</dt>
+      </dl>
+    </div>
+  )}
+</BreakpointRender>
+```
+
+## Element Breakpoints
+
+Viewport breakpoints are great for laying out entire pages, but often an element should only be concerned with its own size, or the size of a close parent element.
+
+We can declaratively access the size of an element, and use breakpoints like we did for the viewport above.
+
+You can use either the high order component or render callback for element breakpoints, but often the render callback is more convenient since it's relative to the position of the BreakpointRender in the tree.
+
+We'll use the previous example of `BreakpointRender`, with some alterations.
+
+```javascript
+<div className="SomeClass">
+  <BreakpointRender breakpoints={breakpoints} type="element" element=".SomeClass">
+    {bp => (
+      <div>
+        <dl>
+          <dt>Equal to small? {String(bp.isEq('small'))}</dt>
+          <dt>Equal to medium? {String(bp.isEq('medium'))}</dt>
+          <dt>Equal to large? {String(bp.isEq('large'))}</dt>
+        </dl>
+      </div>
+    )}
+  </BreakpointRender>
+</div>
+```
+
+Let's break down the props:
+
+breakpoints is the same as viewport, except now it's relative to our outer div here.
+
+type is set to 'element', which tells it to use element breakpoints instead of viewport breakpoints.
+
+If element is an HTMLElement (e.g. from a ref or document.getElementById) that element will be used.
+
+If element isn't defined, it will default to ':parent:'. ':parent:' uses the direct parent of BreakpointRender. Similarly, passing ':child:' will use the direct child of BreakpointRender.
+
+If element a string selector it will be matched against the closest parent. If that element doesn't match, then we attempt to match it on the grandparent, and so on, until it finds a match, or reaches document.body where it gives up.
+
+If an element isn't found immediately, we schedule low priority tasks to attempt to find the element again. This will be the case on the initial render unless you pass an HTMLElement as the element property.
+
+So what do we do if we don't have an element to check the size of? We'll, that's up to you. By default, we simply don't render the child until we're able to create a valid breakpoint object. You can override this with the canRenderWithNullBp boolean prop. If set to true, and we don't have a breakpoint, we'll pass bp as null. It's up to you to do something appropriate with the lack of information.
+
+We handle all sources of the element size changing without using timers, nor requiring you to make any special effort. There's no significant performance cost in listening for element resizes.
+
+In this example, we're using a CSS animation to change the size of the element.
+
+## Caveats
+
+We do our best to render the child without a wrapper node. If the type of the child element is a `React.Component` subclass, or an element type string (e.g. `<div />` has type `div`), then we can render it without a wrapper.
+
+If it's e.g. a number, or the type is a functional component, we wrap it in a `<span>` with only a ref prop, and pass your element as the child.
+
+When using the high order component variant, your render method should return exactly one element or null. With the render callback variant, your callback should render exactly one node or null.
+
+
+
+
+
+
+

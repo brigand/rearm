@@ -1,0 +1,39 @@
+---
+name: Ctx
+route: /ctx
+menu: Components
+---
+
+
+# Intent
+
+The Ctx module provides a stable and declarative interface to the concept of "context" in React. One component is used for creating, transforming, and accessing context. It can do any combination of these operations.
+
+## Usage
+
+```javascript
+import { makeCtx } from 'rearm/lib/Ctx';
+const Ctx = makeCtx();
+```
+
+Anywhere in the tree you can define the context by using the `value` prop. This in no way affects the parent context.
+
+```javascript
+render() {
+  return (
+    <Ctx.Provider value={{ color: 'hotpink' }}>
+      <B />
+    </Ctx.Provider>
+  );
+}
+```
+
+Within the children of `Ctx.Provider`, no matter how deep, we can map the context to React nodes in render by passing a render callback child to `Ctx.use` hook. The render callback will run any time the nearest parent Ctx updates.
+
+
+```javascript
+function B() {
+  const pink = Ctx.use(state => state.color);
+  return <p style={{ color: pink }}>Hello, World!</p>;
+}
+```
