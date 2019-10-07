@@ -5,13 +5,13 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "jest",
-    "docs-dev": "webpack-dev-server --mode=development --port 9398 --config ./src/docs/webpack.config.js",
-    "build-docs": "webpack --mode=production --config ./src/docs/webpack.config.js && node ./scripts/buildDocs.js",
-    "build-new-docs": "docz dev",
+    "docs:start": "docz dev",
+    "docs:build": "docz build",
+    "docs:publish": "npm run docs:build && npm run gh-pages",
+    "gh-pages": "gh-pages -d ./.docz/dist",
     "build": "env NODE_ENV=production babel src --out-dir lib --ignore src/docs,src/__tests__",
     "lint": "eslint src",
     "prepare": "npm run build",
-    "gh-pages": "npm run build-docs && gh-pages -d docs-pub",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -45,6 +45,7 @@
     "babel-loader": "^8.0.6",
     "css-loader": "^0.28.11",
     "docz": "^1.3.2",
+    "docz-theme-default": "^1.2.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.4.0",
@@ -74,7 +75,6 @@
   },
   "dependencies": {
     "add-resize-listener": "^2.0.1",
-    "docz-theme-default": "^1.2.0",
     "prop-types": "^15.6.1"
   }
 }
