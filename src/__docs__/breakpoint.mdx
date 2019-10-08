@@ -4,6 +4,9 @@ route: /breakpoint
 menu: Components
 ---
 
+import BreakpointDemo from './components/BreakpointDemo'
+import BreakpointMethods from './components/BreakpointMethods'
+import BreakpointAnimate from './components/BreakpointAnimate';
 
 # Intent
 
@@ -55,24 +58,7 @@ export default MyComponent;
 
 Here are the outputs of all of the bp methods given these breakpoints. If you resize your browser, they will change.
 
-```
-isLt('small')false
-isLte('small')false
-isGt('small')true
-isGte('small')true
-isEq('small')false
-isLt('medium')false
-isLte('medium')false
-isGt('medium')true
-isGte('medium')true
-isEq('medium')false
-isLt('large')false
-isLte('large')true
-isGt('large')false
-isGte('large')true
-isEq('large')true
-```
-bp.width(): 1680 bp.height(): 885
+<BreakpointMethods />
 
 In the previous example we hard coded the minWidth of medium to be one pixel more than the maxWidth of small. This works, but it's more expressive to name the breakpoint you want to base the property on.
 
@@ -111,6 +97,10 @@ The render variant is similar, but can be used more easily in some situations. W
   )}
 </BreakpointRender>
 ```
+
+Which produces this output:
+
+<BreakpointDemo />
 
 ## Element Breakpoints
 
@@ -157,6 +147,8 @@ So what do we do if we don't have an element to check the size of? We'll, that's
 We handle all sources of the element size changing without using timers, nor requiring you to make any special effort. There's no significant performance cost in listening for element resizes.
 
 In this example, we're using a CSS animation to change the size of the element.
+
+<BreakpointAnimate />
 
 ## Caveats
 

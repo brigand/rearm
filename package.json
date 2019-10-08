@@ -67,6 +67,7 @@
     "react-dom": "^16.9.0",
     "react-router-dom": "^4.3.1",
     "react-test-renderer": "^16.9.0",
+    "styled-components": "^4.4.0",
     "showdown": "^1.8.6",
     "style-loader": "^0.21.0",
     "webpack": "^4.12.0",
