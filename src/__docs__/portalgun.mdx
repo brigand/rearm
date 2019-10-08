@@ -1,0 +1,59 @@
+---
+name: PortalGun
+route: /portal-gun
+menu: Components
+---
+
+
+# Intent
+
+The PortalGun module allows defining UI in one place in the tree, and shooting it to a near-by location elsewhere in the tree.
+
+
+## Usage
+
+```javascript
+import usePortalGun from 'rearm/lib/PortalGunHooks';
+```
+
+First you'll need a hook `usePortalGun`. Each hook gets its own Source and Dest component. You may use Dest multiple times, but with multiple Source elements the order of results is undefined.
+
+
+```javascript
+function TestUi() {
+  const [Source, Dest] = usePortalGun();
+
+  return (
+    <>
+      <TestSource Source={Source} />
+      <div data-testid="dest">
+        <Dest />
+      </div>
+    </>
+  );
+}
+```
+
+Then you'll need a component to provide the value for `Source`. In this example, that'll be done inside `TestSource`.
+
+```javascript
+function TestSource({ Source }) {
+  const [counter, setCounter] = React.useState(1);
+
+  return (
+    <>
+      <button data-testid="incr" onClick={() => setCounter(c => c + 1)}>Incr</button>
+      <Source>
+        <span data-testid="source">{`Count: ${counter}`}</span>
+      </Source>
+    </>
+  );
+}
+```
+
+Note that in this case, `TestSource` holds the full state and defines the UI for representing that state, but `TestUi` decides where to put the rendered output.
+
+If there isn't currently a Source element, then Dest will render nothing.
+
+
+

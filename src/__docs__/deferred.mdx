@@ -1,0 +1,27 @@
+---
+name: DeferredRender
+route: /deferred-render
+menu: Components
+---
+
+
+# Intent
+
+Sometimes you have elements that aren't visible right away. You want to defer rendering these elements.
+
+
+## Usage
+
+```javascript
+import DeferredRender from 'rearm/lib/DeferredRender';
+```
+
+```javascript
+render() {
+  return (
+    <DeferredRender idleTimeout={1000}>
+      <ExpensiveStuff />
+    </DeferredRender>
+  );
+}
+```

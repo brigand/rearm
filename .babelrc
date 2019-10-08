@@ -13,5 +13,8 @@
     "production": {
       "plugins": ["./scripts/babel-plugin-react-no-star.js"]
     }
-  }
+  },
+  "ignore": [
+    "./scripts/babel-plugin-react-no-star.js"
+  ]
 }
