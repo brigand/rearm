@@ -36,7 +36,7 @@ function BreakpointMethods({ bp }) {
     <div key={name}>
       {keys.map(key => (
         <div key={key}>
-          <code>{`${key}('${name}')`}</code>
+          <code>{`${key}('${name}') === `}</code>
           <Highlight>{String(bp[key](name))}</Highlight>
         </div>
       ))}
@@ -46,7 +46,7 @@ function BreakpointMethods({ bp }) {
   return (
     <div>
       {results}
-      <pre>bp.width: <Highlight>{bp.width()}</Highlight> bp.height: <Highlight>{bp.height()}</Highlight></pre>
+      <pre>bp.width: <Highlight>{bp.width()}</Highlight>, bp.height: <Highlight>{bp.height()}</Highlight></pre>
     </div>
   );
 }
