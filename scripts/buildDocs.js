@@ -4,7 +4,8 @@ const pages = require('../src/docs/pages');
 
 const buildId = Math.floor(Math.random() * 2**45);
 const html = fs.readFileSync('src/docs/index.html', 'utf-8');
-const adjusted = html.replace('docs.bundle.js', 'rearm/docs.bundle.js?' + buildId).replace('rearm-icon.png', 'rearm/rearm-icon.png');
+// const adjusted = html.replace('docs.bundle.js', 'rearm/docs.bundle.js?' + buildId).replace('rearm-icon.png', 'rearm/rearm-icon.png');
+const adjusted = html;
 
 mkdirp.sync('docs-pub');
 mkdirp.sync('docs-pub/docs');
@@ -16,3 +17,6 @@ pages.forEach((page) => {
   mkdirp.sync(`docs-pub/docs/${page.path}`);
   fs.writeFileSync(`docs-pub/docs/${page.path}/index.html`, adjusted);
 });
+
+fs.writeFileSync('docs-pub/.nojekyll', 'yes');
+fs.copyFileSync('CNAME', 'docs-pub/CNAME');

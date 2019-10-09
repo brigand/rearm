@@ -31,7 +31,8 @@ const urlParts = urlPartsRaw.filter((x) => {
 const isHome = urlParts.length === 0;
 const activePage = isHome ? null : urlParts[1] || urlParts[0];
 
-const getPageUrl = page => (page.absolute ? page.absolute : `/rearm/${page.path ? `docs/${page.path}` : ''}`);
+// const getPageUrl = page => (page.absolute ? page.absolute : `/rearm/${page.path ? `docs/${page.path}` : ''}`);
+const getPageUrl = page => (page.absolute ? page.absolute : `/${page.path ? `docs/${page.path}` : ''}`);
 
 class Docs extends React.Component<Props> {
   render() {
@@ -105,7 +106,7 @@ class Docs extends React.Component<Props> {
           {this.renderLink({ path: '', name: 'Home', description: `The home page` })}
           {pages.map(page => this.renderLink(page))}
           {this.renderLink({
-            absolute: `https://github.com/brigand/rearm`,
+            absolute: `https://rearm.brigand.me`,
             path: '<github>',
             name: <React.Fragment><icons.Github /> Github</React.Fragment>,
             description: `The official github repo`,
