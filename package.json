@@ -8,7 +8,7 @@
     "docs:start": "docz dev",
     "docs:build": "docz build",
     "docs:publish": "npm run docs:build && npm run gh-pages",
-    "gh-pages": "gh-pages -d ./.docz/dist",
+    "gh-pages": "cp CNAME .docz/dist; gh-pages -d ./.docz/dist",
     "build": "env NODE_ENV=production babel src --out-dir lib --ignore src/docs,src/__tests__",
     "lint": "eslint src",
     "prepare": "npm run build",
