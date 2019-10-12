@@ -2,3 +2,5 @@ node_modules
 lib
 docs-pub
 .docz
+
+packages/*/lib
