@@ -2,11 +2,10 @@
 // @flow
 import * as React from 'react';
 
+const includes = (arr, item) => arr.includes(item);
+
 function getCurrentViewportSize() {
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  };
+  return { width: global.innerWidth, height: global.innerHeight };
 }
 
 function solveFor(bp, key, entries) {
@@ -26,7 +25,7 @@ function solveFor(bp, key, entries) {
       minWidth: 'maxWidth',
     };
     const inverted = invertedMapping[key];
-    const solved = solveFor(target, inverted);
+    const solved = solveFor(target, inverted, entries);
 
     if (inverted === 'maxWidth') return solved + 1;
     return solved - 1;
@@ -72,12 +71,12 @@ function calcBreakpoints(bps) {
   }
 
   return {
-    eq,
-    gt,
-    lt,
     key: keys.join('|||'),
     width: isExact ? currentSize.width : null,
     height: isExact ? currentSize.height : null,
+    eq,
+    gt,
+    lt,
   };
 }
 
@@ -99,14 +98,30 @@ function useBreakpoint(breakpoints) {
     return () => window.removeEventListener('resize', handleResize, false);
   }, []);
 
-  return {
-    key: relationships ? relationships.key : null,
-    isEq: key => !!relationships && relationships.eq.indexOf(key) !== -1,
-    isGt: key => !!relationships && relationships.gt.indexOf(key) !== -1,
-    isLt: key => !!relationships && relationships.lt.indexOf(key) !== -1,
-    width: relationships.width || null,
-    height: relationships.height || null,
-  };
+  const currentBreakpoint = React.useMemo(() => {
+    const isEq = key => includes(relationships.eq, key);
+    const isGte = key => includes(relationships.gt, key) || isEq(key);
+    const isLte = key => includes(relationships.lt, key) || isEq(key);
+
+    const isGt = key => isGte(key) && !isEq(key);
+    const isLt = key => isLte(key) && !isEq(key);
+
+    const key = relationships ? relationships.key : null;
+    const { width, height } = relationships;
+
+    return {
+      isEq,
+      isGte,
+      isLte,
+      isGt,
+      isLt,
+      key,
+      width,
+      height,
+    };
+  }, [relationships.key]);
+
+  return currentBreakpoint;
 }
 
 export default useBreakpoint;
