@@ -3,4 +3,5 @@ module.exports = {
   base: '/',
   menu: ['Getting Started', 'Installation', 'Components'],
   openBrowser: false,
+  typescript: true,
 };

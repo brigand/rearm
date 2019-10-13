@@ -20,10 +20,8 @@
   },
   "keywords": [
     "react",
-    "abstraction",
-    "hoc",
-    "highordercomponent",
-    "rendercallback"
+    "hooks",
+    "hoc"
   ],
   "author": "Frankie Bagnardi <f.bagnardi@gmail.com>",
   "license": "MIT",
