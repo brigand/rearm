@@ -106,8 +106,7 @@ function useBreakpoint(breakpoints) {
     const isGt = key => isGte(key) && !isEq(key);
     const isLt = key => isLte(key) && !isEq(key);
 
-    const key = relationships ? relationships.key : null;
-    const { width, height } = relationships;
+    const { width, height, key } = relationships;
 
     return {
       isEq,
