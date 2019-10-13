@@ -1,6 +1,6 @@
 {
   "name": "@rearm/ctx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "a stable and declarative interface to the concept of \"context\" in React",
   "scripts": {
     "test": "jest",
