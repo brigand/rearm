@@ -1,6 +1,6 @@
 {
   "name": "@rearm/use-portal-gun",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "allows defining UI in one place in the tree, and shooting it to a near-by location elsewhere in the tree",
   "private": true,
   "scripts": {
