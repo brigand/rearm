@@ -4,3 +4,4 @@ docs-pub
 .docz
 
 packages/*/lib
+packages/*/esm

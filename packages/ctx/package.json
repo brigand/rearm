@@ -4,8 +4,10 @@
   "description": "a stable and declarative interface to the concept of \"context\" in React",
   "scripts": {
     "test": "jest",
-    "tsc": "tsc",
-    "build": "npm run tsc"
+    "build": "npm run tsc && ../../scripts/flowgen",
+    "tsc": "npm run tsc:cjs && npm run tsc:esm",
+    "tsc:cjs": "tsc",
+    "tsc:esm": "tsc -p tsconfig.esm.json"
   },
   "keywords": [
     "react",
@@ -16,6 +18,7 @@
   "homepage": "https://github.com/brigand/rearm/tree/master/packages/ctx#readme",
   "license": "MIT",
   "main": "lib/ctx.js",
+  "types": "lib/index.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
