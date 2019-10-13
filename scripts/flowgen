@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
+const { compiler, beautify } = require('flowgen');
+
+const local = glob.sync('packages').length === 0;
+const dts = local
+  ? glob.sync('{lib,esm}/*.d.ts')
+  : glob.sync(`packages/*/{lib,esm}/*.d.ts`);
+
+for (const ts of dts) {
+  console.log(`Processing ${path.relative(process.cwd(), ts)}`);
+  let flowdef = compiler.compileDefinitionFile(ts);
+  flowdef = beautify(flowdef);
+
+  const outFile = ts.replace(/(\/.*?)\.d\.ts$/, '$1.js.flow');
+  if (!outFile.includes('.js.flow')) {
+    throw new Error(`Failed to convert ${ts} to a .js.flow file path`);
+  }
+
+  fs.writeFileSync(outFile, flowdef);
+
+  console.log(`Wrote ${path.relative(process.cwd(), outFile)}`);
+}
