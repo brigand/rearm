@@ -32,5 +32,10 @@
   },
   "bugs": {
     "url": "https://github.com/brigand/rearm/issues"
+  },
+  "devDependencies": {
+    "@babel/polyfill": "^7.6.0",
+    "@testing-library/jest-dom": "^4.1.2",
+    "@testing-library/react": "^9.3.0"
   }
 }
