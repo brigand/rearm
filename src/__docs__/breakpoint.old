@@ -2,6 +2,7 @@
 name: Breakpoint
 route: /breakpoint
 menu: Components
+disable: true
 ---
 
 import BreakpointDemo from './components/BreakpointDemo'

@@ -8,7 +8,7 @@ module.exports = (api) => {
       plugins: ['./scripts/babel-plugin-react-no-star.js'],
     },
   };
-  const ignore = ['./scripts/babel-plugin-react-no-star.js'];
+  const ignore = [];
 
   return {
     presets,

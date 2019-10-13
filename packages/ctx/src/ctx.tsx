@@ -41,13 +41,13 @@ export type Selector<T, U> = ((state: T) => U);
 
 interface UseSelector<T> {
   (): T;
-  <T, U>(selector: Selector<T, U>): U;
+  <U>(selector: Selector<T, U>): U;
   <U>(selector: Selector<T, U> | void): T | U;
 }
 
 export type ProviderProps<T> = { value: T; children: React.ReactChild };
 export type Ctx<T> = {
-  Provider: (props: ProviderProps<T>) => React.ReactChild;
+  Provider: React.SFC<ProviderProps<T>>;
   use: UseSelector<T>;
 };
 

@@ -4,36 +4,123 @@ route: /ctx
 menu: Components
 ---
 
+import CtxExample from './CtxExample.tsx';
 
 # Intent
 
-The Ctx module provides a stable and declarative interface to the concept of "context" in React. One component is used for creating, transforming, and accessing context. It can do any combination of these operations.
+The Ctx module provides a stable and declarative interface to the concept of "context" in React. It's represented as a single object with
+a `Provider` and a `use` hook as the two sides.
+
+Unlike a typical React context, a component may subscribe to specific parts of the context,
+or computations based on the context. This has been a very important aspect of react-redux for many years, and can
+now be leveraged with custom contexts.
 
 ## Usage
 
+First create your context instance. You may create as many as you like, and there is no interaction
+between separate contexts, so it's suitable for applications and libraries.
+
 ```javascript
 import { makeCtx } from 'rearm/lib/Ctx';
-const Ctx = makeCtx();
+const MyCtx = makeCtx();
 ```
 
-Anywhere in the tree you can define the context by using the `value` prop. This in no way affects the parent context.
+If you're using typescript, you may wish to explicitly define a type for the context. As you would expect,
+both `Provider` and `use` will incorporate the generic in their types.
+
+```typescript
+import { makeCtx, Ctx } from 'rearm/lib/Ctx';
+const MyCtx: Ctx<{ color: string}> = makeCtx();
+```
+
+Anywhere in the tree you can define the context by rendering a `Provider` with the `value`
+you would like to pass through context. You may have multiple instances of the `Provider` rendered
+in different parts of the page, or "shadow" a parent provider if they're nested. A `MyCtx.Provider`
+must exist as an (indirect) parent of any component attempting to call `MyCtx.use`.
 
 ```javascript
 render() {
   return (
-    <Ctx.Provider value={{ color: 'hotpink' }}>
+    <MyCtx.Provider value={{ color: 'hotpink' }}>
       <B />
-    </Ctx.Provider>
+    </MyCtx.Provider>
   );
 }
 ```
 
-Within the children of `Ctx.Provider`, no matter how deep, we can map the context to React nodes in render by passing a render callback child to `Ctx.use` hook. The render callback will run any time the nearest parent Ctx updates.
-
+You may then access the context by calling `Ctx.use` with an optional selector function. If not provided,
+then the entire context value will be returned.
 
 ```javascript
 function B() {
-  const pink = Ctx.use(state => state.color);
-  return <p style={{ color: pink }}>Hello, World!</p>;
+  const color = Ctx.use(state => state.color);
+  return <p style={{ color }}>Hello, World!</p>;
+}
+```
+
+If you use typescript, then the value of `color` should be inferred to be `string`, as we defined
+the context to be `Ctx<{ color: string }>.
+
+## Example
+
+Here we have a few components that share a context with a foreground color, background color,
+and a callback which can update either.
+
+```typescript
+type Theme = {
+  fg: string;
+  bg: string;
+  update: (key: 'fg' | 'bg', value: string) => void;
+};
+const ThemeCtx: Ctx<Theme> = makeCtx();
+```
+
+Try pressing the buttons and notice the update counters, which are incremented on
+each render of the respective components.
+
+<CtxExample />
+
+The first section, it accesses the entire context with `const theme = ThemeCtx.use()`, and as
+such the containing component will render in reaction to any context update.
+
+The other two components either access the foreground or background color individually.
+
+```typescript
+const fg = ThemeCtx.use((theme) => theme.fg);
+```
+
+The result of evaluating that function doesn't change if only `theme.bg` is updated, so this
+component isn't forced to update itself for changes it's unaffected by.
+
+Note that by default, any update in React will cause the entire sub tree to update, so using
+an update blocking technique like `React.memo` or `React.useMemo` is required to limit the
+natural rendering caused by any state change.
+
+The example uses such a technique in the root component. You normally don't need to worry about this,
+but if you are having performance issues due to context updates, it's a good thing to try.
+
+```typescript
+function CtxExample(props: {}) {
+  const [fg, setFg] = React.useState(FG_COLORS[0]);
+  const [bg, setBg] = React.useState(BG_COLORS[0]);
+  const theme: Theme = {
+    fg,
+    bg,
+    update(key, value) {
+      key === 'fg' ? setFg(value) : setBg(value);
+    },
+  };
+
+  const children = useMemo(
+    () => (
+      <div className="rearm-ctx-example">
+        <Selector />
+        <Page />
+      </div>
+    ),
+    [],
+  );
+
+  return <ThemeCtx.Provider value={theme}>{children}</ThemeCtx.Provider>;
 }
 ```

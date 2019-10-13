@@ -20,13 +20,13 @@ export type Breakpoint = {
 export type BreakpointHocOptsViewport = {
   type: 'viewport',
   breakpoints: Array<Breakpoint>,
-}
+};
 
 export type BreakpointHocOptsElement = {
   type: 'element',
   selector?: string,
   breakpoints: Array<Breakpoint>,
-}
+};
 
 export type BreakpointHocOpts = BreakpointHocOptsViewport | BreakpointHocOptsElement;
 
@@ -60,7 +60,10 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
     // constraint from another breakpoint key
     if (typeof value === 'string') {
       const target = byName[value];
-      if (!target) throw new TypeError(`Invalid breakpoint reference from ${bp.name} to ${value}`);
+      if (!target)
+        throw new TypeError(
+          `Invalid breakpoint reference from ${bp.name} to ${value}`,
+        );
 
       // we invert the key so that e.g. minWidth of bp becomes the maxWidth of the reference
       const invertedMapping = {
@@ -75,7 +78,11 @@ const calcBreakpoints = (bps: Array<Breakpoint>, size: Size): Relationships => {
       return solved - 1;
     }
     // eslint-disable-next-line max-len
-    throw new TypeError(`Failed to solve for breakpoint ${bp.name} on ${key} with value ${bp[key] != null ? bp[key] : 'null'}`);
+    throw new TypeError(
+      `Failed to solve for breakpoint ${bp.name} on ${key} with value ${
+        bp[key] != null ? bp[key] : 'null'
+      }`,
+    );
   };
 
   let needsExact = false;
@@ -128,15 +135,12 @@ type BreakpointResultProp = {
 
 // type HocProps = {};
 
-const BreakpointHoc = (opts: BreakpointHocOpts) => (Component: React.ComponentType<any>) => {
+const BreakpointHoc = (opts: BreakpointHocOpts) => (
+  Component: React.ComponentType<any>,
+) => {
   const BreakpointProvider = (props: Object): React.Node => (
     <BreakpointRender breakpoints={opts.breakpoints} type={opts.type}>
-      {(bp: BreakpointResultProp) => (
-        <Component
-          {...props}
-          bp={bp}
-        />
-        )}
+      {(bp: BreakpointResultProp) => <Component {...props} bp={bp} />}
     </BreakpointRender>
   );
   return BreakpointProvider;
@@ -154,9 +158,12 @@ type BreakpointRenderState = {
   current: ?Relationships,
   previousKey: ?string,
   bp: BreakpointResultProp,
-}
+};
 
-class BreakpointRender extends React.Component<BreakpointRenderProps, BreakpointRenderState> {
+class BreakpointRender extends React.Component<
+  BreakpointRenderProps,
+  BreakpointRenderState,
+> {
   cleanup: () => void;
   previousElement: ?HTMLElement;
   previousElement = null;
@@ -179,9 +186,12 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
   createBp() {
     return {
       key: () => (this.state.current ? this.state.current.key : null),
-      isGt: (key: string) => !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
-      isLt: (key: string) => !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
-      isEq: (key: string) => !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
+      isGt: (key: string) =>
+        !!this.state.current && this.state.current.gt.indexOf(key) !== -1,
+      isLt: (key: string) =>
+        !!this.state.current && this.state.current.lt.indexOf(key) !== -1,
+      isEq: (key: string) =>
+        !!this.state.current && this.state.current.eq.indexOf(key) !== -1,
       isGte: (key: string) => this.state.bp.isGt(key) || this.state.bp.isEq(key),
       isLte: (key: string) => this.state.bp.isLt(key) || this.state.bp.isEq(key),
       width: () => (this.state.current && this.state.current.width) || null,
@@ -305,11 +315,14 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
           timeout = 1;
           this.useShortIdleDelay = false;
         }
-        const idleCallbackToken = window.requestIdleCallback(() => {
-          // try again
-          this.setupListeners();
-          this.maybeUpdate();
-        }, { timeout });
+        const idleCallbackToken = window.requestIdleCallback(
+          () => {
+            // try again
+            this.setupListeners();
+            this.maybeUpdate();
+          },
+          { timeout },
+        );
 
         this.cleanup = () => window.cancelIdleCallback(idleCallbackToken);
         return;
@@ -349,9 +362,11 @@ class BreakpointRender extends React.Component<BreakpointRenderProps, Breakpoint
       return React.cloneElement(childNode, wrapperProps);
     }
 
-    if (typeof childNode.type === 'function'
+    if (
+      typeof childNode.type === 'function' &&
       // and is not functional component
-      && childNode.type.prototype !== Function.prototype) {
+      childNode.type.prototype !== Function.prototype
+    ) {
       return React.cloneElement(childNode, {
         ref: (instance: React.Component<any>) => {
           if (!instance) this.rootElement = null;

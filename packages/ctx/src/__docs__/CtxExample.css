@@ -1,0 +1,25 @@
+.rearm-ctx-example button {
+  font-size: 1em;
+}
+
+.rearm-ctx-example article,
+.rearm-ctx-example section,
+.rearm-ctx-example dl {
+  border: 1px solid #999;
+  border-radius: 5px;
+  position: relative;
+  padding: 1.5em 0.6em;
+  background: white;
+}
+
+.rearm-ctx-example .update-counter {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-left: 1px solid #999;
+  border-bottom: 1px solid #999;
+  line-height: 1.1;
+  border-top-right-radius: 5px;
+  background: white;
+  padding: 0 0.4em;
+}
