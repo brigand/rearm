@@ -1,6 +1,7 @@
 {
   "name": "@rearm/use-breakpoint",
   "version": "0.0.0",
+  "private": true,
   "description": "breakpoints for react components that only render when needed",
   "scripts": {
     "test": "jest",

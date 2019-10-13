@@ -15,7 +15,7 @@
     "context"
   ],
   "author": "Frankie Bagnardi <f.bagnardi@gmail.com>",
-  "homepage": "https://github.com/brigand/rearm/tree/master/packages/ctx#readme",
+  "homepage": "https://rearm.brigand.me/ctx",
   "license": "MIT",
   "main": "lib/ctx.js",
   "types": "lib/index.d.ts",
@@ -40,5 +40,8 @@
     "@babel/polyfill": "^7.6.0",
     "@testing-library/jest-dom": "^4.1.2",
     "@testing-library/react": "^9.3.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.4.0"
   }
 }
