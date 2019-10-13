@@ -7,7 +7,8 @@
     "build": "npm run tsc && ../../scripts/flowgen",
     "tsc": "npm run tsc:cjs && npm run tsc:esm",
     "tsc:cjs": "tsc",
-    "tsc:esm": "tsc -p tsconfig.esm.json"
+    "tsc:esm": "tsc -p tsconfig.esm.json",
+    "readme": "../../scripts/readme"
   },
   "keywords": [
     "react",

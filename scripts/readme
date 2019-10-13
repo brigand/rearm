@@ -1,0 +1,86 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
+
+const REPO = 'https://github.com/brigand/rearm/';
+
+const START_OMIT = /<!--+\s*<NO_README>\s*--+>|^---+/;
+const END_OMIT = /<!--+\s*<\/NO_README>\s*--+>|^---+/;
+const IMPORT = /import[ ]+[\w\d{}* ]+[ ]+from[ ]*['"]/;
+
+const local = glob.sync('packages').length === 0;
+
+if (!local) {
+  console.error(`readme script must be run inside a packages/* directory`);
+  process.exit(1);
+}
+
+const packageDirName = path.basename(process.cwd());
+
+const { name: packageName } = JSON.parse(fs.readFileSync('./package.json'));
+const mdxFiles = glob.sync('src/__docs__/*.mdx');
+let mdxFile;
+
+if (mdxFiles.length > 1) {
+  const alt = `src/__docs__/${packageDirName}.mdx`;
+  mdxFile = glob.sync(alt);
+  if (!mdxFile) {
+    console.error(
+      `readme script found multiple .mdx files, and ${alt} didn't exist. Try creating it or reducing to one .mdx file.`,
+    );
+    process.exit(1);
+  }
+} else if (mdxFiles.length === 0) {
+  console.error(`No documentation (.mdx files) were found`);
+  process.exit(1);
+} else {
+  [mdxFile] = mdxFiles;
+}
+
+const lines = fs.readFileSync(mdxFile, 'utf-8').split(/\r?\n/);
+const finalLines = [];
+
+let omit = false;
+let code = false;
+
+const routeLine = lines.find((line) => line.startsWith('route:'));
+const route = routeLine.replace(/\s*route:\s+/, '');
+const url = `https://rearm.brigand.me${route[0] === '/' ? route : `/${route}`}`;
+
+finalLines.push(
+  `[${packageName} Website](${url}) - [Source Code](${REPO}/tree/master/packages/${packageDirName})`,
+);
+
+finalLines.push('');
+const repoRoot = path.resolve(__dirname, '..');
+finalLines.push(`<!-- Note: Don't edit this file. See these files:`);
+finalLines.push(`     - rearm/${path.relative(repoRoot, __filename)}`);
+finalLines.push(`     - rearm/${path.relative(repoRoot, path.resolve(mdxFile))} -->`);
+
+for (const line of lines) {
+  if (line.startsWith('```')) {
+    code = !code;
+  }
+
+  if (!code && IMPORT.test(line)) {
+    // skip
+  } else if (omit) {
+    if (END_OMIT.test(line)) {
+      omit = false;
+    }
+  } else if (START_OMIT.test(line)) {
+    omit = true;
+  } else {
+    finalLines.push(line);
+  }
+}
+
+let readme = finalLines
+  .join('\n')
+  .replace(/\n\n\n+/g, '\n\n')
+  .replace(/\n+$/g, '');
+readme += '\n';
+
+fs.writeFileSync('README.md', readme);
