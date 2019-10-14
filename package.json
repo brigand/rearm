@@ -4,7 +4,7 @@
   "description": "powerful react.js abstractions for non-trivial apps",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --testPathIgnorePatterns .docz",
     "docs:start": "docz dev",
     "docs:build": "docz build",
     "docs:publish": "npm run docs:build && npm run gh-pages",
