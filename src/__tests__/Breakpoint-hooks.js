@@ -14,7 +14,6 @@ it(`works`, async () => {
 
     return (
       <React.Fragment>
-        <p>{window.innerWidth}</p>
         <p data-testid="info">Sm: {bp.isEq('small').toString()}</p>
       </React.Fragment>
     );
