@@ -18,6 +18,11 @@ function testChannel() {
   return { Send, receive };
 }
 
+function fireResize(width) {
+  window.innerWidth = width;
+  fireEvent(window, new Event('resize'));
+}
+
 it(`works with one breakpoint`, async () => {
   const breakpoints = [
     { name: 'small', maxWidth: 600 },
@@ -46,9 +51,8 @@ it(`works with one breakpoint`, async () => {
     );
   }
 
+  fireResize(600);
   const { getByTestId } = render(<Test />);
-  window.innerWidth = 600;
-  fireEvent(window, new Event('resize'));
   expect(channel.receive(getByTestId)).toEqual({
     small: {
       isEq: true,
@@ -96,9 +100,8 @@ it(`works with two breakpoints`, async () => {
     );
   }
 
+  fireResize(601);
   const { getByTestId } = render(<Test />);
-  window.innerWidth = 601;
-  fireEvent(window, new Event('resize'));
   expect(channel.receive(getByTestId)).toEqual({
     small: {
       isEq: false,
@@ -161,9 +164,8 @@ it(`works with three breakpoints`, async () => {
     );
   }
 
+  fireResize(800);
   const { getByTestId } = render(<Test />);
-  window.innerWidth = 800;
-  fireEvent(window, new Event('resize'));
   expect(channel.receive(getByTestId)).toEqual({
     small: {
       isEq: false,
@@ -222,9 +224,8 @@ it(`reads width and height value on exact`, async () => {
     );
   }
 
+  fireResize(1205);
   const { getByTestId } = render(<Test />);
-  window.innerWidth = 1205;
-  fireEvent(window, new Event('resize'));
   expect(channel.receive(getByTestId)).toEqual({
     small: {
       isEq: false,
@@ -238,5 +239,36 @@ it(`reads width and height value on exact`, async () => {
       height: 768,
     },
   });
+});
+
+it(`never updates on non-exact breakpoints`, async () => {
+  const breakpoints = [
+    { name: 'large', minWidth: 1200 },
+  ];
+
+  function UpdateCount() {
+    const count = React.useRef(0);
+    count.current += 1;
+
+    return <div data-testid="update-count">{`(updates=${count.current})`}</div>;
+  }
+
+  function Test() {
+    const bp = useBreakpoint(breakpoints);
+
+    return (
+      <React.Fragment>
+        { bp.isEq('large').toString() }
+        <UpdateCount />
+      </React.Fragment>
+    );
+  }
+
+  fireResize(1250);
+  const { getByTestId } = render(<Test />);
+  const initialCountText = getByTestId('update-count').textContent;
+
+  fireResize(1230);
+  expect(getByTestId('update-count')).toHaveTextContent(initialCountText);
 });
 
