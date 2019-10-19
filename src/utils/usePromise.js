@@ -17,10 +17,11 @@ const states = {
   initial: 'initial',
 };
 
-const STATE_PENDING = {
+const INITIAL_PENDING = {
   error: undefined,
   result: undefined,
   state: states.pending,
+  lastValue: null,
 };
 
 function reducer(state, action) {
@@ -30,21 +31,29 @@ function reducer(state, action) {
         error: undefined,
         result: action.payload,
         state: states.resolved,
+        lastValue: { inner: action.payload },
       };
     case states.rejected:
       return {
         error: action.payload,
         result: undefined,
         state: states.rejected,
+        lastValue: state.lastValue,
       };
     case states.pending:
-      return STATE_PENDING;
+      return {
+        error: undefined,
+        result: undefined,
+        state: states.pending,
+        lastValue: state.lastValue,
+      };
 
     case states.initial:
       return {
         error: null,
         result: null,
         state: states.initial,
+        lastValue: null,
       };
     default:
       return state;
@@ -53,13 +62,22 @@ function reducer(state, action) {
 
 function usePromise(_promise, deps) {
   let promise = _promise;
-  const [{ result, error, state }, dispatch] = React.useReducer(reducer, STATE_PENDING);
+  const [{
+    result,
+    error,
+    state,
+    lastValue,
+  }, dispatch] = React.useReducer(reducer, INITIAL_PENDING);
+
+  const isFirstRun = React.useRef(true);
 
   React.useEffect(() => {
     promise = resolvePromise(promise);
     let canceled = false;
 
-    dispatch({ type: states.pending });
+    if (!isFirstRun.current) {
+      dispatch({ type: states.pending });
+    }
 
     if (!promise) {
       dispatch({ type: states.initial });
@@ -67,15 +85,26 @@ function usePromise(_promise, deps) {
     }
 
     promise.then(
-      res => !canceled && dispatch({ payload: res, type: states.resolved }),
-      err => !canceled && dispatch({ payload: err, type: states.rejected }),
+      (res) => {
+        isFirstRun.current = false;
+
+        if (!canceled) {
+          dispatch({ payload: res, type: states.resolved });
+        }
+      },
+      (err) => {
+        isFirstRun.current = false;
+
+        if (!canceled) {
+          dispatch({ payload: err, type: states.rejected });
+        }
+      },
     );
 
-    return () => { canceled = true; };
+    return () => (canceled = true);
   }, deps);
 
-
-  return [result, error, state];
+  return [result, error, state, lastValue];
 }
 
 export default usePromise;

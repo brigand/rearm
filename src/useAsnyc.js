@@ -4,14 +4,15 @@ import * as React from 'react';
 import usePromise from './utils/usePromise';
 
 class AsyncStore {
-  constructor(result, error, state) {
-    this.result = result;
+  constructor(result, error, state, lastValue) {
+    this._result = result;
     this._error = error;
-    this.state = state;
+    this._state = state;
+    this.lastValue = lastValue;
   }
 
   value() {
-    return this.result || null;
+    return this._result || null;
   }
 
   error() {
@@ -19,27 +20,27 @@ class AsyncStore {
   }
 
   success() {
-    return this.state === 'resolved' ? this.value() : null;
+    return this._state === 'resolved' ? this.value() : null;
   }
 
   failure() {
-    return this.state === 'rejected' ? this.error() : null;
+    return this._state === 'rejected' ? this.error() : null;
   }
 
   initial() {
-    return this.state === 'initial';
+    return this._state === 'initial';
   }
 
   loading() {
-    return this.state === 'pending';
+    return this._state === 'pending';
   }
 }
 
+
 function useAsync(promise, deps) {
-  const [result, error, state] = usePromise(promise, deps);
+  const [result, error, state, lastValue] = usePromise(promise, deps);
 
-
-  return new AsyncStore(result, error, state);
+  return new AsyncStore(result, error, state, lastValue);
 }
 
 
