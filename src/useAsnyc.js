@@ -4,43 +4,107 @@ import * as React from 'react';
 import usePromise from './utils/usePromise';
 
 class AsyncStore {
-  constructor(result, error, state, lastValue) {
+  constructor(result, error, state, latestValue) {
     this._result = result;
     this._error = error;
     this._state = state;
-    this.lastValue = lastValue;
+    this._latestValue = latestValue;
   }
 
-  value() {
-    return this._result || null;
+  hasValue() {
+    return this._latestValue != null;
   }
 
-  error() {
-    return this._error || null;
+  hasError() {
+    return this._error != null;
   }
 
-  success() {
-    return this._state === 'resolved' ? this.value() : null;
+  isLoading() {
+    return this._state === 'loading';
   }
 
-  failure() {
-    return this._state === 'rejected' ? this.error() : null;
+  isSuccess() {
+    return this._state === 'success';
   }
 
-  initial() {
+  isFailure() {
+    return this._state === 'failure';
+  }
+
+  isInitial() {
     return this._state === 'initial';
   }
 
+  value() {
+    return this._latestValue ? this._latestValue.inner : undefined;
+  }
+
+  error() {
+    return this._error ? this._error : undefined;
+  }
+
+  success() {
+    return this.isSuccess() ? this.value() : null;
+  }
+
+  failure() {
+    return this.isFailure() ? this.error() : null;
+  }
+
+  initial() {
+    return this.isInitial();
+  }
+
   loading() {
-    return this._state === 'pending';
+    return this.isLoading();
+  }
+
+  match(matcher) {
+    for (const key of Object.keys(matcher)) {
+      if (key === 'value') {
+        if (this.hasValue()) {
+          return matcher.value(this.value());
+        }
+      }
+
+      if (key === 'error') {
+        if (this.hasError()) {
+          return matcher.error(this.error());
+        }
+      }
+
+      if (key === 'loading') {
+        if (this.isLoading()) {
+          return matcher.loading();
+        }
+      }
+
+      if (key === 'success') {
+        if (this.isSuccess()) {
+          return matcher.success(this.value());
+        }
+      }
+
+      if (key === 'failure') {
+        if (this.isFailure()) {
+          return matcher.failure(this.error());
+        }
+      }
+
+      if (key === 'initial') {
+        if (this.isInitial()) {
+          return matcher.initial();
+        }
+      }
+    }
   }
 }
 
 
 function useAsync(promise, deps) {
-  const [result, error, state, lastValue] = usePromise(promise, deps);
+  const [result, error, state, latestValue] = usePromise(promise, deps);
 
-  return new AsyncStore(result, error, state, lastValue);
+  return new AsyncStore(result, error, state, latestValue);
 }
 
 

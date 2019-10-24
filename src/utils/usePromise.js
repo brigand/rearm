@@ -11,41 +11,41 @@ function resolvePromise(promise) {
 }
 
 const states = {
-  pending: 'pending',
-  rejected: 'rejected',
-  resolved: 'resolved',
+  loading: 'loading',
+  failure: 'failure',
+  success: 'success',
   initial: 'initial',
 };
 
-const INITIAL_PENDING = {
+const INITIAL_LOADING = {
   error: undefined,
   result: undefined,
-  state: states.pending,
-  lastValue: null,
+  state: states.loading,
+  latestValue: null,
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case states.resolved:
+    case states.success:
       return {
         error: undefined,
         result: action.payload,
-        state: states.resolved,
-        lastValue: { inner: action.payload },
+        state: states.success,
+        latestValue: { inner: action.payload },
       };
-    case states.rejected:
+    case states.failure:
       return {
         error: action.payload,
         result: undefined,
-        state: states.rejected,
-        lastValue: state.lastValue,
+        state: states.failure,
+        latestValue: state.latestValue,
       };
-    case states.pending:
+    case states.loading:
       return {
         error: undefined,
         result: undefined,
-        state: states.pending,
-        lastValue: state.lastValue,
+        state: states.loading,
+        latestValue: state.latestValue,
       };
 
     case states.initial:
@@ -53,7 +53,7 @@ function reducer(state, action) {
         error: null,
         result: null,
         state: states.initial,
-        lastValue: null,
+        latestValue: null,
       };
     default:
       return state;
@@ -66,8 +66,8 @@ function usePromise(_promise, deps) {
     result,
     error,
     state,
-    lastValue,
-  }, dispatch] = React.useReducer(reducer, INITIAL_PENDING);
+    latestValue,
+  }, dispatch] = React.useReducer(reducer, INITIAL_LOADING);
 
   const isFirstRun = React.useRef(true);
 
@@ -76,12 +76,13 @@ function usePromise(_promise, deps) {
     let canceled = false;
 
     if (!isFirstRun.current) {
-      dispatch({ type: states.pending });
+      dispatch({ type: states.loading });
     }
 
     if (!promise) {
       dispatch({ type: states.initial });
-      return;
+    } else if (state !== states.loading) {
+      dispatch({ type: states.loading });
     }
 
     promise.then(
@@ -89,14 +90,14 @@ function usePromise(_promise, deps) {
         isFirstRun.current = false;
 
         if (!canceled) {
-          dispatch({ payload: res, type: states.resolved });
+          dispatch({ payload: res, type: states.success });
         }
       },
       (err) => {
         isFirstRun.current = false;
 
         if (!canceled) {
-          dispatch({ payload: err, type: states.rejected });
+          dispatch({ payload: err, type: states.failure });
         }
       },
     );
@@ -104,7 +105,7 @@ function usePromise(_promise, deps) {
     return () => (canceled = true);
   }, deps);
 
-  return [result, error, state, lastValue];
+  return [result, error, state, latestValue];
 }
 
 export default usePromise;
