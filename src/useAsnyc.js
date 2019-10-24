@@ -3,6 +3,16 @@
 import * as React from 'react';
 import usePromise from './utils/usePromise';
 
+const states = {
+  value: 'value',
+  error: 'error',
+  loading: 'loading',
+  initial: 'initial',
+  default: 'default',
+};
+
+const keyExists = k => (k in states);
+
 class AsyncStore {
   constructor(result, error, state, latestValue) {
     this._result = result;
@@ -53,34 +63,38 @@ class AsyncStore {
 
   match(matcher) {
     for (const key of Object.keys(matcher)) {
-      if (key === 'value') {
+      if (key === states.value) {
         if (this.hasValue()) {
           return matcher.value(this.value());
         }
       }
 
-      if (key === 'error') {
+      if (key === states.error) {
         if (this.isError()) {
           return matcher.error(this.error());
         }
       }
 
-      if (key === 'loading') {
+      if (key === states.loading) {
         if (this.isLoading()) {
           return matcher.loading();
         }
       }
 
-      if (key === 'success') {
+      if (key === states.success) {
         if (this.isSuccess()) {
           return matcher.success(this.value());
         }
       }
 
-      if (key === 'initial') {
+      if (key === states.initial) {
         if (this.isInitial()) {
           return matcher.initial();
         }
+      }
+
+      if (!keyExists(key)) {
+        throw new Error(`Unexpected matcher key "${key}". See the expected API`);
       }
     }
 
@@ -91,6 +105,7 @@ class AsyncStore {
     throw new Error(`No cases matched. Define a 'default' case as a fallback if needed.`);
   }
 }
+
 
 function useAsync(promise, deps) {
   const [result, error, state, latestValue] = usePromise(promise, deps);
