@@ -15,10 +15,6 @@ class AsyncStore {
     return this._latestValue != null;
   }
 
-  hasError() {
-    return this._error != null;
-  }
-
   isLoading() {
     return this._state === 'loading';
   }
@@ -27,8 +23,8 @@ class AsyncStore {
     return this._state === 'success';
   }
 
-  isFailure() {
-    return this._state === 'failure';
+  isError() {
+    return this._state === 'error';
   }
 
   isInitial() {
@@ -39,16 +35,12 @@ class AsyncStore {
     return this._latestValue ? this._latestValue.inner : undefined;
   }
 
-  error() {
-    return this._error ? this._error : undefined;
-  }
-
   success() {
     return this.isSuccess() ? this.value() : null;
   }
 
-  failure() {
-    return this.isFailure() ? this.error() : null;
+  error() {
+    return this.isError() ? this._error : null;
   }
 
   initial() {
@@ -68,7 +60,7 @@ class AsyncStore {
       }
 
       if (key === 'error') {
-        if (this.hasError()) {
+        if (this.isError()) {
           return matcher.error(this.error());
         }
       }
@@ -85,27 +77,25 @@ class AsyncStore {
         }
       }
 
-      if (key === 'failure') {
-        if (this.isFailure()) {
-          return matcher.failure(this.error());
-        }
-      }
-
       if (key === 'initial') {
         if (this.isInitial()) {
           return matcher.initial();
         }
       }
     }
+
+    if (matcher.default) {
+      return matcher.default();
+    }
+
+    throw new Error(`No cases matched. Define a 'default' case as a fallback if needed.`);
   }
 }
-
 
 function useAsync(promise, deps) {
   const [result, error, state, latestValue] = usePromise(promise, deps);
 
   return new AsyncStore(result, error, state, latestValue);
 }
-
 
 export default useAsync;

@@ -12,7 +12,7 @@ function resolvePromise(promise) {
 
 const states = {
   loading: 'loading',
-  failure: 'failure',
+  error: 'error',
   success: 'success',
   initial: 'initial',
 };
@@ -33,11 +33,11 @@ function reducer(state, action) {
         state: states.success,
         latestValue: { inner: action.payload },
       };
-    case states.failure:
+    case states.error:
       return {
         error: action.payload,
         result: undefined,
-        state: states.failure,
+        state: states.error,
         latestValue: state.latestValue,
       };
     case states.loading:
@@ -97,12 +97,12 @@ function usePromise(_promise, deps) {
         isFirstRun.current = false;
 
         if (!canceled) {
-          dispatch({ payload: err, type: states.failure });
+          dispatch({ payload: err, type: states.error });
         }
       },
     );
 
-    return () => (canceled = true);
+    return () => { canceled = true; };
   }, deps);
 
   return [result, error, state, latestValue];
