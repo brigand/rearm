@@ -23,7 +23,7 @@ function DisplayState({ api }) {
       default: () => ({ type: 'default' }),
       loading: () => ({ type: 'loading' }),
       success: value => ({ type: 'success', value }),
-      error: msg => ({ type: 'error', value: msg.toString() }),
+      error: msg => ({ type: 'error', value: msg }),
     }),
   };
 
@@ -92,7 +92,8 @@ it(`resolves to success`, async () => {
 });
 
 it(`rejects to error`, async () => {
-  const rejects = () => new Promise((_, reject) => reject(new Error('rejected')));
+  const error = { message: 'Expected rejection' };
+  const rejects = () => new Promise((_, reject) => reject(error));
 
   function Test() {
     const api = useAsync(() => rejects(), []);
@@ -104,7 +105,7 @@ it(`rejects to error`, async () => {
   expect(getStates(getByTestId)).toEqual({
     value: undefined,
     success: null,
-    error: {},
+    error,
     initial: false,
     loading: false,
 
@@ -114,7 +115,7 @@ it(`rejects to error`, async () => {
     isError: true,
     isInitial: false,
 
-    matches: { type: 'error', value: 'Error: rejected' },
+    matches: { type: 'error', value: error },
   });
 });
 
