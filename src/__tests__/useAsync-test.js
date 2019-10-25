@@ -2,7 +2,7 @@
 import '@testing-library/jest-dom/extend-expect';
 import * as React from 'react';
 import '@babel/polyfill';
-import { render, waitForDomChange } from '@testing-library/react';
+import { render, waitForDomChange, fireEvent, act } from '@testing-library/react';
 import useAsync from '../useAsync';
 
 function DisplayState({ api }) {
@@ -23,7 +23,7 @@ function DisplayState({ api }) {
       default: () => ({ type: 'default' }),
       loading: () => ({ type: 'loading' }),
       success: value => ({ type: 'success', value }),
-      error: msg => ({ type: 'error', msg }),
+      error: msg => ({ type: 'error', value: msg.toString() }),
     }),
   };
 
@@ -47,10 +47,24 @@ it(`matches only loading`, () => {
   }
 
   const { getByTestId } = render(<Test />);
-  expect(getStates(getByTestId).matches).toMatchObject({ type: 'loading' });
+  expect(getStates(getByTestId)).toEqual({
+    value: undefined,
+    success: null,
+    error: null,
+    initial: false,
+    loading: true,
+
+    hasValue: false,
+    isSuccess: false,
+    isLoading: true,
+    isError: false,
+    isInitial: false,
+
+    matches: { type: 'loading' },
+  });
 });
 
-it(`matches only success`, async () => {
+it(`resolves to success`, async () => {
   const resolves = () => new Promise(resolve => resolve(1));
 
   function Test() {
@@ -60,6 +74,83 @@ it(`matches only success`, async () => {
 
   const { getByTestId } = render(<Test />);
   await waitForDomChange();
-  expect(getStates(getByTestId).matches).toMatchObject({ type: 'success', value: 1 });
+  expect(getStates(getByTestId)).toEqual({
+    value: 1,
+    success: 1,
+    error: null,
+    initial: false,
+    loading: false,
+
+    hasValue: true,
+    isSuccess: true,
+    isLoading: false,
+    isError: false,
+    isInitial: false,
+
+    matches: { type: 'success', value: 1 },
+  });
+});
+
+it(`rejects to error`, async () => {
+  const rejects = () => new Promise((_, reject) => reject(new Error('rejected')));
+
+  function Test() {
+    const api = useAsync(() => rejects(), []);
+    return <DisplayState api={api} />;
+  }
+
+  const { getByTestId } = render(<Test />);
+  await waitForDomChange();
+  expect(getStates(getByTestId)).toEqual({
+    value: undefined,
+    success: null,
+    error: {},
+    initial: false,
+    loading: false,
+
+    hasValue: false,
+    isSuccess: false,
+    isLoading: false,
+    isError: true,
+    isInitial: false,
+
+    matches: { type: 'error', value: 'Error: rejected' },
+  });
+});
+
+it(`goes from success to loading`, async () => {
+  const resolves = () => new Promise(resolve => resolve(1));
+
+  function Test() {
+    const [counter, setCounter] = React.useState(1);
+    const api = useAsync(() => resolves(), [counter]);
+
+    return (
+      <React.Fragment>
+        <button data-testid="incr" onClick={() => setCounter(c => c + 1)}>Incr</button>
+        <DisplayState api={api} />
+      </React.Fragment>
+    );
+  }
+
+  const { getByTestId } = render(<Test />);
+  const button = getByTestId('incr');
+
+  await waitForDomChange();
+  expect(getStates(getByTestId)).toMatchObject({
+    value: 1,
+    hasValue: true,
+    success: 1,
+    isLoading: false,
+    matches: { type: 'success', value: 1 },
+  });
+  act(() => fireEvent.click(button));
+  expect(getStates(getByTestId)).toMatchObject({
+    value: 1,
+    hasValue: true,
+    success: null,
+    isLoading: true,
+    matches: { type: 'loading' },
+  });
 });
 
