@@ -5,6 +5,7 @@ import usePromise from './utils/usePromise';
 
 const states = {
   value: 'value',
+  success: 'success',
   error: 'error',
   loading: 'loading',
   initial: 'initial',
