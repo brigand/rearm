@@ -1,0 +1,52 @@
+{
+  "name": "@rearm/use-async",
+  "version": "0.0.0",
+  "description": "powerful pattern matching on async resources and requests",
+  "scripts": {
+    "test": "jest",
+    "build": "npm run tsc && ../../scripts/flowgen && npm run readme",
+    "tsc": "npm run tsc:cjs && npm run tsc:esm",
+    "tsc:cjs": "tsc",
+    "tsc:esm": "tsc -p tsconfig.esm.json",
+    "readme": "../../scripts/readme",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "async",
+    "promise"
+  ],
+  "author": "Frankie Bagnardi <f.bagnardi@gmail.com>",
+  "homepage": "https://rearm.brigand.me/use-async",
+  "license": "MIT",
+  "main": "lib/use-async.js",
+  "module": "esm/use-async.js",
+  "types": "lib/use-async.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brigand/rearm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brigand/rearm/issues"
+  },
+  "devDependencies": {
+    "@babel/polyfill": "^7.6.0",
+    "@testing-library/jest-dom": "^4.1.2",
+    "@testing-library/react": "^9.3.0",
+    "typescript": "^3.6.4"
+  },
+  "peerDependencies": {
+    "react": ">=16.4.0"
+  }
+}
