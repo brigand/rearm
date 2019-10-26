@@ -143,7 +143,9 @@ it(`goes from success to loading`, async () => {
     isLoading: false,
     matches: { type: 'success', value: 1 },
   });
-  act(() => fireEvent.click(button));
+  act(() => {
+    fireEvent.click(button);
+  });
   expect(getStates(getByTestId)).toMatchObject({
     value: 1,
     hasValue: true,

@@ -1,7 +1,6 @@
-/* eslint react/prop-types: 0 */
 import * as React from 'react';
 
-type Nothing = null | void;
+export type Nothing = null | void;
 export type PromiseNullable<T> = Promise<T> | Nothing;
 export type PromiseArg<T> = PromiseNullable<T> | (() => PromiseNullable<T>);
 
@@ -13,7 +12,7 @@ function resolvePromise<T>(promise: PromiseArg<T>): PromiseNullable<T> {
   return promise;
 }
 
-enum State {
+export enum State {
   loading = 'loading',
   error = 'error',
   success = 'success',
@@ -27,7 +26,7 @@ const INITIAL_LOADING = {
   latestValue: null,
 };
 
-type Latest<T> = null | { inner: T };
+export type Latest<T> = null | { inner: T };
 
 type ReducerState<T, E> = {
   state: State;
@@ -88,12 +87,19 @@ function reducer<T, E>(
   }
 }
 
-function usePromise<T, E>(_promise: PromiseArg<T>, deps: Array<unknown>) {
+type Reducer<T, E> = (
+  state: ReducerState<T, E>,
+  action: Action<T, E>,
+) => ReducerState<T, E>;
+
+function usePromise<T, E>(
+  _promise: PromiseArg<T>,
+  deps: Array<unknown>,
+): [T | void, E | void, State, Latest<T>] {
   let promise = _promise;
-  const [{ result, error, state, latestValue }, dispatch] = React.useReducer(
-    reducer,
-    INITIAL_LOADING,
-  );
+  const [{ result, error, state, latestValue }, dispatch] = React.useReducer<
+    Reducer<T, E>
+  >(reducer, INITIAL_LOADING);
 
   const isFirstRun = React.useRef(true);
 

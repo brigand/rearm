@@ -10,9 +10,7 @@
     "docs:publish": "npm run docs:build && npm run gh-pages",
     "gh-pages": "cp CNAME .docz/dist; gh-pages -d ./.docz/dist",
     "build": "env NODE_ENV=production babel src --out-dir lib --ignore src/docs,src/__tests__",
-    "lint": "eslint src",
-    "prepare": "npm run build",
-    "prepublish": "npm run build"
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
