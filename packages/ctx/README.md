@@ -1,4 +1,5 @@
-[@rearm/ctx Website](https://rearm.brigand.me/ctx) - [Source Code](https://github.com/brigand/rearm//tree/master/packages/ctx)
+[@rearm/ctx Website](https://rearm.brigand.me/ctx) -
+[Source Code](https://github.com/brigand/rearm//tree/master/packages/ctx)
 
 <!-- Note: Don't edit this file. See these files:
      - rearm/scripts/readme
