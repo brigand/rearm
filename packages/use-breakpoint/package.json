@@ -8,6 +8,12 @@
     "tsc": "tsc",
     "build": "npm run tsc"
   },
+  "devDependencies": {
+    "@babel/polyfill": "^7.6.0",
+    "@testing-library/jest-dom": "^4.1.2",
+    "@testing-library/react": "^9.3.0",
+    "typescript": "^3.6.4"
+  },
   "keywords": [
     "react",
     "hooks",
