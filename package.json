@@ -57,7 +57,7 @@
     "flowgen": "^1.10.0",
     "gatsby-plugin-typescript": "^2.1.12",
     "gh-pages": "^1.2.0",
-    "highlight.js": "^9.12.0",
+    "highlight.js": "^10.4.1",
     "jest": "^24.9.0",
     "lerna": "^3.17.0",
     "marked": "^0.7.0",
